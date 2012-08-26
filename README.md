@@ -1,4 +1,4 @@
 coral
 =====
 
-Solid Node JS framework to dynamically create REST apps
+Node JS framework to dynamically create REST apps
