@@ -7,6 +7,7 @@
     "email": "prathamesh.satpute@a-1enterprises.in"
   },
   "keywords": ["node", "backbone","mongoose"],
+  "subdomain": "coral",
   "scripts": {
     "start": "node ./examples/app.js"
   },

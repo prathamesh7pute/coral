@@ -1,7 +1,10 @@
 language: node_js
 node_js:
   - 0.8
-notifications:
+branches:
+  only:
+    - master
+notifications_dont_run:
   webhooks: 
     urls:
       - http://webhooks.nodejitsu.com/1/deploy
