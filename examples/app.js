@@ -3,6 +3,7 @@ var Coral = require('../lib/coral'),
 
 application = {
 	root: __dirname,
+	port: process.env.PORT || 80,
 	corals: [{
 		url: "/",
 		model: {

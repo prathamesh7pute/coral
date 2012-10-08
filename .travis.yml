@@ -1,12 +1,3 @@
 language: node_js
 node_js:
   - 0.8
-branches:
-  only:
-    - master
-notifications_dont_run:
-  webhooks: 
-    urls:
-      - http://webhooks.nodejitsu.com/1/deploy
-    on_success: always
-    on_failure: never

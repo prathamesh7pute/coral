@@ -14,4 +14,7 @@ describe('coral', function() {
 		coral.version.should.match(/[0-9]+\.[0-9]+\.[0-9]+/);
 	});
 	
+	it('must match version number', function() {
+		coral.version.should.equal("0.0.4");
+	});
 });
