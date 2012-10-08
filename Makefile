@@ -5,7 +5,8 @@ REPORTER = dot
 build: jshint test
 
 jshint:
-	jshint $(LIB) $(TESTS) --config .jshintrc
+	jshint $(LIB) --config .jshintrc
+	jshint $(TESTS) --config .jshintrc
 
 test:
 	@./node_modules/.bin/mocha \
