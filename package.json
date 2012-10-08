@@ -8,7 +8,7 @@
   },
   "keywords": ["node", "backbone","mongoose"],
   "scripts": {
-    "test": "make build" 
+    "test": "make test" 
   },
   "repository": {
     "type": "git",
