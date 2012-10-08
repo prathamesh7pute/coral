@@ -1,10 +1,11 @@
 TESTS = test/*.js
+LIB = lib/*.js
 REPORTER = dot
 
 build: jshint test
 
 jshint:
-	jshint lib/ test/ --config .jshintrc
+	jshint $(LIB) $(TESTS) --config .jshintrc
 
 test:
 	@./node_modules/.bin/mocha \
