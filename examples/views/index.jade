@@ -7,29 +7,29 @@ block content
           span(class='icon-bar')
           span(class='icon-bar')
           span(class='icon-bar')
-        a(class='brand', href='#') Coral
+        a(class='brand', href='/') Coral
         .nav-collapse
           ul(class='nav')
             li(class='active')
               a(href='/') Home
             li
-              a(href='about') About
-            li
-              a(href='about') 
+              a(href='/') About
   br
   br
-  br
+  br              
   .container-fluid
     .row-fluid
       .span3
         div(class='well sidebar-nav')
           ul(id='exampleList', class='nav nav-list')
             li(class='nav-header') Examples
+            li 
+              a(href='/') Hello World
       .span9
         .hero-unit
           h1 Coral
           p Dyanmic Node, Express, Mongoose, Backbone framework
           br
           br
-          h2= model
+          h2= model.message
           #mainArea

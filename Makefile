@@ -4,7 +4,7 @@ REPORTER = dot
 build: jshint test
 
 jshint:
-	jshint lib/ test/ examples/ --config .jshintrc
+	jshint lib/ test/ --config .jshintrc
 
 test:
 	@./node_modules/.bin/mocha \

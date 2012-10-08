@@ -1,12 +1,14 @@
 var Coral = require('../lib/coral'),
-    application;
+	application;
 
 application = {
-    root: __dirname,
-    corals: [{
-        name: "",
-        model: {}
-    }]
+	root: __dirname,
+	corals: [{
+		url: "/",
+		model: {
+			message: "Hello World"
+		}
+	}]
 };
 
-return new Coral(application);
+var app = new Coral(application);
