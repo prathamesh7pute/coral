@@ -1,31 +1,37 @@
 {
-  "name": "coral",
-  "description": "Node JS framework to dynamically create REST apps",
-  "version": "0.0.4",
-  "author": {
-    "name": "Prathamesh Satpute (A-1 Enterprises)",
-    "email": "prathamesh.satpute@a-1enterprises.in"
-  },
-  "keywords": ["node", "backbone","mongoose"],
-  "scripts": {
-    "test": "make test" 
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/a-1/coral.git"
-  },
-  "dependencies": {
-    "express": "3.0.x",
-    "jade": "0.27.x",
-    "underscore": "1.3.x"
-  },
-  "devDependencies": {
-    "jshint": "0.6.1",
-    "mocha": "*",
-    "should": "*"
-  },
-  "engines": {  
-    "node": "0.8.x",
-    "npm": "1.1.x"
-  }
+    "name": "coral",
+    "description": "Node JS framework to dynamically create REST apps",
+    "version": "0.1.0",
+    "author": {
+        "name": "Prathamesh Satpute",
+        "email": "prathamesh.satpute@gmail.com"
+    },
+    "keywords": [
+        "node",
+        "mongoose",
+        "rest"
+    ],
+    "scripts": {
+        "test": "grunt test --verbose"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/a-1/coral.git"
+    },
+    "dependencies": {
+        "express": "~3.1.0",
+        "mongoose": "~3.5.6"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-jsbeautifier": "~0.1.8",
+        "grunt-contrib-jshint": "~0.6.0",
+        "grunt-contrib-watch": "~0.4.4",
+        "grunt-simple-mocha": "~0.4.0",
+        "supertest": "~0.7.0"
+    },
+    "engines": {
+        "node": "0.8.x",
+        "npm": "1.1.x"
+    }
 }

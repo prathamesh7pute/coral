@@ -1,8 +1,7 @@
 examples
 test
-Procfile
 .jshintrc
 .git*
 .travis.yml
 History.md
-Makefile
+gruntfile.js
