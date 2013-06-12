@@ -68,12 +68,7 @@ describe('query', function() {
 
     it('create - must create proper records', function(done) {
         var query = new Query(Brand),
-            data = [{
-                    name: 'samsung'
-                }, {
-                    name: 'nokia'
-                }
-            ],
+            data = [{name: 'samsung'}, {name: 'nokia'}],
             cb = function(err, record1, record2) {
                 if (!err) {
                     record1.name.should.equal('samsung');
@@ -88,9 +83,7 @@ describe('query', function() {
 
     it('findByIdAndUpdate - must update proper record', function(done) {
         var query = new Query(Brand),
-            data = {
-                name: 'samsung'
-            },
+            data = {name: 'samsung'},
             cb = function(err, record) {
                 if (!err) {
                     record.name.should.equal('samsung');

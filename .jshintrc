@@ -58,6 +58,5 @@
     "predef"        : [
          "it",
          "describe"
-    ],
-    "indent"        : 4
+    ]
 }
