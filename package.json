@@ -28,7 +28,8 @@
         "grunt-contrib-jshint": "~0.6.0",
         "grunt-contrib-watch": "~0.4.4",
         "grunt-simple-mocha": "~0.4.0",
-        "supertest": "~0.7.0"
+        "supertest": "~0.7.0",
+        "should": "~1.2.2"
     },
     "engines": {
         "node": "0.8.x",
