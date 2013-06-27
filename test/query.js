@@ -1,23 +1,33 @@
 /**
- * Tests.
+ * Test dependencies.
  */
-describe('query', function() {
 
-    var Query = require('../lib/query'),
-        should = require('should'),
-        mongoose = require("mongoose"),
-        Schema = mongoose.Schema,
-        Brand = require('./models/brand'),
-        id;
+var Query = require('../lib/query'),
+    connection = require('./common'),
+    mongoose = connection.mongoose,
+    Schema = mongoose.Schema,
+    should = require('should');
 
-    var resetData = function(done) {
-        Brand.remove({}, function(err) {
+/**
+ * Setup
+ */
+var schema = new Schema({
+    name: String
+});
+
+
+describe('query', function () {
+
+    var db, id, Brand;
+
+    var resetData = function (done) {
+        Brand.remove({}, function (err) {
             if (err) {
                 console.log(err);
             }
             var brand = new Brand();
             brand.name = 'Apple';
-            brand.save(function(err, doc) {
+            brand.save(function (err, doc) {
                 if (err) {
                     console.log(err);
                     done();
@@ -30,17 +40,19 @@ describe('query', function() {
         });
     };
 
-    beforeEach(function(done) {
-        mongoose.connect('mongodb://localhost/backbone_mongoose_test');
+    before(function (done) {
+        db = connection();
+        Brand = db.model('brand', schema);
         resetData(done);
     });
 
-    afterEach(function(done) {
-        mongoose.disconnect(done);
+    after(function (done) {
+        db.close(done);
     });
 
-    it('findById - must return exact available record', function(done) {
-        var cb = function(err, record) {
+
+    it('findById - must return exact available record', function (done) {
+        var cb = function (err, record) {
             if (!err) {
                 record.name.should.equal('Apple');
             } else {
@@ -52,8 +64,8 @@ describe('query', function() {
         query.findById(id, cb);
     });
 
-    it('findAll - must return all available records', function(done) {
-        var cb = function(err, records) {
+    it('findAll - must return all available records', function (done) {
+        var cb = function (err, records) {
             if (!err) {
                 records.length.should.equal(1);
                 records[0].name.should.equal('Apple');
@@ -66,10 +78,16 @@ describe('query', function() {
         query.findAll({}, cb);
     });
 
-    it('create - must create proper records', function(done) {
+    it('create - must create proper records', function (done) {
         var query = new Query(Brand),
-            data = [{name: 'samsung'}, {name: 'nokia'}],
-            cb = function(err, record1, record2) {
+            data = [
+                {
+                    name: 'samsung'
+                }, {
+                    name: 'nokia'
+                }
+            ],
+            cb = function (err, record1, record2) {
                 if (!err) {
                     record1.name.should.equal('samsung');
                     record2.name.should.equal('nokia');
@@ -81,10 +99,12 @@ describe('query', function() {
         query.create(data, cb);
     });
 
-    it('findByIdAndUpdate - must update proper record', function(done) {
+    it('findByIdAndUpdate - must update proper record', function (done) {
         var query = new Query(Brand),
-            data = {name: 'samsung'},
-            cb = function(err, record) {
+            data = {
+                name: 'samsung'
+            },
+            cb = function (err, record) {
                 if (!err) {
                     record.name.should.equal('samsung');
                 } else {
@@ -95,9 +115,9 @@ describe('query', function() {
         query.findByIdAndUpdate(id, data, cb);
     });
 
-    it('findByIdAndRemove - must remove proper record', function(done) {
+    it('findByIdAndRemove - must remove proper record', function (done) {
         var query = new Query(Brand),
-            cb = function(err) {
+            cb = function (err) {
                 should.not.exist(err);
                 if (!err) {
                     done();
@@ -105,6 +125,5 @@ describe('query', function() {
             };
         query.findByIdAndRemove(id, cb);
     });
-
 
 });

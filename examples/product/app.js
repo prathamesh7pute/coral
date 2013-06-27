@@ -6,7 +6,7 @@ var Coral = require('../../lib/coral'),
 	app = express();
 
 
-app.configure(function() {
+app.configure(function () {
 	app.use(express.bodyParser());
 	app.use(app.router);
 	app.use(express.errorHandler({
@@ -21,19 +21,13 @@ mongoose.connect('mongodb://localhost/backbone_mongoose_test');
 var coral = new Coral(app);
 
 coral.create({
-	methods: ['get', 'post', 'put', 'delete'],
 	path: '/brand',
-	params: ['bid'],
 	models: [Brand],
-	findAll: true,
 });
 
 coral.create({
-	methods: ['get', 'post', 'put', 'delete'],
 	path: '/product',
-	params: ['pid'],
 	models: [Product],
-	findAll: true
 });
 
 app.listen(3000);

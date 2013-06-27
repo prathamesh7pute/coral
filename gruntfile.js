@@ -1,49 +1,56 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     grunt.initConfig({
 
-            pkg: grunt.file.readJSON('package.json'),
-            files: ['gruntfile.js', 'package.json', 'test/**/*.js', 'lib/**/*.js'],
+        pkg: grunt.file.readJSON('package.json'),
+        lib: 'lib/**/*.js',
+        test: 'test/**/*.js',
+        examples: 'examples/**/*.js',
 
-            jsbeautifier: {
-                files: '<%= files %>'
-            },
-
-            jshint: {
-                files: '<%= files %>',
-                options: {
-                    jshintrc: ".jshintrc"
-                }
-            },
-
-            simplemocha: {
-                options: {
-                    globals: ['should'],
-                    timeout: 3000,
-                    ignoreLeaks: false,
-                    ui: 'bdd',
-                    reporter: 'spec'
-                },
-
-                all: {
-                    src: ['test/**/*.js']
-                }
-            },
-
-            watch: {
-                files: '<%= files %>',
-                tasks: ['default']
+        jshint: {
+            files: ['gruntfile.js', '<%= lib %>', '<%= test %>', '<%= examples %>'],
+            options: {
+                jshintrc: ".jshintrc"
             }
+        },
 
-        });
+        mocha: {
+            options: {
+                globals: ['should'],
+                timeout: 3000,
+                ignoreLeaks: false,
+                ui: 'bdd',
+                reporter: 'spec'
+            },
 
-    grunt.loadNpmTasks('grunt-jsbeautifier');
+            all: {
+                src: '<%= test %>'
+            }
+        },
+
+        watch: {
+            files: '<%= jshint.files %>',
+            tasks: ['default']
+        }
+
+    });
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-simple-mocha');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
+    grunt.registerMultiTask('mocha', 'mocha test cases', function () {
+        var Mocha = require('mocha'),
+            options = this.options(),
+            mocha = new Mocha(options),
+            done = this.async();
 
-    grunt.registerTask('default', ['jsbeautifier', 'jshint', 'simplemocha']);
-    grunt.registerTask('test', ['jshint', 'simplemocha']);
+        this.filesSrc.forEach(mocha.addFile.bind(mocha));
+        mocha.run(function (errCount) {
+            done(errCount === 0);
+        });
+    });
+
+    grunt.registerTask('default', ['jshint', 'mocha']);
+    grunt.registerTask('test', ['jshint', 'mocha']);
 
 };
