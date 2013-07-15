@@ -1,5 +1,6 @@
 examples
 test
+node_modules
 .jshintrc
 .git*
 .travis.yml
