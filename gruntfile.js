@@ -1,56 +1,56 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
-    grunt.initConfig({
+  grunt.initConfig({
 
-        pkg: grunt.file.readJSON('package.json'),
-        lib: 'lib/**/*.js',
-        test: 'test/**/*.js',
-        examples: 'examples/**/*.js',
+    pkg: grunt.file.readJSON('package.json'),
+    lib: 'lib/**/*.js',
+    test: 'test/**/*.js',
+    examples: 'examples/**/*.js',
 
-        jshint: {
-            files: ['gruntfile.js', '<%= lib %>', '<%= test %>', '<%= examples %>'],
-            options: {
-                jshintrc: ".jshintrc"
-            }
-        },
+    jshint: {
+      files: ['gruntfile.js', '<%= lib %>', '<%= test %>', '<%= examples %>'],
+      options: {
+        jshintrc: '.jshintrc'
+      }
+    },
 
-        mocha: {
-            options: {
-                globals: ['should'],
-                timeout: 3000,
-                ignoreLeaks: false,
-                ui: 'bdd',
-                reporter: 'spec'
-            },
+    mocha: {
+      options: {
+        globals: ['should'],
+        timeout: 3000,
+        ignoreLeaks: false,
+        ui: 'bdd',
+        reporter: 'spec'
+      },
 
-            all: {
-                src: '<%= test %>'
-            }
-        },
+      all: {
+        src: '<%= test %>'
+      }
+    },
 
-        watch: {
-            files: '<%= jshint.files %>',
-            tasks: ['default']
-        }
+    watch: {
+      files: '<%= jshint.files %>',
+      tasks: ['default']
+    }
 
+  });
+
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+
+  grunt.registerMultiTask('mocha', 'mocha test cases', function() {
+    var Mocha = require('mocha'),
+      options = this.options(),
+      mocha = new Mocha(options),
+      done = this.async();
+
+    this.filesSrc.forEach(mocha.addFile.bind(mocha));
+    mocha.run(function(errCount) {
+      done(errCount === 0);
     });
+  });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-
-    grunt.registerMultiTask('mocha', 'mocha test cases', function () {
-        var Mocha = require('mocha'),
-            options = this.options(),
-            mocha = new Mocha(options),
-            done = this.async();
-
-        this.filesSrc.forEach(mocha.addFile.bind(mocha));
-        mocha.run(function (errCount) {
-            done(errCount === 0);
-        });
-    });
-
-    grunt.registerTask('default', ['jshint', 'mocha']);
-    grunt.registerTask('test', ['jshint', 'mocha']);
+  grunt.registerTask('default', ['jshint', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'mocha']);
 
 };

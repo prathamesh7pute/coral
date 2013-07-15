@@ -2,52 +2,52 @@
  * Test dependencies.
  */
 var should = require('should'),
-    express = require('express'),
-    Coral = require('../lib/coral');
+  express = require('express'),
+  Coral = require('../lib/coral');
 
-describe('coral', function () {
+describe('coral', function() {
 
-    var app = express(),
-        coral = new Coral(app);
+  var app = express(),
+    coral = new Coral(app);
 
 
-    it('create - must create proper routes', function () {
+  it('create - must create proper routes', function() {
 
-        coral.route({
-            path: '/brand',
-            models: ['Brand']
-        });
-
-        var get = app.routes.get;
-        get.should.have.length(2);
-        get[0].path.should.equal('/brand');
-        get[0].method.should.equal('get');
-        get[1].path.should.equal('/brand/:id');
-        get[1].method.should.equal('get');
-
-        var post = app.routes.post;
-        post.should.have.length(1);
-        post[0].path.should.equal('/brand');
-        post[0].method.should.equal('post');
-
-        var put = app.routes.put;
-        put.should.have.length(1);
-        put[0].path.should.equal('/brand/:id');
-        put[0].method.should.equal('put');
-
-        var del = app.routes.delete;
-        del.should.have.length(1);
-        del[0].path.should.equal('/brand/:id');
-        del[0].method.should.equal('delete');
-
+    coral.route({
+      path: '/brand',
+      models: ['Brand']
     });
 
-    it('version - must match proper format', function () {
-        Coral.version.should.match(/[0-9]+\.[0-9]+\.[0-9]+/);
-    });
+    var get = app.routes.get;
+    get.should.have.length(2);
+    get[0].path.should.equal('/brand');
+    get[0].method.should.equal('get');
+    get[1].path.should.equal('/brand/:id');
+    get[1].method.should.equal('get');
 
-    it('version - must match version number', function () {
-        Coral.version.should.equal("0.1.0");
-    });
+    var post = app.routes.post;
+    post.should.have.length(1);
+    post[0].path.should.equal('/brand');
+    post[0].method.should.equal('post');
+
+    var put = app.routes.put;
+    put.should.have.length(1);
+    put[0].path.should.equal('/brand/:id');
+    put[0].method.should.equal('put');
+
+    var del = app.routes.delete;
+    del.should.have.length(1);
+    del[0].path.should.equal('/brand/:id');
+    del[0].method.should.equal('delete');
+
+  });
+
+  it('version - must match proper format', function() {
+    Coral.version.should.match(/[0-9]+\.[0-9]+\.[0-9]+/);
+  });
+
+  it('version - must match version number', function() {
+    Coral.version.should.equal('0.1.0');
+  });
 
 });

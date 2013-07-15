@@ -1,29 +1,21 @@
 {
-    "bitwise"       : true,
-    "curly"         : true,
-    "eqeqeq"        : true,
-    "forin"         : true,
-    "immed"         : true,
-    "latedef"       : true,
-    "newcap"        : true,
-    "noarg"         : true,
-    "noempty"       : true,
-    "nonew"         : true,
-    "regexp"        : true,
-    "undef"         : true,
-    "trailing"      : true,
-    "node"          : true,
-    "onevar"        : false,
-    "white"         : true,
-    "predef"        : [
-        "it",
-        "describe",
-        "afterEach",
-        "beforeEach",
-        "xdescribe",
-        "xit",
-        "before",
-        "after"
-    ],
-    "indent"        : 4
+  "curly": true,
+  "eqeqeq": true,
+  "undef": true,
+  "trailing": true,
+  "node": true,
+  "indent": 2,
+  "camelcase": true,
+  "quotmark": "single",
+  "maxlen": 120,
+  "predef": [
+    "it",
+    "describe",
+    "afterEach",
+    "beforeEach",
+    "xdescribe",
+    "xit",
+    "before",
+    "after"
+  ]
 }

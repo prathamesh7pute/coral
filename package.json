@@ -1,6 +1,6 @@
 {
   "name": "coral",
-  "description": "Node JS framework to dynamically create REST apps",
+  "description": "Node JS framework to dynamically create REST application with express and mongoose Models",
   "version": "0.1.0",
   "author": {
     "name": "Prathamesh Satpute",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/a-1/coral.git"
+    "url": "https://github.com/prathamesh7pute/coral.git"
   },
   "dependencies": {
     "async": "~0.2.9"
