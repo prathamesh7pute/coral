@@ -6,3 +6,4 @@ node_modules
 .travis.yml
 History.md
 gruntfile.js
+notes.txt
