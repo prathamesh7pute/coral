@@ -29,11 +29,11 @@ Above coral route method will generate the following urls
 	/product/:id						-	put
 	/product/:id						-	delete
 
-Following get paramets are supported to get sorted data and pagination
+Following get parameters are supported to get sorted data and pagination
 
 	skip, limit, order, sort and page
 
-If your records are huge and dont want to expose all the records findAll can be set to false so that only limited records will be returned depending on the skip, limit or page by default per page 20 records are returned this can be change through perPage option 
+If your records are huge and don't want to expose all the records findAll can be set to false so that only limited records will be returned depending on passed options in the skip, limit or page by default per page 20 records are returned this can be change through perPage option 
 
 	coral.route({
 		path: '/product',
