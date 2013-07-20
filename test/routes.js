@@ -56,7 +56,10 @@ describe('routes', function() {
   });
 
   it('find - must create proper get route', function(done) {
-    routes.findAll('/', [Brand]);
+    var options = {
+      findAll: true
+    };
+    routes.find('/', Brand, options);
     request(app)
       .get('/')
       .set('accept', 'application/json')
@@ -72,7 +75,7 @@ describe('routes', function() {
   });
 
   it('findById - must create proper get route', function(done) {
-    routes.findById('/:bid', [Brand]);
+    routes.findById('/:bid', Brand);
     request(app)
       .get('/' + id)
       .set('accept', 'application/json')
@@ -90,7 +93,7 @@ describe('routes', function() {
     var data = {
       'name': 'Samsung'
     };
-    routes.create('/', [Brand]);
+    routes.create('/', Brand);
     request(app)
       .post('/')
       .send(data)
@@ -109,7 +112,7 @@ describe('routes', function() {
     var data = {
       'name': 'Samsung'
     };
-    routes.update('/:bid', [Brand]);
+    routes.update('/:bid', Brand);
     request(app)
       .put('/' + id)
       .send(data)
@@ -125,7 +128,7 @@ describe('routes', function() {
   });
 
   it('remove - must create proper delete route', function(done) {
-    routes.remove('/:bid', [Brand]);
+    routes.remove('/:bid', Brand);
     request(app)
       .del('/' + id)
       .set('accept', 'application/json')

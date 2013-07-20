@@ -11,17 +11,21 @@ describe('coral', function() {
     coral = new Coral(app);
 
 
-  it('create - must create proper routes', function() {
+  it('route - must create proper routes', function() {
 
     coral.route({
       path: '/brand',
-      models: ['Brand']
+      model: ['Brand']
     });
 
     var get = app.routes.get;
     get.should.have.length(2);
+
+    //find
     get[0].path.should.equal('/brand');
     get[0].method.should.equal('get');
+
+    //findById
     get[1].path.should.equal('/brand/:id');
     get[1].method.should.equal('get');
 
@@ -47,7 +51,7 @@ describe('coral', function() {
   });
 
   it('version - must match version number', function() {
-    Coral.version.should.equal('0.1.0');
+    Coral.version.should.equal('0.1.2');
   });
 
 });

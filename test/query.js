@@ -64,7 +64,7 @@ describe('query', function() {
     query.findById(id, cb);
   });
 
-  it('findAll - must return all available records', function(done) {
+  it('find - must return all available records', function(done) {
     var cb = function(err, records) {
       if (!err) {
         records.length.should.equal(1);
@@ -75,7 +75,10 @@ describe('query', function() {
       done();
     };
     var query = new Query(Brand);
-    query.findAll({}, cb);
+    var options = {
+      findAll: true
+    };
+    query.find(options, cb);
   });
 
   it('create - must create proper records', function(done) {

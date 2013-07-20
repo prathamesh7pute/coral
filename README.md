@@ -16,7 +16,7 @@ Use the route method by passing path and mongoose models as configuration
 
 	coral.route({
 		path: '/product',
-		models:	[Product],
+		model:	Product
 	});
 
 Above coral route method will generate the following urls
@@ -28,3 +28,16 @@ Above coral route method will generate the following urls
 	/product							-	post
 	/product/:id						-	put
 	/product/:id						-	delete
+
+Following get paramets are supported to get sorted data and pagination
+
+	skip, limit, order, sort and page
+
+If your records are huge and dont want to expose all the records findAll can be set to false so that only limited records will be returned depending on the skip, limit or page by default per page 20 records are returned this can be change through perPage option 
+
+	coral.route({
+		path: '/product',
+		model:	Product,
+		findAll: false,
+		perPage: 10
+	});

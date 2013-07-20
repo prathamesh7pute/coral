@@ -20,14 +20,14 @@ mongoose.connect('mongodb://localhost/backbone_mongoose_test');
 
 var coral = new Coral(app);
 
-coral.create({
+coral.route({
   path: '/brand',
-  models: [Brand],
+  model: Brand
 });
 
-coral.create({
+coral.route({
   path: '/product',
-  models: [Product],
+  model: Product
 });
 
 app.listen(3000);
