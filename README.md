@@ -24,7 +24,7 @@ Use the route method by passing path and mongoose models as configuration
 		model:	Product
 	});
 
-Above coral route method will generate the following urls
+Above coral route method will generate the following routes
 
 	/product							-	get
 	/product/:id						-	get
