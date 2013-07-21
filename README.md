@@ -12,6 +12,11 @@ To create routes with mongoose Models initialize the coral with the express appl
 	var app = express();
 	var coral = new Coral(app);
 
+	var ProductSchema = new Schema({
+  		name: String
+	});
+	var Product = mongoose.model('Product', ProductSchema);
+
 Use the route method by passing path and mongoose models as configuration
 
 	coral.route({
