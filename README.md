@@ -46,3 +46,26 @@ If your records are huge and don't want to expose all the records findAll can be
 		findAll: false,
 		perPage: 10
 	});
+
+In some cases routes specific to some methods are needed like only want to provide user read, create and update functionality without delete this can be done by specifying methods option
+
+	coral.route({
+		path: '/product',
+		model:	Product,
+		methods: ['get', 'post', 'put']
+	});
+
+Above coral route method will only generate the following routes without delete
+
+	/product							-	get
+	/product/:id						-	get
+	/product?skip=10&limit=10	  		-	get (limited records)
+	/product?sort=name&order=asc&page=1	-	get	(pagination with sorting)
+	/product							-	post
+	/product/:id						-	put
+
+Following options are supported to create specific methods routes
+
+	get, post, put and del
+
+
