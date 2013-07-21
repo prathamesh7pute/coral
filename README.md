@@ -22,7 +22,7 @@ Use the route method by passing path and mongoose models as configuration
 Above coral route method will generate the following urls
 
 	/product							-	get
-	/produc/:id							-	get
+	/product/:id						-	get
 	/product?skip=10&limit=10	  		-	get (limited records)
 	/product?sort=name&order=asc&page=1	-	get	(pagination with sorting)
 	/product							-	post
