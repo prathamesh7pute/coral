@@ -62,8 +62,6 @@ describe('util', function() {
 		route.perPage.should.equal(10);
 	});
 
-
-
 	it('processRoute - must process route properly when page is not pass', function() {
 		var req = {
 			query: {

@@ -7,15 +7,18 @@ var should = require('should'),
 
 describe('coral', function() {
 
-  var app = express(),
-    coral = new Coral(app);
+  var app, coral;
 
+  beforeEach(function() {
+    app = express();
+    coral = new Coral(app);
+  });
 
   it('route - must create proper routes', function() {
 
     coral.route({
       path: '/brand',
-      model: ['Brand']
+      model: 'Brand'
     });
 
     var get = app.routes.get;
@@ -42,6 +45,64 @@ describe('coral', function() {
     var del = app.routes.delete;
     del.should.have.length(1);
     del[0].path.should.equal('/brand/:id');
+    del[0].method.should.equal('delete');
+
+  });
+
+  it('route with methods get, post, put - should create specific routes', function() {
+
+    coral.route({
+      path: '/product',
+      model: 'Product',
+      methods: ['get', 'post', 'put']
+    });
+
+    var get = app.routes.get;
+    get.should.have.length(2);
+
+    //find
+    get[0].path.should.equal('/product');
+    get[0].method.should.equal('get');
+
+    //findById
+    get[1].path.should.equal('/product/:id');
+    get[1].method.should.equal('get');
+
+    var post = app.routes.post;
+    post.should.have.length(1);
+    post[0].path.should.equal('/product');
+    post[0].method.should.equal('post');
+
+    var put = app.routes.put;
+    put.should.have.length(1);
+    put[0].path.should.equal('/product/:id');
+    put[0].method.should.equal('put');
+
+    var del = app.routes.delete;
+    should.not.exist(del);
+
+  });
+
+  it('route with methods del - should create specific routes', function() {
+
+    coral.route({
+      path: '/product',
+      model: 'Product',
+      methods: ['del']
+    });
+
+    var get = app.routes.get;
+    should.not.exist(get);
+
+    var post = app.routes.post;
+    should.not.exist(post);
+
+    var put = app.routes.put;
+    should.not.exist(put);
+
+    var del = app.routes.delete;
+    del.should.have.length(1);
+    del[0].path.should.equal('/product/:id');
     del[0].method.should.equal('delete');
 
   });
