@@ -1,3 +1,3 @@
 {
-  "dbUrl": "mongodb://bm:bm@ds051007.mongolab.com:51007/library"
+  "dbUrl": "mongodb://localhost/backbone_mongoose_test"
 }
