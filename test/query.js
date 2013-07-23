@@ -124,6 +124,21 @@ describe('query', function() {
     query.find(options, cb);
   });
 
+  it('find - must return emapty records without pagination, skip and findAll', function(done) {
+    var cb = function(err, records) {
+      if (!err) {
+        records.length.should.equal(0);
+      } else {
+        console.log(err);
+      }
+      done();
+    };
+    var data = db.getData();
+    var query = new Query(data.brand);
+    var options = {};
+    query.find(options, cb);
+  });
+
   it('findById - must return exact available record', function(done) {
     var data = db.getData();
     var query = new Query(data.brand);
