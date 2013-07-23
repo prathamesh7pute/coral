@@ -3,6 +3,7 @@ var Coral = require('../../lib/coral'),
   Brand = require('./models/Brand'),
   Product = require('./models/Product'),
   mongoose = require('mongoose'),
+  config = require('../../config'),
   app = express();
 
 
@@ -16,7 +17,7 @@ app.configure(function() {
 });
 
 //connect to db
-mongoose.connect('mongodb://localhost/backbone_mongoose_test');
+mongoose.connect(config.dbUrl);
 
 var coral = new Coral(app);
 

@@ -19,6 +19,9 @@
     "type": "git",
     "url": "https://github.com/prathamesh7pute/coral.git"
   },
+  "dependencies": {
+    "async": "~0.2.9"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.0",

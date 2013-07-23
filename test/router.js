@@ -2,64 +2,37 @@
  * Test dependencies.
  */
 
-var Routes = require('../lib/routes'),
-  connection = require('./common'),
-  mongoose = connection.mongoose,
-  Schema = mongoose.Schema,
+var Router = require('../lib/router'),
+  DB = require('./helper/db'),
   should = require('should'),
   express = require('express'),
   request = require('supertest'),
   app = express(),
-  routes = new Routes(app);
+  router = new Router(app);
 
-/**
- * Setup
- */
-var schema = new Schema({
-  name: String
-});
 
-describe('routes', function() {
+describe('router', function() {
+
+  var db = new DB();
 
   app.use(express.bodyParser());
 
-  var db, id, Brand;
-
-  var resetData = function(done) {
-    Brand.remove({}, function(err) {
-      if (err) {
-        console.log(err);
-      }
-      var brand = new Brand();
-      brand.name = 'Apple';
-      brand.save(function(err, doc) {
-        if (err) {
-          console.log(err);
-          done();
-        } else {
-          id = doc._id;
-          done();
-        }
-
-      });
-    });
-  };
-
   before(function(done) {
-    db = connection();
-    Brand = db.model('brand', schema);
-    resetData(done);
+    db.connect();
+    db.initialize(done);
   });
 
   after(function(done) {
-    db.close(done);
+    db.disconnect(done);
   });
+
 
   it('find - must create proper get route', function(done) {
     var options = {
       findAll: true
     };
-    routes.find('/', Brand, options);
+    var data = db.getData();
+    router.find('/', data.brand, options);
     request(app)
       .get('/')
       .set('accept', 'application/json')
@@ -68,35 +41,37 @@ describe('routes', function() {
         if (err) {
           return done(err);
         }
-        res.body.length.should.equal(1);
-        res.body[0].name.should.equal('Apple');
+        res.body.length.should.equal(3);
+        res.body[0].name.should.equal('A');
         done();
       });
   });
 
   it('findById - must create proper get route', function(done) {
-    routes.findById('/:bid', Brand);
+    var data = db.getData();
+    router.findById('/:bid', data.brand);
     request(app)
-      .get('/' + id)
+      .get('/' + data.brandData[0])
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
         if (err) {
           return done(err);
         }
-        res.body.name.should.equal('Apple');
+        res.body.name.should.equal('A');
         done();
       });
   });
 
   it('create - must create proper post route', function(done) {
-    var data = {
+    var record = {
       'name': 'Samsung'
     };
-    routes.create('/', Brand);
+    var data = db.getData();
+    router.create('/', data.brand);
     request(app)
       .post('/')
-      .send(data)
+      .send(record)
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
@@ -109,13 +84,14 @@ describe('routes', function() {
   });
 
   it('update - must create proper put route', function(done) {
-    var data = {
+    var record = {
       'name': 'Samsung'
     };
-    routes.update('/:bid', Brand);
+    var data = db.getData();
+    router.update('/:bid', data.brand);
     request(app)
-      .put('/' + id)
-      .send(data)
+      .put('/' + data.brandData[0])
+      .send(record)
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
@@ -128,9 +104,10 @@ describe('routes', function() {
   });
 
   it('remove - must create proper delete route', function(done) {
-    routes.remove('/:bid', Brand);
+    var data = db.getData();
+    router.remove('/:bid', data.brand);
     request(app)
-      .del('/' + id)
+      .del('/' + data.brandData[0])
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {

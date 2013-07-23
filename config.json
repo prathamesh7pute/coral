@@ -1,0 +1,3 @@
+{
+  "dbUrl": "mongodb://localhost/backbone_mongoose_test"
+}
