@@ -47,6 +47,32 @@ describe('router', function() {
       });
   });
 
+  it('find with sorting - must create proper get route', function(done) {
+    var options = {
+      findAll: true
+    };
+    var data = db.getData();
+    router.find('/', data.brand, options);
+    request(app)
+      .get('/')
+      .set('accept', 'application/json')
+      .query({
+        sort: 'name',
+        order: 'desc'
+      })
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.length.should.equal(3);
+        res.body[0].name.should.equal('C');
+        res.body[1].name.should.equal('B');
+        res.body[2].name.should.equal('A');
+        done();
+      });
+  });
+
   it('findById - must create proper get route', function(done) {
     var data = db.getData();
     router.findById('/:bid', data.brand);
