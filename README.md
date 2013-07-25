@@ -2,6 +2,7 @@ Coral
 =====
 
 [![Build Status](https://secure.travis-ci.org/prathamesh7pute/coral.png?branch=master)](http://travis-ci.org/prathamesh7pute/coral)
+[![NPM version](https://badge.fury.io/js/coral.png)](http://badge.fury.io/js/coral)
 
 Node JS framework to dynamically create REST application with express and mongoose Models
 
