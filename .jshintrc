@@ -9,13 +9,10 @@
   "quotmark": "single",
   "maxlen": 120,
   "predef": [
-    "it",
     "describe",
-    "afterEach",
     "beforeEach",
-    "xdescribe",
-    "xit",
-    "before",
-    "after"
+    "it",
+    "afterEach",
+    "xdescribe"
   ]
 }

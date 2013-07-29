@@ -6,11 +6,36 @@ describe('util', function() {
 	var should = require('should'),
 		util = require('../lib/util');
 
-	it('getParams - must return proper params', function() {
-		var params = util.getParams('/brand/:bid/product/:pid/specification');
+	it('getRouteParams - must return proper params', function() {
+		var params = util.getRouteParams('/brand/:bid/product/:pid/specification');
 		params.should.have.length(2);
 		params[0].should.equal('bid');
 		params[1].should.equal('pid');
+	});
+
+
+	it('processFilters - must return processed filters', function() {
+		var filter;
+		// = 
+		filter = util.processFilters('name=abc,age>10,weight<150,height>=68,chest<=30,eyes!=blue');
+		filter.should.have.property('name', 'abc');
+		filter.name.should.equal('abc');
+		// > 
+		filter.should.have.property('age');
+		filter.age.should.have.property('$gt', 10);
+		// <
+		filter.should.have.property('weight');
+		filter.weight.should.have.property('$lt', 150);
+		// >=
+		filter.should.have.property('height');
+		filter.height.should.have.property('$gte', 68);
+		// <=
+		filter.should.have.property('chest');
+		filter.chest.should.have.property('$lte', 30);
+		// <=
+		filter.should.have.property('eyes');
+		filter.eyes.should.have.property('$ne', 'blue');
+
 	});
 
 	it('processRoute - must process route properly when page is pass', function() {

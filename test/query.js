@@ -10,12 +10,12 @@ describe('query', function() {
 
   var db = new DB();
 
-  before(function(done) {
+  beforeEach(function(done) {
     db.connect();
     db.initialize(done);
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     db.disconnect(done);
   });
 

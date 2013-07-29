@@ -17,40 +17,18 @@ describe('router', function() {
 
   app.use(express.bodyParser());
 
-  before(function(done) {
+  beforeEach(function(done) {
     db.connect();
     db.initialize(done);
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     db.disconnect(done);
   });
 
 
-  it('find - must create proper get route', function(done) {
-    var options = {
-      findAll: true
-    };
-    var data = db.getData();
-    router.find('/', data.brand, options);
-    request(app)
-      .get('/')
-      .set('accept', 'application/json')
-      .expect(200)
-      .end(function(err, res) {
-        if (err) {
-          return done(err);
-        }
-        res.body.length.should.equal(3);
-        res.body[0].name.should.equal('A');
-        done();
-      });
-  });
-
   it('find with sorting - must create proper get route', function(done) {
-    var options = {
-      findAll: true
-    };
+    var options = {};
     var data = db.getData();
     router.find('/', data.brand, options);
     request(app)
