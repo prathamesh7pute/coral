@@ -103,13 +103,13 @@ describe('query', function() {
     query.find(options, cb);
   });
 
-  it('find - must return all available records with pagination and sort desc', function(done) {
+  it('find - must return all available records with select of id only and sort desc', function(done) {
     var cb = function(err, records) {
       if (!err) {
         records.length.should.equal(3);
-        records[0].name.should.equal('C');
+        records[0].name.should.equal('A');
         records[1].name.should.equal('B');
-        records[2].name.should.equal('A');
+        records[2].name.should.equal('C');
       } else {
         console.log(err);
       }
@@ -118,8 +118,8 @@ describe('query', function() {
     var data = db.getData();
     var query = new Query(data.brand);
     var options = {
-      sort: '-name',
-      page: '0'
+      select: '_id name',
+      findAll: true
     };
     query.find(options, cb);
   });
