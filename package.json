@@ -1,7 +1,7 @@
 {
   "name": "coral",
   "description": "Node JS framework to dynamically create REST application with express and mongoose Models",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "author": {
     "name": "Prathamesh Satpute",
     "email": "prathamesh.satpute@gmail.com"
