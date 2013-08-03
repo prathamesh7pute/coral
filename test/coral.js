@@ -112,7 +112,7 @@ describe('coral', function() {
   });
 
   it('version - must match version number', function() {
-    Coral.version.should.equal('0.1.9');
+    Coral.version.should.equal('0.2.0');
   });
 
 });

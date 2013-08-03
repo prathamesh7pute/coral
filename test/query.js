@@ -127,7 +127,7 @@ describe('query', function() {
   it('find - must return emapty records without pagination, skip and findAll', function(done) {
     var cb = function(err, records) {
       if (!err) {
-        records.length.should.equal(0);
+        should.not.exist(records);
       } else {
         console.log(err);
       }
