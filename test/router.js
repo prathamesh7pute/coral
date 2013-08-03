@@ -108,7 +108,7 @@ describe('router', function() {
       'name': 'Samsung'
     };
     var data = db.getData();
-    router.update('/:bid', data.brand);
+    router.update('/:bid', data.brand, '_id');
     request(app)
       .put('/' + data.brandData[0])
       .send(record)
@@ -125,7 +125,7 @@ describe('router', function() {
 
   it('remove - must create proper delete route', function(done) {
     var data = db.getData();
-    router.remove('/:bid', data.brand);
+    router.remove('/:bid', data.brand, '_id');
     request(app)
       .del('/' + data.brandData[0])
       .set('accept', 'application/json')

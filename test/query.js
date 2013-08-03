@@ -176,7 +176,7 @@ describe('query', function() {
     query.create(records, cb);
   });
 
-  it('findByIdAndUpdate - must update proper record', function(done) {
+  it('findOneAndUpdate - must update proper record', function(done) {
     var data = db.getData();
     var query = new Query(data.brand);
     var records = {
@@ -190,10 +190,13 @@ describe('query', function() {
       }
       done();
     };
-    query.findByIdAndUpdate(data.brandData[0], records, cb);
+    var identifier = {
+      '_id': data.brandData[0]
+    };
+    query.findOneAndUpdate(identifier, records, cb);
   });
 
-  it('findByIdAndRemove - must remove proper record', function(done) {
+  it('findOneAndRemove - must remove proper record', function(done) {
     var data = db.getData();
     var query = new Query(data.brand);
     var cb = function(err) {
@@ -202,7 +205,10 @@ describe('query', function() {
         done();
       }
     };
-    query.findByIdAndRemove(data.brandData[0], cb);
+    var identifier = {
+      '_id': data.brandData[0]
+    };
+    query.findOneAndRemove(identifier, cb);
   });
 
 });
