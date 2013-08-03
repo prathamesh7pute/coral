@@ -139,7 +139,7 @@ describe('query', function() {
     query.find(options, cb);
   });
 
-  it('findById - must return exact available record', function(done) {
+  it('findOne - must return exact available record', function(done) {
     var data = db.getData();
     var query = new Query(data.brand);
     var cb = function(err, record) {
@@ -150,7 +150,10 @@ describe('query', function() {
       }
       done();
     };
-    query.findById(data.brandData[0], cb);
+    var identifier = {
+      '_id': data.brandData[0]
+    };
+    query.findOne(identifier, cb);
   });
 
   it('create - must create proper records', function(done) {

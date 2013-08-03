@@ -51,11 +51,27 @@ describe('router', function() {
       });
   });
 
-  it('findById - must create proper get route', function(done) {
+  it('findOne - must create proper get route when id pass', function(done) {
     var data = db.getData();
-    router.findById('/:bid', data.brand);
+    router.findOne('/:bid', data.brand, '_id');
     request(app)
       .get('/' + data.brandData[0])
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.name.should.equal('A');
+        done();
+      });
+  });
+
+  it('findOne - must create proper get route when name pass', function(done) {
+    var data = db.getData();
+    router.findOne('/name/:name', data.brand, 'name');
+    request(app)
+      .get('/name/A')
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
