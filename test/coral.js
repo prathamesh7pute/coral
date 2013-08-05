@@ -29,7 +29,7 @@ describe('coral', function() {
     get[0].method.should.equal('get');
 
     //findById
-    get[1].path.should.equal('/brand/:id');
+    get[1].path.should.equal('/brand/:idAttribute');
     get[1].method.should.equal('get');
 
     var post = app.routes.post;
@@ -39,12 +39,12 @@ describe('coral', function() {
 
     var put = app.routes.put;
     put.should.have.length(1);
-    put[0].path.should.equal('/brand/:id');
+    put[0].path.should.equal('/brand/:idAttribute');
     put[0].method.should.equal('put');
 
     var del = app.routes.delete;
     del.should.have.length(1);
-    del[0].path.should.equal('/brand/:id');
+    del[0].path.should.equal('/brand/:idAttribute');
     del[0].method.should.equal('delete');
 
   });
@@ -65,7 +65,7 @@ describe('coral', function() {
     get[0].method.should.equal('get');
 
     //findById
-    get[1].path.should.equal('/product/:id');
+    get[1].path.should.equal('/product/:idAttribute');
     get[1].method.should.equal('get');
 
     var post = app.routes.post;
@@ -75,7 +75,7 @@ describe('coral', function() {
 
     var put = app.routes.put;
     put.should.have.length(1);
-    put[0].path.should.equal('/product/:id');
+    put[0].path.should.equal('/product/:idAttribute');
     put[0].method.should.equal('put');
 
     var del = app.routes.delete;
@@ -102,7 +102,7 @@ describe('coral', function() {
 
     var del = app.routes.delete;
     del.should.have.length(1);
-    del[0].path.should.equal('/product/:id');
+    del[0].path.should.equal('/product/:idAttribute');
     del[0].method.should.equal('delete');
 
   });
@@ -112,7 +112,7 @@ describe('coral', function() {
   });
 
   it('version - must match version number', function() {
-    Coral.version.should.equal('0.2.0');
+    Coral.version.should.equal('0.2.1');
   });
 
 });

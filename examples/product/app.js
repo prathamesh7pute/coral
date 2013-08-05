@@ -28,7 +28,9 @@ coral.route({
 
 coral.route({
   path: '/product',
-  model: Product
+  model: Product,
+  methods: ['get', 'post'],
+  idAttribute: 'name'
 });
 
 app.listen(3000);

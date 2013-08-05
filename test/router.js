@@ -53,9 +53,9 @@ describe('router', function() {
 
   it('findOne - must create proper get route when id pass', function(done) {
     var data = db.getData();
-    router.findOne('/:bid', data.brand, '_id');
+    router.findOne('/localhost', data.brand, '_id');
     request(app)
-      .get('/' + data.brandData[0])
+      .get('/localhost/' + data.brandData[0])
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
@@ -69,9 +69,9 @@ describe('router', function() {
 
   it('findOne - must create proper get route when name pass', function(done) {
     var data = db.getData();
-    router.findOne('/name/:name', data.brand, 'name');
+    router.findOne('/localhost/name', data.brand, 'name');
     request(app)
-      .get('/name/A')
+      .get('/localhost/name/A')
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
@@ -88,9 +88,9 @@ describe('router', function() {
       'name': 'Samsung'
     };
     var data = db.getData();
-    router.create('/', data.brand);
+    router.create('/localhost', data.brand);
     request(app)
-      .post('/')
+      .post('/localhost')
       .send(record)
       .set('accept', 'application/json')
       .expect(200)
@@ -108,9 +108,9 @@ describe('router', function() {
       'name': 'Samsung'
     };
     var data = db.getData();
-    router.update('/:bid', data.brand, '_id');
+    router.update('/localhost', data.brand, '_id');
     request(app)
-      .put('/' + data.brandData[0])
+      .put('/localhost/' + data.brandData[0])
       .send(record)
       .set('accept', 'application/json')
       .expect(200)
@@ -125,9 +125,9 @@ describe('router', function() {
 
   it('remove - must create proper delete route', function(done) {
     var data = db.getData();
-    router.remove('/:bid', data.brand, '_id');
+    router.remove('/localhost', data.brand, '_id');
     request(app)
-      .del('/' + data.brandData[0])
+      .del('/localhost/' + data.brandData[0])
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
