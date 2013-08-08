@@ -8,7 +8,8 @@ Node JS framework to dynamically create REST application with express and mongoo
 
 ### Creating Routes
 
-To create routes with mongoose Models initialize the coral with the express application
+To create routes with mongoose Models initialize the coral with the express application and use the route method by passing path and mongoose models as configuration
+
 
 	var app = express();
 	var coral = new Coral(app);
@@ -17,8 +18,6 @@ To create routes with mongoose Models initialize the coral with the express appl
   		name: String
 	});
 	var Product = mongoose.model('Product', ProductSchema);
-
-Use the route method by passing path and mongoose models as configuration
 
 	coral.route({
 		path: '/product',
