@@ -22,19 +22,18 @@ describe('query', function() {
   it('find - must return all available records', function(done) {
     var cb = function(err, records) {
       if (!err) {
-        records.length.should.equal(3);
-        records[0].name.should.equal('A');
-        records[1].name.should.equal('B');
-        records[2].name.should.equal('C');
+        records.length.should.equal(2);
+        records[0].name.should.equal('abc');
+        records[1].name.should.equal('xyz');
       } else {
         console.log(err);
       }
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {
-      findAll: true,
+      findAll: true
     };
     query.find(options, cb);
   });
@@ -42,17 +41,16 @@ describe('query', function() {
   it('find - must return all available records with sort and in descending order', function(done) {
     var cb = function(err, records) {
       if (!err) {
-        records.length.should.equal(3);
-        records[0].name.should.equal('C');
-        records[1].name.should.equal('B');
-        records[2].name.should.equal('A');
+        records.length.should.equal(2);
+        records[0].name.should.equal('xyz');
+        records[1].name.should.equal('abc');
       } else {
         console.log(err);
       }
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {
       sort: '-name',
       skip: '0',
@@ -65,15 +63,15 @@ describe('query', function() {
     var cb = function(err, records) {
       if (!err) {
         records.length.should.equal(2);
-        records[0].name.should.equal('A');
-        records[1].name.should.equal('B');
+        records[0].name.should.equal('abc');
+        records[1].name.should.equal('xyz');
       } else {
         console.log(err);
       }
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {
       sort: 'name',
       skip: '0',
@@ -82,49 +80,49 @@ describe('query', function() {
     query.find(options, cb);
   });
 
-  it('find - must return all available records with sort order with skip first and limit of 2', function(done) {
+  it('find - must return all records with asc sort order with skip first record and limit of 2', function(done) {
     var cb = function(err, records) {
       if (!err) {
-        records.length.should.equal(2);
-        records[0].name.should.equal('B');
-        records[1].name.should.equal('C');
+        records.length.should.equal(1);
+        records[0].name.should.equal('xyz');
       } else {
         console.log(err);
       }
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {
       sort: 'name',
       skip: '1',
-      limit: '3'
+      limit: '2'
     };
     query.find(options, cb);
   });
 
-  it('find - must return all available records with select of id only and sort desc', function(done) {
+  it('find - must return all available records with select of age only', function(done) {
     var cb = function(err, records) {
       if (!err) {
-        records.length.should.equal(3);
-        records[0].name.should.equal('A');
-        records[1].name.should.equal('B');
-        records[2].name.should.equal('C');
+        records.length.should.equal(2);
+        records[0].age.should.equal(28);
+        records[1].age.should.equal(18);
+        should.not.exist(records[0].names);
+        should.not.exist(records[1].names);
       } else {
         console.log(err);
       }
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {
-      select: '_id name',
+      select: '-name -_id -articles',
       findAll: true
     };
     query.find(options, cb);
   });
 
-  it('find - must return emapty records without pagination, skip and findAll', function(done) {
+  it('find - must return empty records without pagination, skip and findAll', function(done) {
     var cb = function(err, records) {
       if (!err) {
         should.not.exist(records);
@@ -134,40 +132,40 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var options = {};
     query.find(options, cb);
   });
 
   it('findOne - must return exact available record', function(done) {
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var cb = function(err, record) {
       if (!err) {
-        record.name.should.equal('A');
+        record.name.should.equal('abc');
       } else {
         console.log(err);
       }
       done();
     };
     var identifier = {
-      '_id': data.brandData[0]
+      '_id': data.userid
     };
     query.findOne(identifier, cb);
   });
 
   it('create - must create proper records', function(done) {
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var records = [{
-      name: 'samsung'
+      name: 'Ryan'
     }, {
-      name: 'nokia'
+      name: 'Scott'
     }];
     var cb = function(err, record1, record2) {
       if (!err) {
-        record1.name.should.equal('samsung');
-        record2.name.should.equal('nokia');
+        record1.name.should.equal('Ryan');
+        record2.name.should.equal('Scott');
       } else {
         console.log(err);
       }
@@ -178,27 +176,27 @@ describe('query', function() {
 
   it('findOneAndUpdate - must update proper record', function(done) {
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var records = {
-      name: 'samsung'
+      name: 'Ryan'
     };
     var cb = function(err, record) {
       if (!err) {
-        record.name.should.equal('samsung');
+        record.name.should.equal('Ryan');
       } else {
         console.log(err);
       }
       done();
     };
     var identifier = {
-      '_id': data.brandData[0]
+      '_id': data.userid
     };
     query.findOneAndUpdate(identifier, records, cb);
   });
 
   it('findOneAndRemove - must remove proper record', function(done) {
     var data = db.getData();
-    var query = new Query(data.brand);
+    var query = new Query(data.model);
     var cb = function(err) {
       should.not.exist(err);
       if (!err) {
@@ -206,7 +204,7 @@ describe('query', function() {
       }
     };
     var identifier = {
-      '_id': data.brandData[0]
+      '_id': data.userid
     };
     query.findOneAndRemove(identifier, cb);
   });

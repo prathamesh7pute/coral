@@ -1,102 +1,126 @@
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	config = require('../../config'),
-	async = require('async');
+  Schema = mongoose.Schema,
+  config = require('../../config'),
+  async = require('async');
 
-//Brand Schema
-var BrandSchema = new Schema({
-	name: String
+
+var UserSchema = new Schema({
+  name: String,
+  age: Number,
+  articles: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Article'
+  }]
 });
 
-//Product Schema 
-var ProductSchema = new Schema({
-	name: String
+var CommentSchema = new Schema({
+  body: String,
+  date: {
+    type: Date,
+    default: Date.now
+  }
 });
+
+var ArticleSchema = new Schema({
+  title: String,
+  body: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  },
+  comments: [CommentSchema],
+  fans: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  hidden: Boolean
+});
+
+
 
 var db = function() {
 
-	var conn, data;
+  var conn, data;
 
-	var connect = function() {
-		conn = mongoose.createConnection(config.dbUrl, {});
-	};
+  var connect = function() {
+    conn = mongoose.createConnection(config.dbUrl, {});
+  };
 
-	var initialize = function(done) {
-		var Brand = conn.model('brand', BrandSchema);
-		var Product = conn.model('product', ProductSchema);
+  var initialize = function(done) {
+    var User = conn.model('User', UserSchema);
+    var Comment = conn.model('Comment', CommentSchema);
+    var Article = conn.model('Article', ArticleSchema);
 
-		async.series({
-				clearBrand: function(callback) {
-					clear(Brand, callback);
-				},
-				clearProduct: function(callback) {
-					clear(Product, callback);
-				},
-				insertBrandOne: function(callback) {
-					save(Brand, 'A', callback);
-				},
-				insertBrandTwo: function(callback) {
-					save(Brand, 'B', callback);
-				},
-				insertBrandThree: function(callback) {
-					save(Brand, 'C', callback);
-				},
-				insertProductOne: function(callback) {
-					save(Product, 'p1', callback);
-				},
-				insertProductTwo: function(callback) {
-					save(Product, 'p2', callback);
-				},
-				insertProductThree: function(callback) {
-					save(Product, 'p3', callback);
-				}
-			},
-			function(err, results) {
-				data = {
-					brand: Brand,
-					product: Product,
-					brandData: [results.insertBrandOne, results.insertBrandTwo, results.insertBrandThree],
-					productData: [results.insertProductOne, results.insertProductTwo, results.insertProductThree]
-				};
-				done();
-			});
-	};
+    async.series({
+        clearUserData: function(callback) {
+          clear(User, callback);
+        },
+        clearCommentData: function(callback) {
+          clear(Comment, callback);
+        },
+        clearArticleData: function(callback) {
+          clear(Article, callback);
+        },
+        createUserOne: function(callback) {
+          save(User, {
+            name: 'abc',
+            age: 28
+          }, callback);
+        },
+        createUserTwo: function(callback) {
+          save(User, {
+            name: 'xyz',
+            age: 18
+          }, callback);
+        }
+      },
+      function(err, results) {
+        data = {
+          model: User,
+          userid: results.createUserOne
+        };
+        done();
+      });
+  };
 
-	var getData = function() {
-		return data;
-	};
+  var getData = function() {
+    return data;
+  };
 
-	var clear = function(Model, callback) {
-		Model.remove({}, function(err) {
-			if (err) {
-				callback(err, 1);
-			}
-			callback(null, 0);
-		});
-	};
+  var clear = function(Model, callback) {
+    Model.remove({}, function(err) {
+      if (err) {
+        callback(err, null);
+      }
+      callback(null, null);
+    });
+  };
 
-	var save = function(Model, data, callback) {
-		var model = new Model();
-		model.name = data;
-		model.save(function(err, doc) {
-			if (err) {
-				callback(err, 1);
-			} else {
-				callback(null, doc._id);
-			}
-		});
-	};
+  var save = function(Model, data, callback) {
+    var model = new Model();
+    Model.create(data, function(err, doc) {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, doc._id);
+      }
+    });
+  };
 
-	var disconnect = function(done) {
-		conn.close(done);
-	};
+  var disconnect = function(done) {
+    conn.close(done);
+  };
 
-	return {
-		connect: connect,
-		initialize: initialize,
-		disconnect: disconnect,
-		getData: getData
-	};
+  return {
+    connect: connect,
+    initialize: initialize,
+    disconnect: disconnect,
+    getData: getData
+  };
 };
 
 module.exports = db;

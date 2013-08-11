@@ -17,34 +17,34 @@ describe('coral', function() {
   it('route - must create proper routes', function() {
 
     coral.route({
-      path: '/brand',
-      model: 'Brand'
+      path: '/user',
+      model: 'User'
     });
 
     var get = app.routes.get;
     get.should.have.length(2);
 
     //find
-    get[0].path.should.equal('/brand');
+    get[0].path.should.equal('/user');
     get[0].method.should.equal('get');
 
     //findById
-    get[1].path.should.equal('/brand/:idAttribute');
+    get[1].path.should.equal('/user/:idAttribute');
     get[1].method.should.equal('get');
 
     var post = app.routes.post;
     post.should.have.length(1);
-    post[0].path.should.equal('/brand');
+    post[0].path.should.equal('/user');
     post[0].method.should.equal('post');
 
     var put = app.routes.put;
     put.should.have.length(1);
-    put[0].path.should.equal('/brand/:idAttribute');
+    put[0].path.should.equal('/user/:idAttribute');
     put[0].method.should.equal('put');
 
     var del = app.routes.delete;
     del.should.have.length(1);
-    del[0].path.should.equal('/brand/:idAttribute');
+    del[0].path.should.equal('/user/:idAttribute');
     del[0].method.should.equal('delete');
 
   });
@@ -52,8 +52,8 @@ describe('coral', function() {
   it('route with methods get, post, put - should create specific routes', function() {
 
     coral.route({
-      path: '/product',
-      model: 'Product',
+      path: '/article',
+      model: 'Article',
       methods: ['get', 'post', 'put']
     });
 
@@ -61,21 +61,21 @@ describe('coral', function() {
     get.should.have.length(2);
 
     //find
-    get[0].path.should.equal('/product');
+    get[0].path.should.equal('/article');
     get[0].method.should.equal('get');
 
     //findById
-    get[1].path.should.equal('/product/:idAttribute');
+    get[1].path.should.equal('/article/:idAttribute');
     get[1].method.should.equal('get');
 
     var post = app.routes.post;
     post.should.have.length(1);
-    post[0].path.should.equal('/product');
+    post[0].path.should.equal('/article');
     post[0].method.should.equal('post');
 
     var put = app.routes.put;
     put.should.have.length(1);
-    put[0].path.should.equal('/product/:idAttribute');
+    put[0].path.should.equal('/article/:idAttribute');
     put[0].method.should.equal('put');
 
     var del = app.routes.delete;
@@ -86,8 +86,8 @@ describe('coral', function() {
   it('route with methods del - should create specific routes', function() {
 
     coral.route({
-      path: '/product',
-      model: 'Product',
+      path: '/admin/user',
+      model: 'User',
       methods: ['del']
     });
 
@@ -102,7 +102,7 @@ describe('coral', function() {
 
     var del = app.routes.delete;
     del.should.have.length(1);
-    del[0].path.should.equal('/product/:idAttribute');
+    del[0].path.should.equal('/admin/user/:idAttribute');
     del[0].method.should.equal('delete');
 
   });
