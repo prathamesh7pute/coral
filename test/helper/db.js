@@ -13,8 +13,25 @@ var UserSchema = new Schema({
   }]
 });
 
+var ReplySchema = new Schema({
+  body: String,
+  likes: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  date: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 var CommentSchema = new Schema({
   body: String,
+  replies: [ReplySchema],
+  likes: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   date: {
     type: Date,
     default: Date.now
@@ -28,18 +45,17 @@ var ArticleSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  date: {
-    type: Date,
-    default: Date.now
-  },
   comments: [CommentSchema],
-  fans: [{
+  likes: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],
-  hidden: Boolean
+  hidden: Boolean,
+  date: {
+    type: Date,
+    default: Date.now
+  }
 });
-
 
 
 var db = function() {
@@ -54,6 +70,7 @@ var db = function() {
     var User = conn.model('User', UserSchema);
     var Comment = conn.model('Comment', CommentSchema);
     var Article = conn.model('Article', ArticleSchema);
+    var Reply = conn.model('Reply', ReplySchema);
 
     async.series({
         clearUserData: function(callback) {
@@ -76,12 +93,28 @@ var db = function() {
             name: 'xyz',
             age: 18
           }, callback);
+        },
+        createArticleOne: function(callback) {
+          save(Article, {
+            title: 'Coral Framework',
+            body: 'Node JS framework to dynamically create REST application with express and mongoose Models',
+            comments: [{
+              body: 'How to create nested sub-docs on route ?',
+              replies: [{
+                body: 'you can add sub-doc inside sub-doc in config'
+              }]
+            }]
+          }, callback);
         }
       },
       function(err, results) {
         data = {
-          model: User,
-          userid: results.createUserOne
+          userModel: User,
+          articleModel: Article,
+          userid: results.createUserOne._id,
+          articleid: results.createArticleOne._id,
+          commentid: results.createArticleOne.subDocid,
+          replyid: results.createArticleOne.subSubDocid
         };
         done();
       });
@@ -106,7 +139,13 @@ var db = function() {
       if (err) {
         callback(err, null);
       } else {
-        callback(null, doc._id);
+        var data = {
+          _id: doc._id,
+          subDocid: doc.comments && doc.comments[0]._id,
+          subSubDocid: doc.comments && doc.comments[0].replies && doc.comments[0].replies[0]._id
+        };
+        //console.log(data);
+        callback(null, data);
       }
     });
   };

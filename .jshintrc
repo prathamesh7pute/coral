@@ -13,6 +13,7 @@
     "beforeEach",
     "it",
     "afterEach",
-    "xdescribe"
+    "xdescribe",
+    "xit"
   ]
 }

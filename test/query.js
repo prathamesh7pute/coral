@@ -31,7 +31,7 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {
       findAll: true
     };
@@ -50,7 +50,7 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {
       sort: '-name',
       skip: '0',
@@ -71,7 +71,7 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {
       sort: 'name',
       skip: '0',
@@ -91,7 +91,7 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {
       sort: 'name',
       skip: '1',
@@ -114,7 +114,7 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {
       select: '-name -_id -articles',
       findAll: true
@@ -132,14 +132,14 @@ describe('query', function() {
       done();
     };
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var options = {};
     query.find(options, cb);
   });
 
   it('findOne - must return exact available record', function(done) {
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var cb = function(err, record) {
       if (!err) {
         record.name.should.equal('abc');
@@ -156,7 +156,7 @@ describe('query', function() {
 
   it('create - must create proper records', function(done) {
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var records = [{
       name: 'Ryan'
     }, {
@@ -176,7 +176,7 @@ describe('query', function() {
 
   it('findOneAndUpdate - must update proper record', function(done) {
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var records = {
       name: 'Ryan'
     };
@@ -196,7 +196,7 @@ describe('query', function() {
 
   it('findOneAndRemove - must remove proper record', function(done) {
     var data = db.getData();
-    var query = new Query(data.model);
+    var query = new Query(data.userModel);
     var cb = function(err) {
       should.not.exist(err);
       if (!err) {

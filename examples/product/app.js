@@ -1,7 +1,9 @@
 var Coral = require('../../lib/coral'),
   express = require('express'),
-  Brand = require('./models/Brand'),
-  Product = require('./models/Product'),
+  User = require('./models/user'),
+  Article = require('./models/article'),
+  Comment = require('./models/comment'),
+  Reply = require('./models/reply'),
   mongoose = require('mongoose'),
   config = require('../../config'),
   app = express();
@@ -22,15 +24,35 @@ mongoose.connect(config.dbUrl);
 var coral = new Coral(app);
 
 coral.route({
-  path: '/brand',
-  model: Brand
+  path: '/user',
+  model: User
 });
 
 coral.route({
-  path: '/product',
-  model: Product,
-  methods: ['get', 'post'],
-  idAttribute: 'name'
+  path: '/article',
+  model: Article
+});
+
+coral.route({
+  path: '/article/:aid/comment',
+  model: Article,
+  idParam: 'aid',
+  subDoc: {
+    path: 'comments'
+  }
+});
+
+coral.route({
+  path: '/article/:aid/comment/:cid/reply',
+  model: Article,
+  idParam: 'aid',
+  subDoc: {
+    path: 'comments',
+    idParam: 'cid',
+    subDoc: {
+      path: 'replies'
+    }
+  }
 });
 
 app.listen(3000);

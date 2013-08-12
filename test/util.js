@@ -44,10 +44,10 @@ describe('util', function() {
 				page: '0'
 			}
 		};
-		var options = {
+		var config = {
 			perPage: 10
 		};
-		var route = util.processRoute(req, options);
+		var route = util.processRoute(req, config);
 		route.skip.should.equal(0);
 		route.limit.should.equal(10);
 		should.not.exist(route.sort);
@@ -61,10 +61,10 @@ describe('util', function() {
 				order: 'asc'
 			}
 		};
-		var options = {
+		var config = {
 			perPage: 10
 		};
-		var route = util.processRoute(req, options);
+		var route = util.processRoute(req, config);
 		route.skip.should.equal(0);
 		route.limit.should.equal(10);
 		route.sort.should.equal('name');
@@ -78,10 +78,10 @@ describe('util', function() {
 				order: 'desc'
 			}
 		};
-		var options = {
+		var config = {
 			perPage: 10
 		};
-		var route = util.processRoute(req, options);
+		var route = util.processRoute(req, config);
 		route.skip.should.equal(0);
 		route.limit.should.equal(10);
 		route.sort.should.equal('-name');
@@ -94,10 +94,10 @@ describe('util', function() {
 				limit: 20
 			}
 		};
-		var options = {
+		var config = {
 			perPage: 10
 		};
-		var route = util.processRoute(req, options);
+		var route = util.processRoute(req, config);
 		should.not.exist(route.sort);
 		route.skip.should.equal(0);
 		route.limit.should.equal(20);

@@ -28,9 +28,12 @@ describe('router', function() {
 
 
   it('find with sorting - must create proper get route', function(done) {
-    var options = {};
     var data = db.getData();
-    router.find('/localhost', data.model, options);
+    var config = {
+      path: '/localhost',
+      model: data.userModel
+    };
+    router.find(config);
     request(app)
       .get('/localhost')
       .set('accept', 'application/json')
@@ -52,7 +55,11 @@ describe('router', function() {
 
   it('findOne - must create proper get route when id pass', function(done) {
     var data = db.getData();
-    router.findOne('/localhost', data.model, '_id');
+    var config = {
+      path: '/localhost',
+      model: data.userModel
+    };
+    router.findOne(config);
     request(app)
       .get('/localhost/' + data.userid)
       .set('accept', 'application/json')
@@ -68,7 +75,12 @@ describe('router', function() {
 
   it('findOne - must create proper get route when name pass', function(done) {
     var data = db.getData();
-    router.findOne('/localhost/name', data.model, 'name');
+    var config = {
+      path: '/localhost/name',
+      model: data.userModel,
+      idAttribute: 'name'
+    };
+    router.findOne(config);
     request(app)
       .get('/localhost/name/abc')
       .set('accept', 'application/json')
@@ -83,12 +95,16 @@ describe('router', function() {
   });
 
   it('create - must create proper post route', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/localhost',
+      model: data.userModel
+    };
     var record = {
       name: 'Ryan',
       age: 26
     };
-    var data = db.getData();
-    router.create('/localhost', data.model);
+    router.create(config);
     request(app)
       .post('/localhost')
       .send(record)
@@ -105,11 +121,15 @@ describe('router', function() {
   });
 
   it('update - must create proper put route', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/localhost',
+      model: data.userModel
+    };
     var record = {
       'name': 'Scott'
     };
-    var data = db.getData();
-    router.update('/localhost', data.model, '_id');
+    router.update(config);
     request(app)
       .put('/localhost/' + data.userid)
       .send(record)
@@ -126,7 +146,11 @@ describe('router', function() {
 
   it('remove - must create proper delete route', function(done) {
     var data = db.getData();
-    router.remove('/localhost', data.model, '_id');
+    var config = {
+      path: '/localhost',
+      model: data.userModel
+    };
+    router.remove(config);
     request(app)
       .del('/localhost/' + data.userid)
       .set('accept', 'application/json')
@@ -139,5 +163,120 @@ describe('router', function() {
         done();
       });
   });
+
+  it('subDoc findOne - must create proper get route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments'
+      }
+    };
+    router.findOne(config);
+    request(app)
+      .get('/article/' + data.articleid + '/comment/' + data.commentid)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('How to create nested sub-docs on route ?');
+        done();
+      });
+  });
+
+  it('subDoc Create - must create proper get route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments'
+      }
+    };
+    var record = {
+      body: 'nice article'
+    };
+    router.create(config);
+    request(app)
+      .post('/article/' + data.articleid + '/comment')
+      .send(record)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('nice article');
+        done();
+      });
+  });
+
+
+  it('subSubDoc findOne - must create proper get route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment/:cid/reply',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments',
+        idParam: 'cid',
+        subDoc: {
+          path: 'replies'
+        }
+      }
+    };
+    router.findOne(config);
+    request(app)
+      .get('/article/' + data.articleid + '/comment/' + data.commentid + '/reply/' + data.replyid)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('you can add sub-doc inside sub-doc in config');
+        done();
+      });
+  });
+
+  it('subSubDoc Create - must create proper get route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment/:cid/reply',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments',
+        idParam: 'cid',
+        subDoc: {
+          path: 'replies'
+        }
+      }
+    };
+    var record = {
+      body: 'thanks!'
+    };
+    router.create(config);
+    request(app)
+      .post('/article/' + data.articleid + '/comment/' + data.commentid + '/reply')
+      .send(record)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('thanks!');
+        done();
+      });
+  });
+
+
 
 });
