@@ -216,6 +216,58 @@ describe('router', function() {
       });
   });
 
+  it('subDoc update - must create proper put route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments'
+      }
+    };
+    var record = {
+      'body': 'updated comment'
+    };
+    router.update(config);
+    request(app)
+      .put('/article/' + data.articleid + '/comment/' + data.commentid)
+      .send(record)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('updated comment');
+        done();
+      });
+  });
+
+  it('subDoc remove - must create proper delete route', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments'
+      }
+    };
+    router.remove(config);
+    request(app)
+      .del('/article/' + data.articleid + '/comment/' + data.commentid)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.should.have.status(200);
+        done();
+      });
+  });
+
 
   it('subSubDoc findOne - must create proper get route when id pass', function(done) {
     var data = db.getData();
@@ -277,6 +329,65 @@ describe('router', function() {
       });
   });
 
+  it('subSubDoc update - must create proper put route when id pass', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment/:cid/reply',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments',
+        idParam: 'cid',
+        subDoc: {
+          path: 'replies'
+        }
+      }
+    };
+    var record = {
+      body: 'updated reply'
+    };
+    router.update(config);
+    request(app)
+      .put('/article/' + data.articleid + '/comment/' + data.commentid + '/reply/' + data.replyid)
+      .send(record)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.body.body.should.equal('updated reply');
+        done();
+      });
+  });
+
+  it('subSubDoc remove - must create proper delete route', function(done) {
+    var data = db.getData();
+    var config = {
+      path: '/article/:aid/comment/:cid/reply',
+      model: data.articleModel,
+      idParam: 'aid',
+      subDoc: {
+        path: 'comments',
+        idParam: 'cid',
+        subDoc: {
+          path: 'replies'
+        }
+      }
+    };
+    router.remove(config);
+    request(app)
+      .del('/article/' + data.articleid + '/comment/' + data.commentid + '/reply/' + data.replyid)
+      .set('accept', 'application/json')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        res.should.have.status(200);
+        done();
+      });
+  });
 
 
 });
