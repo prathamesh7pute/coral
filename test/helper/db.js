@@ -144,7 +144,6 @@ var db = function() {
           subDocid: doc.comments && doc.comments[0]._id,
           subSubDocid: doc.comments && doc.comments[0].replies && doc.comments[0].replies[0]._id
         };
-        //console.log(data);
         callback(null, data);
       }
     });

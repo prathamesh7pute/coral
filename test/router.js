@@ -26,7 +26,6 @@ describe('router', function() {
     db.disconnect(done);
   });
 
-
   it('find with sorting - must create proper get route', function(done) {
     var data = db.getData();
     var config = {
