@@ -1,7 +1,10 @@
 {
+  "boss": true,
   "curly": true,
   "eqeqeq": true,
+  "immed": true,
   "undef": true,
+  "smarttabs": true,
   "trailing": true,
   "node": true,
   "indent": 2,
@@ -9,11 +12,6 @@
   "quotmark": "single",
   "maxlen": 120,
   "predef": [
-    "describe",
-    "beforeEach",
-    "it",
-    "afterEach",
-    "xdescribe",
-    "xit"
+    "describe", "it", "beforeEach", "afterEach"
   ]
 }
