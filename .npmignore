@@ -4,7 +4,4 @@ node_modules
 .jshintrc
 .git*
 .travis.yml
-History.md
 gruntfile.js
-notes.txt
-config.json
