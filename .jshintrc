@@ -12,6 +12,6 @@
   "quotmark": "single",
   "maxlen": 120,
   "predef": [
-    "describe", "it", "beforeEach", "afterEach"
+    "describe", "it", "before", "after", "beforeEach", "afterEach"
   ]
 }
