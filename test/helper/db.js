@@ -3,12 +3,14 @@
  * connect
  * disconnect
  * removeRecords
+ * initiase with sample records
  * addRecords - actually these should be seperate
  */
 
 var mongoose = require('mongoose'),
   _ = require('underscore'),
-  async = require('async');
+  async = require('async'),
+  testData = require('./data');
 
 module.exports = new DB();
 
@@ -30,18 +32,35 @@ function DB() {
     return models[modelName];
   };
 
-  var insertRecords = function(Model, data, done) {
-    Model.create(data, done);
-  };
+  var insertRecords = function(Model, data) {
+    //return callback fucntion for futher series operation
+    return function(callback) {
+      //iterator to insert docs one by one
+      var iterator = function(data, cb) {
+        Model.create(data, cb);
+      };
 
-  var removeRecords = function(done) {
-    //iterator to remove docs for each model
-    var iterator = function(modelName, callback) {
-      getModel(modelName).remove(callback);
+      //remove all records for each model one by one
+      async.eachSeries(data, iterator, callback);
     };
 
-    //remove all records for each model one by one
-    async.eachSeries(_.keys(models), iterator, done);
+  };
+
+  var removeRecords = function(callback) {
+    //iterator to remove docs for each model
+    var iterator = function(modelName, cb) {
+      getModel(modelName).remove(cb);
+    };
+
+    //onsert all records for model one by one
+    async.each(_.keys(models), iterator, callback);
+  };
+
+  var initialise = function(done) {
+    async.series([
+      removeRecords,
+      insertRecords(getModel('User'), testData.users)
+    ], done);
   };
 
   return {
@@ -49,6 +68,7 @@ function DB() {
     disconnect: disconnect,
     getModel: getModel,
     insertRecords: insertRecords,
-    removeRecords: removeRecords
+    removeRecords: removeRecords,
+    initialise: initialise
   };
 }

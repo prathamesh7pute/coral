@@ -17,12 +17,11 @@ module.exports = function(grunt) {
     mocha: {
       options: {
         globals: ['should'],
-        timeout: 3000,
+        timeout: 10000,
         ignoreLeaks: false,
         ui: 'bdd',
         reporter: 'spec'
       },
-
       all: {
         src: '<%= test %>'
       }
@@ -37,7 +36,6 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-
   grunt.registerMultiTask('mocha', 'mocha test cases', function() {
     var Mocha = require('mocha'),
       options = this.options(),
