@@ -32,17 +32,26 @@ function DB() {
     return models[modelName];
   };
 
-  var insertRecords = function(Model, data) {
-    //return callback fucntion for futher series operation
-    return function(callback) {
-      //iterator to insert docs one by one
-      var iterator = function(data, cb) {
-        Model.create(data, cb);
-      };
+  var insertRecords = function(callback) {
 
-      //remove all records for each model one by one
-      async.eachSeries(data, iterator, callback);
+    var insert = function(modelName, data) {
+      return function(done) {
+        var iterator = function(data, cb) {
+          getModel(modelName).create(data, function(err, records) {
+            if (err) {
+              cb(err);
+            }
+            cb();
+          });
+        };
+        async.eachSeries(data, iterator, done);
+      };
     };
+
+    async.series([
+      insert('User', testData.users),
+      insert('Article', testData.articles)
+    ], callback);
 
   };
 
@@ -59,7 +68,7 @@ function DB() {
   var initialise = function(done) {
     async.series([
       removeRecords,
-      insertRecords(getModel('User'), testData.users)
+      insertRecords
     ], done);
   };
 

@@ -8,13 +8,13 @@ var Query = require('../lib/query'),
 describe('query find tests', function() {
   var query;
 
-  beforeEach(function(done) {
+  before(function(done) {
     db.connect();
     query = new Query(db.getModel('User'));
     db.initialise(done);
   });
 
-  afterEach(function(done) {
+  after(function(done) {
     db.disconnect(done);
   });
 
@@ -120,18 +120,15 @@ describe('query find tests', function() {
       findAll: true
     };
 
-    var removeCallback = function(err, records) {
-      //call the find query now
+    //remove all the records first
+    db.removeRecords(function(err, records) {
+      //once removed all records call the find query now
       query.find(options, function(err, records) {
         records.length.should.equal(0);
         done();
       });
+    });
 
-    };
-
-    //remove all the records first
-    db.removeRecords(removeCallback);
   });
-
 
 });
