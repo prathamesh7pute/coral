@@ -55,7 +55,6 @@ describe('query create tests', function() {
 
   });
 
-
   it('create - records should not exists if pass blank array', function(done) {
     //data to insert
     var data = [];
