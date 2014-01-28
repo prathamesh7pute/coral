@@ -8,14 +8,17 @@ var Query = require('../lib/query'),
 describe('query find tests', function() {
   var query;
 
-  before(function(done) {
+  before(function() {
     db.connect();
     query = new Query(db.getModel('User'));
-    db.initialise(done);
   });
 
   after(function(done) {
     db.disconnect(done);
+  });
+
+  beforeEach(function(done) {
+    db.initialise(done);
   });
 
   it('find - must return all available records', function(done) {
@@ -26,9 +29,6 @@ describe('query find tests', function() {
 
     query.find(options, function(err, records) {
       records.length.should.equal(3);
-      records[0].name.should.equal('abc');
-      records[1].name.should.equal('def');
-      records[2].name.should.equal('xyz');
       done();
     });
 
@@ -98,6 +98,42 @@ describe('query find tests', function() {
       should.exist(records[1].age);
       should.not.exist(records[0].names);
       should.not.exist(records[1].names);
+      done();
+    });
+
+  });
+
+  it('find - must return specific records available records with article populated', function(done) {
+    //query options
+    var options = {
+      sort: 'name',
+      skip: '0',
+      limit: '1',
+      populate: 'articles'
+    };
+
+    query.find(options, function(err, records) {
+      records.length.should.equal(1);
+      records[0].name.should.equal('abc');
+      records[0].articles[0].title.should.equal('Coral Framework');
+      done();
+    });
+
+  });
+
+
+  it('find - must return all records available records with article populated', function(done) {
+    //query options
+    var options = {
+      sort: 'name',
+      populate: 'articles',
+      findAll: true
+    };
+
+    query.find(options, function(err, records) {
+      records.length.should.equal(3);
+      records[0].name.should.equal('abc');
+      records[0].articles[0].title.should.equal('Coral Framework');
       done();
     });
 

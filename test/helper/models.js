@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports = models;
 
 function models(mongoose, connection) {
@@ -7,13 +9,23 @@ function models(mongoose, connection) {
 	var UserSchema = new Schema({
 		name: String,
 		age: Number,
+		email: String,
 		articles: [{
 			type: Schema.Types.ObjectId,
 			ref: 'Article'
 		}]
 	});
 
+	UserSchema.path('email').validate(function(email) {
+		var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+		return emailRegex.test(email);
+	}, 'Invalid email address');
+
 	var ReplySchema = new Schema({
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
 		body: String,
 		likes: [{
 			type: Schema.Types.ObjectId,
@@ -26,6 +38,10 @@ function models(mongoose, connection) {
 	});
 
 	var CommentSchema = new Schema({
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User'
+		},
 		body: String,
 		replies: [ReplySchema],
 		likes: [{

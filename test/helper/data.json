@@ -9,7 +9,7 @@
 		"name": "xyz",
 		"age": 30
 	}],
-	"articles": [{
+	"articles": {
 		"title": "Coral Framework",
 		"body": "Node JS framework to dynamically create REST application with express and mongoose Models",
 		"comments": [{
@@ -18,5 +18,5 @@
 				"body": "you can add sub-doc inside sub-doc in config"
 			}]
 		}]
-	}]
+	}
 }

@@ -34,23 +34,29 @@ function DB() {
 
   var insertRecords = function(callback) {
 
-    var insert = function(modelName, data) {
-      return function(done) {
-        var iterator = function(data, cb) {
-          getModel(modelName).create(data, function(err, records) {
-            if (err) {
-              cb(err);
-            }
-            cb();
-          });
-        };
-        async.eachSeries(data, iterator, done);
-      };
+    var insertUsers = function(done) {
+      getModel('User').create(testData.users, function(err, user1, user2, user3) {
+        done(err, user1, user2, user3);
+      });
     };
 
-    async.series([
-      insert('User', testData.users),
-      insert('Article', testData.articles)
+    var insertArticles = function(user1, user2, user3, done) {
+      var articles = testData.articles;
+      articles.author = user1;
+      articles.likes = [user2, user3];
+      articles.comments[0].user = user2;
+      articles.comments[0].likes = [user1, user3];
+      articles.comments[0].replies[0].user = user3;
+      articles.comments[0].replies[0] = [user1, user2];
+      getModel('Article').create(articles, function(err, article) {
+        user1.articles.push(article);
+        user1.save(done);
+      });
+    };
+
+    async.waterfall([
+      insertUsers,
+      insertArticles
     ], callback);
 
   };

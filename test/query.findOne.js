@@ -20,11 +20,13 @@ describe('query findOne tests', function() {
 
   it('findOne - must return exact available record when call with name identifier', function(done) {
     //unique identifier to find data
-    var identifier = {
-      name: 'abc'
+    var options = {
+      identifier: {
+        name: 'abc'
+      }
     };
 
-    query.findOne(identifier, function(err, record) {
+    query.findOne(options, function(err, record) {
       record.name.should.equal('abc');
       done();
     });
@@ -32,16 +34,52 @@ describe('query findOne tests', function() {
 
   it('findOne - must return available record when call with multiple identifier', function(done) {
     //unique identifier to find data
-    var identifier = {
-      name: 'abc',
-      age: 10
+    var options = {
+      identifier: {
+        name: 'abc',
+        age: 10
+      }
     };
 
-    query.findOne(identifier, function(err, record) {
+    query.findOne(options, function(err, record) {
       record.name.should.equal('abc');
       done();
     });
 
+  });
+
+  it('findOne - must return exact record with only selected values when call with name identifier', function(done) {
+    //unique identifier to find data
+    var options = {
+      identifier: {
+        name: 'abc'
+      },
+      select: 'name'
+    };
+
+    query.findOne(options, function(err, record) {
+      record.name.should.equal('abc');
+      should.not.exist(record.age);
+      done();
+    });
+  });
+
+  it('findOne - must return exact record with only selected values and populated articles', function(done) {
+    //unique identifier to find data
+    var options = {
+      identifier: {
+        name: 'abc'
+      },
+      select: 'name articles',
+      populate: 'articles'
+    };
+
+    query.findOne(options, function(err, record) {
+      record.name.should.equal('abc');
+      record.articles[0].title.should.equal('Coral Framework');
+      should.not.exist(record.age);
+      done();
+    });
   });
 
 });

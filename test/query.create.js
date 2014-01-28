@@ -80,4 +80,20 @@ describe('query create tests', function() {
 
   });
 
+  it('create - must throw error with improper email address', function(done) {
+    //data to insert
+    var records = {
+      name: 'xyz',
+      age: 27,
+      email: 'xyz.com' // pass invalid email address (no @)
+    };
+
+    //invoke query create method
+    query.create(records, function(err, record1) {
+      err.errors.email.message.should.equal('Invalid email address');
+      done();
+    });
+
+  });
+
 });
