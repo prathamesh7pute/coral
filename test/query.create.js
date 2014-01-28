@@ -21,18 +21,18 @@ describe('query create tests', function() {
   it('create - must create proper records if pass array of records', function(done) {
     //data to insert
     var records = [{
-      name: 'Ryan',
+      name: 'ghi',
       age: 27
     }, {
-      name: 'Scott',
+      name: 'pqr',
       age: 18
     }];
 
     //invoke query create method
     query.create(records, function(err, record1, record2) {
-      record1.name.should.equal('Ryan');
+      record1.name.should.equal('ghi');
       record1.age.should.equal(27);
-      record2.name.should.equal('Scott');
+      record2.name.should.equal('pqr');
       record2.age.should.equal(18);
       done();
     });
@@ -42,13 +42,13 @@ describe('query create tests', function() {
   it('create - must create proper records if pass object', function(done) {
     //data to insert
     var data = {
-      name: 'Ryan',
+      name: 'pqr',
       age: 27
     };
 
     //invoke query create method
     query.create(data, function(err, record) {
-      record.name.should.equal('Ryan');
+      record.name.should.equal('pqr');
       record.age.should.equal(27);
       done();
     });

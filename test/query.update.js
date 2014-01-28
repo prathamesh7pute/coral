@@ -21,7 +21,7 @@ describe('query findOneAndUpdate tests', function() {
   it('findOneAndUpdate - must update proper record', function(done) {
     //update data
     var data = {
-      name: 'Ryan'
+      name: 'pqr'
     };
 
     //identifier to update the specific record
@@ -32,7 +32,7 @@ describe('query findOneAndUpdate tests', function() {
     //invoke findOne and update 
     query.findOneAndUpdate(identifier, data, function(err, record) {
       //name should get modify from abc to Ryan
-      record.name.should.equal('Ryan');
+      record.name.should.equal('pqr');
       //age should not chage
       record.age.should.equal(10);
       done();
