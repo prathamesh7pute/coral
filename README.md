@@ -4,7 +4,8 @@ Coral
 [![Build Status](https://secure.travis-ci.org/prathamesh7pute/coral.png?branch=master)](http://travis-ci.org/prathamesh7pute/coral)
 [![NPM version](https://badge.fury.io/js/coral.png)](http://badge.fury.io/js/coral)
 [![Dependency Status](https://david-dm.org/prathamesh7pute/coral.png?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral)
-
+[![Dependency Status](https://david-dm.org/prathamesh7pute/coral.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral)
+[![devDependency Status](https://david-dm.org/prathamesh7pute/coral/dev-status.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral#info=devDependencies)
 
 Node JS framework to dynamically create REST application with express and mongoose Models
 
