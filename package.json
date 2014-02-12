@@ -20,18 +20,18 @@
     "url": "https://github.com/prathamesh7pute/coral.git"
   },
   "dependencies": {
-    "async": "0.2.9",
-    "underscore": "1.5.2"
+    "async": "0.2.10",
+    "underscore": "1.6.0"
   },
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-contrib-jshint": "0.8.0",
     "grunt-contrib-watch": "0.5.3",
     "supertest": "0.9.0",
-    "should": "3.0",
-    "mocha": "1.17.0",
+    "should": "3.1",
+    "mocha": "1.17.1",
     "express": "3.4.8",
-    "mongoose": "3.8.4"
+    "mongoose": "3.8.7"
   },
   "engines": {
     "node": "*"
