@@ -85,6 +85,8 @@ describe('query find tests', function() {
 
   });
 
+
+
   it('find - must return all available records with select of age only', function(done) {
     //query options
     var options = {
@@ -98,6 +100,29 @@ describe('query find tests', function() {
       should.exist(records[1].age);
       should.not.exist(records[0].names);
       should.not.exist(records[1].names);
+      done();
+    });
+
+  });
+
+  it('find - must return all records with sort, filters, skip and limit', function(done) {
+    //query options
+    var options = {
+      sort: 'name',
+      skip: '0',
+      limit: '10',
+      filter: {
+        age: {
+          $lte: 20
+        },
+        name: {
+          $in: ['abc', 'xyz']
+        }
+      }
+    };
+
+    query.find(options, function(err, records) {
+      records.length.should.equal(1);
       done();
     });
 
