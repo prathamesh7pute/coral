@@ -25,12 +25,14 @@ describe('query findOneAndUpdate tests', function() {
     };
 
     //identifier to update the specific record
-    var identifier = {
-      name: 'abc'
+    var config = {
+      conditions: {
+        name: 'abc'
+      }
     };
 
     //invoke findOne and update 
-    query.findOneAndUpdate(identifier, data, function(err, record) {
+    query.findOneAndUpdate(config, data, function(err, record) {
       //name should get modify from abc to Ryan
       record.name.should.equal('pqr');
       //age should not chage

@@ -20,12 +20,14 @@ describe('query findOneAndRemove tests', function() {
 
   it('findOneAndRemove - must remove proper record', function(done) {
     //identifier to remove the specific record
-    var identifier = {
-      name: 'abc'
+    var config = {
+      conditions: {
+        name: 'abc'
+      }
     };
 
     //invoke findOne and remove 
-    query.findOneAndRemove(identifier, function(err) {
+    query.findOneAndRemove(config, function(err) {
       should.not.exist(err);
       if (!err) {
         done();

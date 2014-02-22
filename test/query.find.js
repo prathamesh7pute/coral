@@ -22,12 +22,10 @@ describe('query find tests', function() {
   });
 
   it('find - must return all available records', function(done) {
-    //query options
-    var options = {
-      findAll: true
-    };
+    //query config
+    var config = {};
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(3);
       done();
     });
@@ -35,14 +33,16 @@ describe('query find tests', function() {
   });
 
   it('find - must return all available records with sort and in descending order', function(done) {
-    //query options
-    var options = {
-      sort: '-name',
-      skip: '0',
-      limit: '3'
+    //query config
+    var config = {
+      options: {
+        sort: '-name',
+        skip: '0',
+        limit: '3'
+      }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(3);
       records[0].name.should.equal('xyz');
       records[1].name.should.equal('def');
@@ -53,14 +53,16 @@ describe('query find tests', function() {
   });
 
   it('find - must return all available records with sort, in ascending order and limit of 2', function(done) {
-    //query options
-    var options = {
-      sort: 'name',
-      skip: '0',
-      limit: '2'
+    //query config
+    var config = {
+      options: {
+        sort: 'name',
+        skip: '0',
+        limit: '2'
+      }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(2);
       records[0].name.should.equal('abc');
       records[1].name.should.equal('def');
@@ -70,14 +72,16 @@ describe('query find tests', function() {
   });
 
   it('find - must return all records with asc sort order with skip first record and limit of 2', function(done) {
-    //query options
-    var options = {
-      sort: 'name',
-      skip: '2',
-      limit: '1'
+    //query config
+    var config = {
+      options: {
+        sort: 'name',
+        skip: '2',
+        limit: '1'
+      }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(1);
       records[0].name.should.equal('xyz');
       done();
@@ -88,13 +92,12 @@ describe('query find tests', function() {
 
 
   it('find - must return all available records with select of age only', function(done) {
-    //query options
-    var options = {
-      select: '-name -_id -articles',
-      findAll: true
+    //query config
+    var config = {
+      fields: '-name -_id -articles'
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(3);
       should.exist(records[0].age);
       should.exist(records[1].age);
@@ -106,12 +109,14 @@ describe('query find tests', function() {
   });
 
   it('find - must return all records with sort, filters, skip and limit', function(done) {
-    //query options
-    var options = {
-      sort: 'name',
-      skip: '0',
-      limit: '10',
-      filter: {
+    //query config
+    var config = {
+      options: {
+        sort: 'name',
+        skip: '0',
+        limit: '10'
+      },
+      conditions: {
         age: {
           $lte: 20
         },
@@ -121,7 +126,7 @@ describe('query find tests', function() {
       }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(1);
       done();
     });
@@ -129,15 +134,17 @@ describe('query find tests', function() {
   });
 
   it('find - must return specific records available records with article populated', function(done) {
-    //query options
-    var options = {
-      sort: 'name',
-      skip: '0',
-      limit: '1',
-      populate: 'articles'
+    //query config
+    var config = {
+      options: {
+        sort: 'name',
+        skip: '0',
+        limit: '1',
+        populate: 'articles'
+      }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(1);
       records[0].name.should.equal('abc');
       records[0].articles[0].title.should.equal('Coral Framework');
@@ -148,14 +155,15 @@ describe('query find tests', function() {
 
 
   it('find - must return all records available records with article populated', function(done) {
-    //query options
-    var options = {
-      sort: 'name',
-      populate: 'articles',
-      findAll: true
+    //query config
+    var config = {
+      options: {
+        sort: 'name',
+        populate: 'articles'
+      }
     };
 
-    query.find(options, function(err, records) {
+    query.find(config, function(err, records) {
       records.length.should.equal(3);
       records[0].name.should.equal('abc');
       records[0].articles[0].title.should.equal('Coral Framework');
@@ -164,27 +172,25 @@ describe('query find tests', function() {
 
   });
 
-  it('find - must return empty records without any options like pagination, skip and findAll', function(done) {
-    //query options
-    var options = {};
+  // it('find - must return empty records without any options like pagination, skip and findAll', function(done) {
+  //   //query config
+  //   var config = {};
 
-    query.find(options, function(err, records) {
-      should.not.exist(records);
-      done();
-    });
+  //   query.find(config, function(err, records) {
+  //     should.not.exist(records);
+  //     done();
+  //   });
 
-  });
+  // });
 
   it('find - must return zero records for empty collection', function(done) {
-    //find options on the query
-    var options = {
-      findAll: true
-    };
+    //find config on the query
+    var config = {};
 
     //remove all the records first
     db.removeRecords(function(err, records) {
       //once removed all records call the find query now
-      query.find(options, function(err, records) {
+      query.find(config, function(err, records) {
         records.length.should.equal(0);
         done();
       });

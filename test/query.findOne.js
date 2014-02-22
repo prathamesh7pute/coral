@@ -20,13 +20,13 @@ describe('query findOne tests', function() {
 
   it('findOne - must return exact available record when call with name identifier', function(done) {
     //unique identifier to find data
-    var options = {
-      identifier: {
+    var config = {
+      conditions: {
         name: 'abc'
       }
     };
 
-    query.findOne(options, function(err, record) {
+    query.findOne(config, function(err, record) {
       record.name.should.equal('abc');
       done();
     });
@@ -34,14 +34,14 @@ describe('query findOne tests', function() {
 
   it('findOne - must return available record when call with multiple identifier', function(done) {
     //unique identifier to find data
-    var options = {
-      identifier: {
+    var config = {
+      conditions: {
         name: 'abc',
         age: 10
       }
     };
 
-    query.findOne(options, function(err, record) {
+    query.findOne(config, function(err, record) {
       record.name.should.equal('abc');
       done();
     });
@@ -50,14 +50,14 @@ describe('query findOne tests', function() {
 
   it('findOne - must return exact record with only selected values when call with name identifier', function(done) {
     //unique identifier to find data
-    var options = {
-      identifier: {
+    var config = {
+      conditions: {
         name: 'abc'
       },
-      select: 'name'
+      fields: 'name'
     };
 
-    query.findOne(options, function(err, record) {
+    query.findOne(config, function(err, record) {
       record.name.should.equal('abc');
       should.not.exist(record.age);
       done();
@@ -66,15 +66,17 @@ describe('query findOne tests', function() {
 
   it('findOne - must return exact record with only selected values and populated articles', function(done) {
     //unique identifier to find data
-    var options = {
-      identifier: {
+    var config = {
+      conditions: {
         name: 'abc'
       },
-      select: 'name articles',
-      populate: 'articles'
+      fields: 'name articles',
+      options: {
+        populate: 'articles'
+      }
     };
 
-    query.findOne(options, function(err, record) {
+    query.findOne(config, function(err, record) {
       record.name.should.equal('abc');
       record.articles[0].title.should.equal('Coral Framework');
       should.not.exist(record.age);
