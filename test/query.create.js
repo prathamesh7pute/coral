@@ -89,7 +89,7 @@ describe('query create tests', function() {
     };
 
     //invoke query create method
-    query.create(records, function(err, record1) {
+    query.create(records, function(err, record) {
       err.errors.email.message.should.equal('Invalid email address');
       done();
     });

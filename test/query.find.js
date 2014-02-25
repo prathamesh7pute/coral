@@ -100,9 +100,7 @@ describe('query find tests', function() {
     query.find(config, function(err, records) {
       records.length.should.equal(3);
       should.exist(records[0].age);
-      should.exist(records[1].age);
       should.not.exist(records[0].names);
-      should.not.exist(records[1].names);
       done();
     });
 
@@ -171,17 +169,6 @@ describe('query find tests', function() {
     });
 
   });
-
-  // it('find - must return empty records without any options like pagination, skip and findAll', function(done) {
-  //   //query config
-  //   var config = {};
-
-  //   query.find(config, function(err, records) {
-  //     should.not.exist(records);
-  //     done();
-  //   });
-
-  // });
 
   it('find - must return zero records for empty collection', function(done) {
     //find config on the query
