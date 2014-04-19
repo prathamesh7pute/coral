@@ -23,7 +23,8 @@ describe('Coral get tests', function() {
     //config to pass router find method
     var config = {
       path: '/localhost/user',
-      model: db.getModel('User')
+      model: db.getModel('User'),
+      methods: ['GET']
     };
 
 
