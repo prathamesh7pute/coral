@@ -5,8 +5,7 @@ var Coral = require('../lib/coral'),
   db = require('./helper/db'),
   should = require('should'),
   express = require('express'),
-  request = require('supertest'),
-  app = express();
+  request = require('supertest');
 
 describe('Coral get with idAttribute tests', function() {
 
@@ -19,53 +18,53 @@ describe('Coral get with idAttribute tests', function() {
     db.disconnect(done);
   });
 
-  it('get with idAttribute - must create proper get route and return exact record', function(done) {
-    //config to pass router find method
-    var config = {
-      path: '/localhost/user',
-      model: db.getModel('User'),
-      idAttribute: 'name'
-    };
+  describe('Coral get config', function() {
+    var app, config;
 
-    //call router get with the config
-    app.use(new Coral(config));
+    before(function() {
+      //config to pass router find method
+      config = {
+        path: '/localhost/user',
+        model: db.getModel('User'),
+        idAttribute: 'name',
+        methods: ['GET']
+      };
 
-    //invoke path with supertest
-    request(app)
-      .get(config.path + '/abc')
-      .set('accept', 'application/json')
-      .expect(200)
-      .end(function(err, res) {
-        res.body.name.should.equal('abc');
-        done(err); //pass err so that fail expect errors will get caught
-      });
+      app = express();
+      //call router get with the config
+      app.use(new Coral(config));
 
-  });
+    });
 
-  it('get with idAttribute - must create proper get route and return exact record with options', function(done) {
-    //config to pass router find method
-    var config = {
-      path: '/localhost/user',
-      model: db.getModel('User'),
-      idAttribute: 'name'
-    };
+    it('get with idAttribute - must create proper get route and return exact record', function(done) {
+      //invoke path with supertest
+      request(app)
+        .get(config.path + '/abc')
+        .set('accept', 'application/json')
+        .expect(200)
+        .end(function(err, res) {
+          res.body.name.should.equal('abc');
+          done(err); //pass err so that fail expect errors will get caught
+        });
 
-    //call router get with the config
-    app.use(new Coral(config));
+    });
 
-    //invoke path with supertest
-    request(app)
-      .get(config.path + '/abc')
-      .set('accept', 'application/json')
-      .query({
-        select: 'name'
-      })
-      .expect(200)
-      .end(function(err, res) {
-        res.body.name.should.equal('abc');
-        should.not.exists(res.body.age);
-        done(err); //pass err so that fail expect errors will get caught
-      });
+    it('get with idAttribute - must create proper get route and return exact record with options', function(done) {
+      //invoke path with supertest
+      request(app)
+        .get(config.path + '/abc')
+        .set('accept', 'application/json')
+        .query({
+          select: 'name'
+        })
+        .expect(200)
+        .end(function(err, res) {
+          res.body.name.should.equal('abc');
+          should.not.exists(res.body.age);
+          done(err); //pass err so that fail expect errors will get caught
+        });
+
+    });
 
   });
 

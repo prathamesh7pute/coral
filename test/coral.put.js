@@ -28,7 +28,8 @@ describe('Coral put tests', function() {
     var config = {
       path: '/localhost/user',
       model: db.getModel('User'),
-      idAttribute: 'name'
+      idAttribute: 'name',
+      methods: ['PUT']
     };
 
     //data to be pass to update data
