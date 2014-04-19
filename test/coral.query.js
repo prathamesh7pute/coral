@@ -7,13 +7,12 @@ var Coral = require('../lib/coral'),
   express = require('express'),
   request = require('supertest');
 
-xdescribe('coral query tests', function() {
-  var coral, app;
+describe('Coral query tests', function() {
+  var app;
 
   beforeEach(function(done) {
     db.connect();
     app = express();
-    coral = new Coral(app);
     db.initialise(done);
   });
 
@@ -44,8 +43,8 @@ xdescribe('coral query tests', function() {
       }
     };
 
-    //call coral route with the config
-    coral.route(config);
+    //call coral router with the config
+    app.use(new Coral(config));
 
     //invoke path with supertest
     request(app)
@@ -75,8 +74,8 @@ xdescribe('coral query tests', function() {
       }
     };
 
-    //call router get with the config
-    coral.route(config);
+    //call coral router with the config
+    app.use(new Coral(config));
 
     //invoke path with supertest
     request(app)

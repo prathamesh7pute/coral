@@ -1,7 +1,7 @@
 /**
  * Test dependencies.
  */
-var Router = require('../lib/router'),
+var Router = require('../lib/coral'),
   db = require('./helper/db'),
   should = require('should'),
   express = require('express'),
