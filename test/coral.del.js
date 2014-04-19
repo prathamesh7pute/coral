@@ -24,7 +24,8 @@ describe('Coral del tests', function() {
     var config = {
       path: '/localhost/user',
       model: db.getModel('User'),
-      idAttribute: 'name'
+      idAttribute: 'name',
+      methods: ['DELETE']
     };
 
     //call router put with the config
