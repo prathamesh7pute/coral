@@ -1,22 +1,21 @@
 /**
  * Test dependencies.
  */
-var Router = require('../lib/router'),
+var Coral = require('../lib/coral'),
   db = require('./helper/db'),
   should = require('should'),
   express = require('express'),
   request = require('supertest'),
+  bodyParser = require('body-parser'),
   app = express();
 
-xdescribe('route del tests', function() {
-  var router;
+describe('Coral post tests', function() {
 
   //require to get req body parameters
-  //app.use(bodyParser());
+  app.use(bodyParser());
 
   before(function(done) {
     db.connect();
-    router = new Router(app);
     db.initialise(done);
   });
 
@@ -24,23 +23,31 @@ xdescribe('route del tests', function() {
     db.disconnect(done);
   });
 
-  it('del - must create proper del route and remove matching record', function(done) {
-    //config for route
+  it('post - must create proper post route and return matching record', function(done) {
+    //config to pass router find method
     var config = {
       path: '/localhost/user',
-      model: db.getModel('User'),
-      idAttribute: 'name'
+      model: db.getModel('User')
     };
 
-    //call router put with the config
-    router.del(config);
+    //data to be pass into post request
+    var data = {
+      name: 'test',
+      age: 40
+    };
+
+    //call router get with the config
+    app.use(new Coral(config));
 
     //invoke path with supertest
     request(app)
-      .del(config.path + '/abc')
+      .post(config.path)
       .set('accept', 'application/json')
+      .send(data)
       .expect(200)
       .end(function(err, res) {
+        res.body.name.should.equal('test');
+        res.body.age.should.equal(40);
         done(err); //pass err so that fail expect errors will get caught
       });
 

@@ -1,7 +1,7 @@
 /**
  * Test dependencies.
  */
-var Router = require('../lib/router'),
+var Coral = require('../lib/coral'),
   db = require('./helper/db'),
   should = require('should'),
   express = require('express'),
@@ -9,15 +9,13 @@ var Router = require('../lib/router'),
   bodyParser = require('body-parser'),
   app = express();
 
-xdescribe('route post tests', function() {
-  var router;
+describe('Coral put tests', function() {
 
   //require to get req body parameters
   app.use(bodyParser());
 
   before(function(done) {
     db.connect();
-    router = new Router(app);
     db.initialise(done);
   });
 
@@ -25,25 +23,26 @@ xdescribe('route post tests', function() {
     db.disconnect(done);
   });
 
-  it('post - must create proper post route and return matching record', function(done) {
-    //config to pass router find method
+  it('put - must create proper put route and update matching record', function(done) {
+    //config for route
     var config = {
       path: '/localhost/user',
-      model: db.getModel('User')
+      model: db.getModel('User'),
+      idAttribute: 'name'
     };
 
-    //data to be pass into post request
+    //data to be pass to update data
     var data = {
       name: 'test',
       age: 40
     };
 
-    //call router get with the config
-    router.post(config);
+    //call router put with the config
+    app.use(new Coral(config));
 
     //invoke path with supertest
     request(app)
-      .post(config.path)
+      .put(config.path + '/abc')
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
