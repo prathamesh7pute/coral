@@ -9,14 +9,30 @@
 		"name": "xyz",
 		"age": 30
 	}],
-	"articles": {
-		"title": "Coral Framework",
-		"body": "Node JS framework to dynamically create REST application with express and mongoose Models",
+	"articles": [{
+		"title": "Article One",
+		"body": "Coral - Node JS framework to dynamically create REST application with express and mongoose Models",
 		"comments": [{
-			"body": "How to create nested sub-docs on route ?",
+			"body": "Article One First Comment",
 			"replies": [{
-				"body": "you can add sub-doc inside sub-doc in config"
+				"body": "Article One First Comment First Reply"
+			}]
+		}, {
+			"body": "Article One Second Comment",
+			"replies": [{
+				"body": "Article One Second Comment First Reply"
+			}, {
+				"body": "Article One Second Comment Second Reply"
 			}]
 		}]
-	}
+	}, {
+		"title": "Article Two",
+		"body": "Coral - Express middleware to simplify routing with mongooes",
+		"comments": [{
+			"body": "Article Two First Comment",
+			"replies": [{
+				"body": "Article Two First Comment First Reply"
+			}]
+		}]
+	}]
 }

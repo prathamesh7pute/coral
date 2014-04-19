@@ -8,7 +8,7 @@ var Router = require('../lib/router'),
   request = require('supertest'),
   app = express();
 
-xdescribe('route get with idAttribute tests', function() {
+xdescribe('route subdoc get tests', function() {
   var router;
 
   before(function(done) {
@@ -21,12 +21,15 @@ xdescribe('route get with idAttribute tests', function() {
     db.disconnect(done);
   });
 
-  it('get with idAttribute - must create proper get route and return exact record', function(done) {
+  it('subdoc get - must create proper get route return all records if no queries provided', function(done) {
     //config to pass router find method
     var config = {
       path: '/localhost/user',
-      model: db.getModel('User'),
-      idAttribute: 'name'
+      model: db.getModel('Article'),
+      idAttribute: 'id',
+      subDoc: {
+        path: 'comments'
+      }
     };
 
     //call router get with the config
@@ -34,22 +37,25 @@ xdescribe('route get with idAttribute tests', function() {
 
     //invoke path with supertest
     request(app)
-      .get(config.path + '/abc')
+      .get(config.path)
       .set('accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
-        res.body.name.should.equal('abc');
+        res.body.length.should.equal(2);
+        //res.body[0].title.should.equal('Coral Framework');
         done(err); //pass err so that fail expect errors will get caught
       });
 
   });
 
-  it('get with idAttribute - must create proper get route and return exact record with options', function(done) {
+  it('subdoc get - must create proper get route return sorted records if sort query provided', function(done) {
     //config to pass router find method
     var config = {
       path: '/localhost/user',
       model: db.getModel('User'),
-      idAttribute: 'name'
+      subDoc: {
+        path: 'comments'
+      }
     };
 
     //call router get with the config
@@ -57,15 +63,18 @@ xdescribe('route get with idAttribute tests', function() {
 
     //invoke path with supertest
     request(app)
-      .get(config.path + '/abc')
+      .get(config.path)
       .set('accept', 'application/json')
       .query({
-        select: 'name'
+        sort: 'name',
+        order: 'desc'
       })
       .expect(200)
       .end(function(err, res) {
-        res.body.name.should.equal('abc');
-        should.not.exists(res.body.age);
+        res.body.length.should.equal(3);
+        res.body[0].name.should.equal('xyz');
+        res.body[1].name.should.equal('def');
+        res.body[2].name.should.equal('abc');
         done(err); //pass err so that fail expect errors will get caught
       });
 

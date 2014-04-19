@@ -7,7 +7,7 @@ var Coral = require('../lib/coral'),
   express = require('express'),
   request = require('supertest');
 
-describe('coral query tests', function() {
+xdescribe('coral query tests', function() {
   var coral, app;
 
   beforeEach(function(done) {

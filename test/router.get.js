@@ -8,7 +8,7 @@ var Router = require('../lib/router'),
   request = require('supertest'),
   app = express();
 
-describe('route get tests', function() {
+xdescribe('route get tests', function() {
   var router;
 
   before(function(done) {

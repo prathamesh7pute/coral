@@ -42,12 +42,31 @@ function DB() {
 
     var insertArticles = function(user1, user2, user3, done) {
       var articles = testData.articles;
-      articles.author = user1;
-      articles.likes = [user2, user3];
-      articles.comments[0].user = user2;
-      articles.comments[0].likes = [user1, user3];
-      articles.comments[0].replies[0].user = user3;
-      articles.comments[0].replies[0] = [user1, user2];
+
+      //article one
+      articles[0].author = user1;
+      articles[0].likes = [user2, user3];
+      //comment first
+      articles[0].comments[0].user = user2;
+      articles[0].comments[0].likes = [user1, user3];
+      articles[0].comments[0].replies[0].user = user3;
+      articles[0].comments[0].replies[0].likes = [user1, user2];
+      //comment second
+      articles[0].comments[1].user = user1;
+      articles[0].comments[1].likes = [user2, user3];
+      articles[0].comments[1].replies[0].user = user2;
+      articles[0].comments[1].replies[0].likes = [user3, user2];
+      articles[0].comments[1].replies[1].user = user1;
+      articles[0].comments[1].replies[1].likes = [user1, user3];
+
+      //article two 
+      articles[1].author = user2;
+      articles[1].likes = [user2, user3];
+      articles[1].comments[0].user = user3;
+      articles[1].comments[0].likes = [user1, user3];
+      articles[1].comments[0].replies[0].user = user1;
+      articles[1].comments[0].replies[0] = [user1, user2];
+
       getModel('Article').create(articles, function(err, article) {
         user1.articles.push(article);
         user1.save(done);

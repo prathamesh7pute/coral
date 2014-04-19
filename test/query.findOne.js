@@ -78,7 +78,7 @@ describe('query findOne tests', function() {
 
     query.findOne(config, function(err, record) {
       record.name.should.equal('abc');
-      record.articles[0].title.should.equal('Coral Framework');
+      record.articles[0].title.should.equal('Article One');
       should.not.exist(record.age);
       done();
     });

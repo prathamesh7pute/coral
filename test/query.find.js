@@ -145,7 +145,7 @@ describe('query find tests', function() {
     query.find(config, function(err, records) {
       records.length.should.equal(1);
       records[0].name.should.equal('abc');
-      records[0].articles[0].title.should.equal('Coral Framework');
+      records[0].articles[0].title.should.equal('Article One');
       done();
     });
 
@@ -164,7 +164,7 @@ describe('query find tests', function() {
     query.find(config, function(err, records) {
       records.length.should.equal(3);
       records[0].name.should.equal('abc');
-      records[0].articles[0].title.should.equal('Coral Framework');
+      records[0].articles[0].title.should.equal('Article One');
       done();
     });
 

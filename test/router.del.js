@@ -8,11 +8,11 @@ var Router = require('../lib/router'),
   request = require('supertest'),
   app = express();
 
-describe('route del tests', function() {
+xdescribe('route del tests', function() {
   var router;
 
   //require to get req body parameters
-  app.use(express.bodyParser());
+  //app.use(bodyParser());
 
   before(function(done) {
     db.connect();
