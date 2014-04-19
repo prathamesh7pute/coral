@@ -16,7 +16,7 @@ xdescribe('coral', function() {
     coral = new Coral(app);
   });
 
-  it.only('route - must create proper routes', function() {
+  it('route - must create proper routes', function() {
 
     coral.route({
       path: 'localhost/user',
