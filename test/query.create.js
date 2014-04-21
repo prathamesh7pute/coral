@@ -85,7 +85,7 @@ describe('query create tests', function() {
     var records = {
       name: 'xyz',
       age: 27,
-      email: 'xyz.com' // pass invalid email address (no @)
+      email: 'xyz.com' // pass invalid email address
     };
 
     //invoke query create method

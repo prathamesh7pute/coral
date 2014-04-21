@@ -1,10 +1,10 @@
 /*
- * these should export following functions
+ * DB exports following functions
  * connect
  * disconnect
+ * insertRecords
  * removeRecords
- * initiase with sample records
- * addRecords - actually these should be seperate
+ * initialise with sample data
  */
 
 var mongoose = require('mongoose'),
