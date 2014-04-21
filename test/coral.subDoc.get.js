@@ -8,7 +8,7 @@ var Coral = require('../lib/coral'),
   request = require('supertest'),
   app = express();
 
-describe.only('Coral subdoc get tests', function() {
+describe('Coral subdoc get tests', function() {
 
   before(function(done) {
     db.connect();
@@ -19,10 +19,10 @@ describe.only('Coral subdoc get tests', function() {
     db.disconnect(done);
   });
 
-  it('Coral subdoc get - must create proper get route return subDoc records', function(done) {
+  it('Coral subdoc get - must create proper get route and return subDoc records', function(done) {
     //config to pass router find method
     var config = {
-      path: '/localhost/article',
+      path: '/localhost/article/:article-name/comments',
       model: db.getModel('Article'),
       idAttribute: 'short-name',
       subDoc: {
