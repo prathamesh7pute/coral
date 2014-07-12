@@ -20,6 +20,7 @@ function models(mongoose, connection) {
 	}, 'Invalid email address');
 
 	var ReplySchema = new Schema({
+		name: String,
 		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'User'
