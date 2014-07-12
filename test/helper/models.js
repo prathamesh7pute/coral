@@ -36,6 +36,7 @@ function models(mongoose, connection) {
 	});
 
 	var CommentSchema = new Schema({
+		name: String,
 		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'User'
@@ -53,7 +54,7 @@ function models(mongoose, connection) {
 	});
 
 	var ArticleSchema = new Schema({
-        name: String,
+		name: String,
 		title: String,
 		body: String,
 		author: {
