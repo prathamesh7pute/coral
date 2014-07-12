@@ -10,7 +10,7 @@
 		"age": 30
 	}],
 	"articles": [{
-	"name": "article-one",
+	    "name": "article-one",
 		"title": "Article One",
 		"body": "Coral - Node JS framework to dynamically create REST application with express and mongoose Models",
 		"comments": [{
@@ -27,7 +27,7 @@
 			}]
 		}]
 	}, {
-		"short-name": "article-two",
+		"name": "article-two",
 		"title": "Article Two",
 		"body": "Coral - Express middleware to simplify routing with mongooes",
 		"comments": [{

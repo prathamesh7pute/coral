@@ -1,5 +1,3 @@
-var _ = require('underscore');
-
 module.exports = models;
 
 function models(mongoose, connection) {
@@ -55,6 +53,7 @@ function models(mongoose, connection) {
 	});
 
 	var ArticleSchema = new Schema({
+        name: String,
 		title: String,
 		body: String,
 		author: {
