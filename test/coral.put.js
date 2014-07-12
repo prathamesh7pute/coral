@@ -12,7 +12,7 @@ var Coral = require('../lib/coral'),
 describe('Coral put tests', function() {
 
   //require to get req body parameters
-  app.use(bodyParser());
+  app.use(bodyParser.json());
 
   before(function(done) {
     db.connect();
