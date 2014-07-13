@@ -35,7 +35,7 @@ describe('subDocQuery findOne tests', function() {
             }
         };
 
-        subDocQuery.find(config, function(err, record) {
+        subDocQuery.findOne(config, function(err, record) {
             record.name.should.equal('comment-one');
             record.body.should.equal('Article One First Comment');
             done();
@@ -63,7 +63,7 @@ describe('subDocQuery findOne tests', function() {
             }
         };
 
-        subDocQuery.find(config, function(err, record) {
+        subDocQuery.findOne(config, function(err, record) {
             record.name.should.equal('reply-two');
             record.body.should.equal('Article One Second Comment Second Reply');
             done();

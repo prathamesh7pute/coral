@@ -22,7 +22,6 @@ describe('subDocQuery find tests', function() {
     });
 
     it('find subDoc - must return all available records', function(done) {
-
         var config = {
             conditions: {
                 name: 'article-one'
@@ -40,7 +39,6 @@ describe('subDocQuery find tests', function() {
     });
 
     it('find subDoc subDoc - must return all available records', function(done) {
-
         var config = {
             conditions: {
                 name: 'article-one'
