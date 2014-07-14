@@ -29,7 +29,7 @@ describe('query create tests', function() {
     }];
 
     //invoke query create method
-    query.create(records, function(err, record1, record2) {
+    query.create({}, records, function(err, record1, record2) {
       record1.name.should.equal('ghi');
       record1.age.should.equal(27);
       record2.name.should.equal('pqr');
@@ -47,7 +47,7 @@ describe('query create tests', function() {
     };
 
     //invoke query create method
-    query.create(data, function(err, record) {
+    query.create({}, data, function(err, record) {
       record.name.should.equal('pqr');
       record.age.should.equal(27);
       done();
@@ -60,7 +60,7 @@ describe('query create tests', function() {
     var data = [];
 
     //invoke query create method
-    query.create(data, function(err, records) {
+    query.create({}, data, function(err, records) {
       should.not.exist(records);
       done();
     });
@@ -72,7 +72,7 @@ describe('query create tests', function() {
     var data = {};
 
     //invoke query create method
-    query.create(data, function(err, record) {
+    query.create({}, data, function(err, record) {
       should.not.exist(record.name);
       should.not.exist(record.age);
       done();
@@ -89,7 +89,7 @@ describe('query create tests', function() {
     };
 
     //invoke query create method
-    query.create(records, function(err, record) {
+    query.create({}, records, function(err, record) {
       err.errors.email.message.should.equal('Invalid email address');
       done();
     });
