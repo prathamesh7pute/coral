@@ -7,7 +7,7 @@ var Coral = require('../lib/coral'),
   express = require('express'),
   request = require('supertest');
 
-describe('Coral subDoc get tests', function() {
+describe('Coral subDoc query tests', function() {
 
   before(function(done) {
     db.connect();
@@ -18,24 +18,23 @@ describe('Coral subDoc get tests', function() {
     db.disconnect(done);
   });
 
-  describe('Coral subDoc get config', function() {
+  describe('Coral subDoc query config', function() {
 
     var app, config;
 
     before(function() {});
 
-    it('subDoc get - must create proper get route return all records if no queries provided', function(done) {
+    it('subDoc query - must create proper get route return all records if no queries provided', function(done) {
 
       //config to pass router find method
       config = {
-        path: '/localhost/articles/:articleName/comments',
+        path: '/localhost/articles/:name/comments',
         model: db.getModel('Article'),
         methods: ['GET'],
         idAttribute: 'name',
-        idParam: 'articleName',
+        idParam: 'name',
         subDoc: {
-          path: 'comments',
-          idAttribute: 'name'
+          path: 'comments'
         }
       };
 
@@ -45,16 +44,16 @@ describe('Coral subDoc get tests', function() {
 
       //invoke path with supertest
       request(app)
-        .get('/localhost/articles/article-one/comments/comment-one')
+        .get('/localhost/articles/article-one/comments')
         .set('accept', 'application/json')
         .expect(200)
         .end(function(err, res) {
-          res.body.name.should.equal('comment-one');
+          res.body.length.should.equal(2);
           done(err); //pass err so that fail expect errors will get caught
         });
     });
 
-    it('subDoc get - must create proper get route return sorted records if sort query provided', function(done) {
+    it('subDoc query - must create proper get route return sorted records if sort query provided', function(done) {
 
       //config to pass router find method
       config = {
@@ -68,8 +67,7 @@ describe('Coral subDoc get tests', function() {
           idAttribute: 'name',
           idParam: 'commentName',
           subDoc: {
-            path: 'replies',
-            idAttribute: 'name'
+            path: 'replies'
           }
         }
       };
@@ -80,11 +78,11 @@ describe('Coral subDoc get tests', function() {
 
       //invoke path with supertest
       request(app)
-        .get('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
+        .get('/localhost/articles/article-one/comments/comment-one/replies')
         .set('accept', 'application/json')
         .expect(200)
         .end(function(err, res) {
-          res.body.name.should.equal('reply-one');
+          res.body.length.should.equal(1);
           done(err); //pass err so that fail expect errors will get caught
         });
     });
