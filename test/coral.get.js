@@ -48,7 +48,26 @@ describe('Coral get tests', function() {
         });
     });
 
-    it('get - must create proper get route return sorted records if sort query provided', function(done) {
+    it('get - must create proper get route return sorted records if sort query provided (sorting ascending)', function(done) {
+      //invoke path with supertest
+      request(app)
+        .get(config.path)
+        .set('accept', 'application/json')
+        .query({
+          sort: 'name',
+          order: 'asc'
+        })
+        .expect(200)
+        .end(function(err, res) {
+          res.body.length.should.equal(3);
+          res.body[0].name.should.equal('abc');
+          res.body[1].name.should.equal('def');
+          res.body[2].name.should.equal('xyz');
+          done(err); //pass err so that fail expect errors will get caught
+        });
+    });
+
+    it('get - must create proper get route return sorted records if sort query provided (sorting descending)', function(done) {
       //invoke path with supertest
       request(app)
         .get(config.path)
@@ -66,6 +85,7 @@ describe('Coral get tests', function() {
           done(err); //pass err so that fail expect errors will get caught
         });
     });
+
 
   });
 
