@@ -6,48 +6,73 @@ Coral
 [![Dependency Status](https://david-dm.org/prathamesh7pute/coral.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral)
 [![devDependency Status](https://david-dm.org/prathamesh7pute/coral/dev-status.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral#info=devDependencies)
 
-Node JS framework to dynamically create REST application with express and mongoose Models
+Node.js framework to create REST API with express and mongoose models
 
-### Creating Routes
+## Table of Contents
 
-To create routes with mongoose Models initialize the coral with the express application and use the route method by passing path and mongoose models as configuration
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+- [License](#license)
 
+## Installation
 
-	var app = express();
+The easiest way to install Coral is by running following command
 
-	var ProductSchema = new Schema({
-  		name: String
-	});
-	
-	var Product = mongoose.model('Product', ProductSchema);
-	
-	var productRoutes = new Coral({
-  		path: '/product',
-		model:	Product
-	});
+```bash
+# NPM
+npm install coral --save
+```
 
-	app.use(productRoutes);
+## Usage
 
-Above coral route method will generate the following routes
+**Creating Routes**
+
+To create routes with mongoose models initialize the coral with the express application and use the route method by passing path and mongoose models as configuration
+
+```js
+var app = express();
+
+//define mongoose schema
+var ProductSchema = new Schema({
+    name: String
+});
+//create the mongoose model
+var Product = mongoose.model('Product', ProductSchema);
+
+//Coral will return the express router with REST API routes 
+var productRouter = new Coral({
+    path: '/product',
+    model:	Product
+});
+
+//use the Coral router in express app
+app.use(productRouter);
+```
+
+Above Coral router will generate the following routes
 
 	/product							-	get
 	/product/:id						-	get
-	/product?skip=10&limit=10	  		-	get (limited records)
-	/product?sort=name&order=asc&page=1	-	get	(pagination with sorting)
 	/product							-	post
 	/product/:id						-	put
 	/product/:id						-	delete
+
+## Configuration
+
 
 Following get parameters are supported to get sorted data and pagination
 
 	skip, limit, order, sort and page
 
-If your records are huge and don't want to expose all the records findAll can be set to false so that only limited records will be returned depending on passed options in the skip, limit or page by default per page 20 records are returned this can be change through perPage option 
+In the skip, limit or page by default per page 10 records are returned this can be change through perPage option 
 
 	var productRoutes = new Coral({
 		path: '/product',
 		model:	Product,
-		perPage: 10
+		perPage: 50
 	});
 
 In some cases routes specific to some methods are needed like only want to provide user read, create and update functionality without delete this can be done by specifying methods option
@@ -55,7 +80,7 @@ In some cases routes specific to some methods are needed like only want to provi
 	var productRoutes = new Coral({
 		path: '/product',
 		model:	Product,
-		methods: ['get', 'post', 'put']
+		methods: ['GET', 'POST', 'PUT']
 	});
 
 Above coral route method will only generate the following routes without delete
@@ -69,6 +94,37 @@ Above coral route method will only generate the following routes without delete
 
 Following options are supported to create specific methods routes
 
-	get, post, put and del
+	GET, POST, PUT and DELETE
 
 
+## API Reference
+
+TODO.
+
+## Contributing
+
+Found a bug or something needs to be refactored, please let me know. Pull requests are always welcome.
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Prathamesh Satpute
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
