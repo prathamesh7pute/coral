@@ -48,7 +48,7 @@ describe('Coral get tests', function() {
         });
     });
 
-    it('get - must create proper get route return sorted records if sort query provided (sorting ascending)', function(done) {
+    it('get - must create proper get route return sorted records if sort query provided (ascending)', function(done) {
       //invoke path with supertest
       request(app)
         .get(config.path)
@@ -67,7 +67,7 @@ describe('Coral get tests', function() {
         });
     });
 
-    it('get - must create proper get route return sorted records if sort query provided (sorting descending)', function(done) {
+    it('get - must create proper get route return sorted records if sort query provided (descending)', function(done) {
       //invoke path with supertest
       request(app)
         .get(config.path)
