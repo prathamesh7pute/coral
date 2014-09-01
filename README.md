@@ -19,8 +19,6 @@ Node.js framework to create REST API with express and mongoose models
 
 ## Installation
 
-The easiest way to install Coral is by running following command
-
 ```bash
 # NPM
 npm install coral --save
@@ -30,7 +28,7 @@ npm install coral --save
 
 **Creating Routes**
 
-To create routes with mongoose models initialize the coral with the express application and use the route method by passing path and mongoose models as configuration
+pass path and mongoose models as configuration to Coral to generate routes
 
 ```js
 var app = express();
@@ -42,7 +40,7 @@ var ProductSchema = new Schema({
 //create the mongoose model
 var Product = mongoose.model('Product', ProductSchema);
 
-//Coral will return the express router with REST API routes 
+//Coral will return the express router with REST routes 
 var productRouter = new Coral({
     path: '/product',
     model:	Product
