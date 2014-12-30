@@ -14,12 +14,12 @@ describe('Coral post tests', function() {
   //require to get req body parameters
   app.use(bodyParser.json());
 
-  before(function(done) {
+  beforeEach(function(done) {
     db.connect();
     db.initialise(done);
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     db.disconnect(done);
   });
 
@@ -53,6 +53,34 @@ describe('Coral post tests', function() {
       });
 
   });
+
+  it('post - must return bad request if improper request is send', function(done) {
+    //config to pass router find method
+    var config = {
+      path: '/localhost/user',
+      model: db.getModel('User'),
+      methods: ['POST']
+    };
+
+    //data to be pass into post request
+    var data = {
+      name: 'test',
+      email: 'invalid-email-id',
+      age: 40
+    };
+
+    //call router get with the config
+    app.use(new Coral(config));
+
+    //invoke path with supertest
+    request(app)
+        .post(config.path)
+        .set('accept', 'application/json')
+        .send(data)
+        .expect(400, done);
+
+  });
+
 
 
 });

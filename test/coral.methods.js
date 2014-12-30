@@ -25,6 +25,7 @@ describe('Coral methods tests', function() {
     before(function() {
       config = {
         path: '/localhost/user',
+        idAttribute: 'name',
         model: db.getModel('User')
       };
       app = express();
@@ -59,31 +60,30 @@ describe('Coral methods tests', function() {
     //with idAttributes
     it('get - must create proper get route with idAttribute', function(done) {
       request(app)
-        .get(config.path + '/:idAttribute')
+        .get(config.path + '/abc')
         .expect(200, done);
     });
 
     it('post - must create proper post route with idAttribute', function(done) {
       request(app)
-        .post(config.path + '/:idAttribute')
+        .post(config.path + '/abc')
         .expect(404, done);
     });
 
     it('put - must create proper put route with idAttribute', function(done) {
       request(app)
-        .put(config.path + '/:idAttribute')
+        .put(config.path + '/abc')
         .expect(200, done);
     });
 
     it('del - must create proper del route with idAttribute', function(done) {
       request(app)
-        .del(config.path + '/:idAttribute')
+        .del(config.path + '/abc')
         .expect(200, done);
     });
 
 
   });
-
 
   describe('get, put - must create only get, put route', function(done) {
 
@@ -92,6 +92,7 @@ describe('Coral methods tests', function() {
     before(function() {
       config = {
         path: '/localhost/user',
+        idAttribute: 'name',
         model: db.getModel('User'),
         methods: ['GET', 'PUT']
       };
@@ -127,25 +128,25 @@ describe('Coral methods tests', function() {
     //with idAttributes
     it('get - must create proper get route with idAttribute', function(done) {
       request(app)
-        .get(config.path + '/:idAttribute')
+        .get(config.path + '/abc')
         .expect(200, done);
     });
 
     it('post - must create proper post route with idAttribute', function(done) {
       request(app)
-        .post(config.path + '/:idAttribute')
+        .post(config.path + '/abc')
         .expect(404, done);
     });
 
     it('put - must create proper put route with idAttribute', function(done) {
       request(app)
-        .put(config.path + '/:idAttribute')
+        .put(config.path + '/abc')
         .expect(200, done);
     });
 
     it('del - must create proper del route with idAttribute', function(done) {
       request(app)
-        .del(config.path + '/:idAttribute')
+        .del(config.path + '/abc')
         .expect(404, done);
     });
 
@@ -159,6 +160,7 @@ describe('Coral methods tests', function() {
     before(function() {
       config = {
         path: '/localhost/user',
+        idAttribute: 'name',
         model: db.getModel('User'),
         methods: ['POST', 'DELETE']
       };
@@ -194,25 +196,25 @@ describe('Coral methods tests', function() {
     //with idAttributes
     it('get - must create proper get route with idAttribute', function(done) {
       request(app)
-        .get(config.path + '/:idAttribute')
+        .get(config.path + '/abc')
         .expect(404, done);
     });
 
     it('post - must create proper post route with idAttribute', function(done) {
       request(app)
-        .post(config.path + '/:idAttribute')
+        .post(config.path + '/abc')
         .expect(404, done);
     });
 
     it('put - must create proper put route with idAttribute', function(done) {
       request(app)
-        .put(config.path + '/:idAttribute')
+        .put(config.path + '/abc')
         .expect(404, done);
     });
 
     it('del - must create proper del route with idAttribute', function(done) {
       request(app)
-        .del(config.path + '/:idAttribute')
+        .del(config.path + '/abc')
         .expect(200, done);
     });
 
