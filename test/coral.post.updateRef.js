@@ -35,10 +35,14 @@ describe('Coral post updateRef tests', function() {
                 conditions: {
                     name: 'abc',
                     age: 10
+                },
+                options: {
+                    populate: 'articles'
                 }
             };
             query.findOne(config, function(err, record) {
                 record.name.should.equal('abc');
+                record.articles.length.should.equal(1);
                 findOneUserId = record._id;
                 done();
             });
@@ -92,7 +96,8 @@ describe('Coral post updateRef tests', function() {
 
             query.findOne(config, function(err, record) {
                 record.name.should.equal('abc');
-                record.articles[0].name.should.equal('test article');
+                record.articles.length.should.equal(2);
+                record.articles[1].name.should.equal('test article');
                 done();
             });
 
