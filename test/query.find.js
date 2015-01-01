@@ -157,7 +157,7 @@ describe('query find tests', function() {
     var config = {
       options: {
         sort: 'name',
-        populate: 'articles'
+        populate: [{path: 'articles location'}]
       }
     };
 
