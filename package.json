@@ -1,11 +1,12 @@
 {
   "name": "coral",
   "description": "Node JS framework to dynamically create REST application with express and mongoose Models",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "author": {
     "name": "Prathamesh Satpute",
     "email": "prathamesh.satpute@gmail.com"
   },
+  "license": "MIT",
   "keywords": [
     "rest",
     "mongoose",
@@ -13,14 +14,16 @@
     "node"
   ],
   "scripts": {
-    "test": "grunt test --verbose"
+    "test": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/prathamesh7pute/coral.git"
   },
   "dependencies": {
-    "express": "4.15.2"
+    "async": "^2.1.5",
+    "express": "4.15.2",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "body-parser": "1.17.1",
