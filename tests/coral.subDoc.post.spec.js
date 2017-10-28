@@ -8,7 +8,7 @@ var request = require('supertest')
 var bodyParser = require('body-parser')
 var app = express()
 
-describe('Coral subDoc post tests', function () {
+xdescribe('Coral subDoc post tests', function () {
   // require to get req body parameters
   app.use(bodyParser.json())
 

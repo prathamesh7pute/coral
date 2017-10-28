@@ -6,7 +6,7 @@ var db = require('./helper/db')
 var express = require('express')
 var request = require('supertest')
 
-describe.only('Coral subDoc del tests', function () {
+xdescribe('Coral subDoc del tests', function () {
   beforeEach(function (done) {
     db.connect()
     db.initialise(done)
