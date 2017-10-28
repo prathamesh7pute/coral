@@ -1,1 +1,1 @@
-module.exports = require('./lib/coral');
+module.exports = require('./lib/coral')
