@@ -107,7 +107,7 @@ Found a bug or something needs to be refactored, please let me know. Pull reques
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Prathamesh Satpute
+Copyright (c) 2017 Prathamesh Satpute
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
