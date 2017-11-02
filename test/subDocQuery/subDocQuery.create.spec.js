@@ -1,28 +1,28 @@
 /**
  * Test dependencies.
  */
-var SubDocQuery = require('../lib/subDocQuery')
-var db = require('./helper/db')
-var should = require('should')
+const SubDocQuery = require('../../lib/subDocQuery')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('subDocQuery create tests', function () {
-  var subDocQuery
+describe('subDocQuery create tests', () => {
+  let subDocQuery
 
-  before(function () {
+  before(() => {
     db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.initialise(done)
   })
 
-  it('create subDoc - must create record with data passed', function (done) {
-    var config = {
+  it('create subDoc - must create record with data passed', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -31,7 +31,7 @@ describe('subDocQuery create tests', function () {
       }
     }
 
-    var data = {
+    const data = {
       'name': 'comment-three',
       'body': 'Article One Third Comment',
       'replies': [{
@@ -40,7 +40,7 @@ describe('subDocQuery create tests', function () {
       }]
     }
 
-    subDocQuery.create(config, data, function (err, record) {
+    subDocQuery.create(config, data, (err, record) => {
       if (err) {
         throw err
       }
@@ -50,8 +50,8 @@ describe('subDocQuery create tests', function () {
     })
   })
 
-  it('create subDoc subDoc - must create record with data passed', function (done) {
-    var config = {
+  it('create subDoc subDoc - must create record with data passed', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -66,12 +66,12 @@ describe('subDocQuery create tests', function () {
       }
     }
 
-    var data = {
+    const data = {
       'name': 'reply-three',
       'body': 'Article One Second Comment Third Reply'
     }
 
-    subDocQuery.create(config, data, function (err, record) {
+    subDocQuery.create(config, data, (err, record) => {
       if (err) {
         throw err
       }

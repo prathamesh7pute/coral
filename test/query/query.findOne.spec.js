@@ -1,32 +1,32 @@
 /**
  * Test dependencies.
  */
-var Query = require('../lib/query')
-var db = require('./helper/db')
-var should = require('should')
+const Query = require('../../lib/query')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('query findOne tests', function () {
-  var query
+describe('query findOne tests', () => {
+  let query
 
-  before(function (done) {
+  before((done) => {
     db.connect()
     query = new Query(db.getModel('User'))
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  it('findOne - must return exact available record when call with name identifier', function (done) {
+  it('findOne - must return exact available record when call with name identifier', (done) => {
     // unique identifier to find data
-    var config = {
+    const config = {
       conditions: {
         name: 'abc'
       }
     }
 
-    query.findOne(config, function (err, record) {
+    query.findOne(config, (err, record) => {
       if (err) {
         throw err
       }
@@ -35,16 +35,16 @@ describe('query findOne tests', function () {
     })
   })
 
-  it('findOne - must return available record when call with multiple identifier', function (done) {
+  it('findOne - must return available record when call with multiple identifier', (done) => {
     // unique identifier to find data
-    var config = {
+    const config = {
       conditions: {
         name: 'abc',
         age: 10
       }
     }
 
-    query.findOne(config, function (err, record) {
+    query.findOne(config, (err, record) => {
       if (err) {
         throw err
       }
@@ -53,16 +53,16 @@ describe('query findOne tests', function () {
     })
   })
 
-  it('findOne - must return exact record with only selected values when call with name identifier', function (done) {
+  it('findOne - must return exact record with only selected values when call with name identifier', (done) => {
     // unique identifier to find data
-    var config = {
+    const config = {
       conditions: {
         name: 'abc'
       },
       fields: 'name'
     }
 
-    query.findOne(config, function (err, record) {
+    query.findOne(config, (err, record) => {
       if (err) {
         throw err
       }
@@ -72,9 +72,9 @@ describe('query findOne tests', function () {
     })
   })
 
-  it('findOne - must return exact record with only selected values and populated articles', function (done) {
+  it('findOne - must return exact record with only selected values and populated articles', (done) => {
     // unique identifier to find data
-    var config = {
+    const config = {
       conditions: {
         name: 'abc'
       },
@@ -84,7 +84,7 @@ describe('query findOne tests', function () {
       }
     }
 
-    query.findOne(config, function (err, record) {
+    query.findOne(config, (err, record) => {
       if (err) {
         throw err
       }

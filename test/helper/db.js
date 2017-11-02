@@ -12,6 +12,8 @@ var _ = require('underscore')
 var async = require('async')
 var testData = require('./data')
 
+mongoose.Promise = global.Promise
+
 module.exports = new DB()
 
 function DB () {

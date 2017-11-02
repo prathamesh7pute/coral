@@ -1,28 +1,28 @@
 /**
  * Test dependencies.
  */
-var SubDocQuery = require('../lib/subDocQuery')
-var db = require('./helper/db')
-var should = require('should')
+const SubDocQuery = require('../../lib/subDocQuery')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('subDocQuery update tests', function () {
-  var subDocQuery
+describe('subDocQuery update tests', () => {
+  let subDocQuery
 
-  before(function () {
+  before(() => {
     db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.initialise(done)
   })
 
-  it('update subDoc - must update record with chnaged value', function (done) {
-    var config = {
+  it('update subDoc - must update record with chnaged value', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -34,11 +34,11 @@ describe('subDocQuery update tests', function () {
       }
     }
 
-    var data = {
+    const data = {
       'body': 'Article One Second Comment - modified'
     }
 
-    subDocQuery.findOneAndUpdate(config, data, function (err, record) {
+    subDocQuery.findOneAndUpdate(config, data, (err, record) => {
       if (err) {
         throw err
       }
@@ -49,8 +49,8 @@ describe('subDocQuery update tests', function () {
     })
   })
 
-  it('update subDoc subDoc - must update record with chnaged value', function (done) {
-    var config = {
+  it('update subDoc subDoc - must update record with chnaged value', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -68,11 +68,11 @@ describe('subDocQuery update tests', function () {
       }
     }
 
-    var data = {
+    const data = {
       'body': 'Article One Second Comment Second Reply - modified'
     }
 
-    subDocQuery.findOneAndUpdate(config, data, function (err, record) {
+    subDocQuery.findOneAndUpdate(config, data, (err, record) => {
       if (err) {
         throw err
       }

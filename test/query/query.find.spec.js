@@ -1,31 +1,31 @@
 /**
  * Test dependencies.
  */
-var Query = require('../lib/query')
-var db = require('./helper/db')
-var should = require('should')
+const Query = require('../../lib/query')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('query find tests', function () {
-  var query
+describe('query find tests', () => {
+  let query
 
-  before(function () {
+  before(() => {
     db.connect()
     query = new Query(db.getModel('User'))
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.initialise(done)
   })
 
-  it('find - must return all available records', function (done) {
+  it('find - must return all available records', (done) => {
     // query config
-    var config = {}
+    const config = {}
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -34,9 +34,9 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all available records with sort and in descending order', function (done) {
+  it('find - must return all available records with sort and in descending order', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: '-name',
         skip: 0,
@@ -44,7 +44,7 @@ describe('query find tests', function () {
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -56,9 +56,9 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all available records with sort, in ascending order and limit of 2', function (done) {
+  it('find - must return all available records with sort, in ascending order and limit of 2', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: 'name',
         skip: 0,
@@ -66,7 +66,7 @@ describe('query find tests', function () {
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -77,9 +77,9 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all records with asc sort order with skip first record and limit of 2', function (done) {
+  it('find - must return all records with asc sort order with skip first record and limit of 2', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: 'name',
         skip: 2,
@@ -87,7 +87,7 @@ describe('query find tests', function () {
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -97,13 +97,13 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all available records with select of age only', function (done) {
+  it('find - must return all available records with select of age only', (done) => {
     // query config
-    var config = {
+    const config = {
       fields: '-name -_id -articles'
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -114,9 +114,9 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all records with sort, filters, skip and limit', function (done) {
+  it('find - must return all records with sort, filters, skip and limit', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: 'name',
         skip: 0,
@@ -132,7 +132,7 @@ describe('query find tests', function () {
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -141,9 +141,9 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return specific records available records with article populated', function (done) {
+  it('find - must return specific records available records with article populated', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: 'name',
         skip: 0,
@@ -152,7 +152,7 @@ describe('query find tests', function () {
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -163,16 +163,16 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return all records available records with article populated', function (done) {
+  it('find - must return all records available records with article populated', (done) => {
     // query config
-    var config = {
+    const config = {
       options: {
         sort: 'name',
         populate: [{path: 'articles location'}]
       }
     }
 
-    query.find(config, function (err, records) {
+    query.find(config, (err, records) => {
       if (err) {
         throw err
       }
@@ -183,17 +183,17 @@ describe('query find tests', function () {
     })
   })
 
-  it('find - must return zero records for empty collection', function (done) {
+  it('find - must return zero records for empty collection', (done) => {
     // find config on the query
-    var config = {}
+    const config = {}
 
     // remove all the records first
-    db.removeRecords(function (err, records) {
+    db.removeRecords((err, records) => {
       if (err) {
         throw err
       }
       // once removed all records call the find query now
-      query.find(config, function (err, records) {
+      query.find(config, (err, records) => {
         if (err) {
           throw err
         }

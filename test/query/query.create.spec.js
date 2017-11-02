@@ -1,26 +1,26 @@
 /**
  * Test dependencies.
  */
-var Query = require('../lib/query')
-var db = require('./helper/db')
-var should = require('should')
+const Query = require('../../lib/query')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('query create tests', function () {
-  var query
+describe('query create tests', () => {
+  let query
 
-  before(function (done) {
+  before((done) => {
     db.connect()
     query = new Query(db.getModel('User'))
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  it('create - must create proper records if pass array of records', function (done) {
+  it('create - must create proper records if pass array of records', (done) => {
     // data to insert
-    var records = [{
+    const records = [{
       name: 'ghi',
       age: 27
     }, {
@@ -29,7 +29,7 @@ describe('query create tests', function () {
     }]
 
     // invoke query create method
-    query.create({}, records, function (err, docs) {
+    query.create({data: records}, {}, (err, docs) => {
       if (err) {
         throw err
       }
@@ -41,15 +41,15 @@ describe('query create tests', function () {
     })
   })
 
-  it('create - must create proper records if pass object', function (done) {
+  it('create - must create proper records if pass object', (done) => {
     // data to insert
-    var data = {
+    const data = {
       name: 'pqr',
       age: 27
     }
 
     // invoke query create method
-    query.create({}, data, function (err, record) {
+    query.create({}, data, (err, record) => {
       if (err) {
         throw err
       }
@@ -59,12 +59,12 @@ describe('query create tests', function () {
     })
   })
 
-  it('create - records should not exists if pass blank array', function (done) {
+  it('create - records should not exists if pass blank array', (done) => {
     // data to insert
-    var data = []
+    const data = []
 
     // invoke query create method
-    query.create({}, data, function (err, records) {
+    query.create({}, data, (err, records) => {
       if (err) {
         throw err
       }
@@ -73,12 +73,12 @@ describe('query create tests', function () {
     })
   })
 
-  it('create - must create blank record if pass blank object', function (done) {
+  it('create - must create blank record if pass blank object', (done) => {
     // data to insert
-    var data = {}
+    const data = {}
 
     // invoke query create method
-    query.create({}, data, function (err, record) {
+    query.create({}, data, (err, record) => {
       if (err) {
         throw err
       }
@@ -88,16 +88,16 @@ describe('query create tests', function () {
     })
   })
 
-  it('create - must throw error with improper email address', function (done) {
+  it('create - must throw error with improper email address', (done) => {
     // data to insert
-    var records = {
+    const records = {
       name: 'xyz',
       age: 27,
       email: 'xyz.com' // pass invalid email address
     }
 
     // invoke query create method
-    query.create({}, records, function (err, record) {
+    query.create({}, records, (err, record) => {
       err.errors.email.message.should.equal('Invalid email address')
       done()
     })

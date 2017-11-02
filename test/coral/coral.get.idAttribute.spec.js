@@ -1,29 +1,29 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var should = require('should')
-var express = require('express')
-var request = require('supertest')
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const should = require('should')
+const express = require('express')
+const request = require('supertest')
 
-describe('Coral get with idAttribute tests', function () {
-  before(function (done) {
+describe('Coral get with idAttribute tests', () => {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  describe('Coral get config', function () {
-    var app, config
+  describe('Coral get config', () => {
+    let app, config
 
-    before(function () {
+    before(() => {
       // config to pass router find method
       config = {
-        path: '/localhost/user',
+        path: '/api/user',
         model: db.getModel('User'),
         idAttribute: 'name',
         methods: ['GET']
@@ -34,19 +34,20 @@ describe('Coral get with idAttribute tests', function () {
       app.use(new Coral(config))
     })
 
-    it('get with idAttribute - must create proper get route and return exact record', function (done) {
+    it('get with idAttribute - must create proper get route and return exact record', (done) => {
       // invoke path with supertest
       request(app)
         .get(config.path + '/abc')
         .set('accept', 'application/json')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
+          console.log(err)
           res.body.name.should.equal('abc')
           done(err) // pass err so that fail expect errors will get caught
         })
     })
 
-    it('get with idAttribute - must create proper get route and return exact record with options', function (done) {
+    it('get with idAttribute - must create proper get route and return exact record with options', (done) => {
       // invoke path with supertest
       request(app)
         .get(config.path + '/abc')
@@ -55,7 +56,7 @@ describe('Coral get with idAttribute tests', function () {
           select: 'name'
         })
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.name.should.equal('abc')
           should.not.exists(res.body.age)
           done(err) // pass err so that fail expect errors will get caught
