@@ -1,60 +1,58 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var Query = require('../lib/query')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
-var bodyParser = require('body-parser')
-var app = express()
+const Coral = require('../../lib/coral')
+const Query = require('../../lib/query')
+const db = require('../helper/db')
+const express = require('express')
+const should = require('should')
+const request = require('supertest')
+const bodyParser = require('body-parser')
+const app = express()
 
-describe('Coral post updateRef tests', function () {
+describe('Coral put  updateRef tests', () => {
     // require to get req body parameters
   app.use(bodyParser.json())
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     db.disconnect(done)
   })
 
-  describe('update Ref - must add record the push article reference', function () {
-    var findOneUserId
+  describe('update Ref - must update record and should not push new article reference', () => {
+    let findOneUserId
 
         // use this to retrive the findOneUserId
-    beforeEach(function (done) {
-      var query = new Query(db.getModel('User'))
+    beforeEach((done) => {
+      const query = new Query(db.getModel('User'))
             // unique identifier to find data
-      var config = {
+      const config = {
         conditions: {
           name: 'abc',
           age: 10
-        },
-        options: {
-          populate: 'articles'
         }
       }
-      query.findOne(config, function (err, record) {
+      query.findOne(config, (err, record) => {
         if (err) {
           throw err
         }
         record.name.should.equal('abc')
-        record.articles.length.should.equal(1)
         findOneUserId = record._id
         done()
       })
     })
 
-    it('post - must create proper post route and updateReference ', function (done) {
+    it('put - must create proper post route and updateReference ', (done) => {
             // config to pass router find method
-      var config = {
+      const config = {
         path: '/localhost/article',
         model: db.getModel('Article'),
-        methods: ['POST'],
+        methods: ['PUT'],
+        idAttribute: 'name',
         updateRef: {
           model: db.getModel('User'),
           path: 'articles',
@@ -62,8 +60,8 @@ describe('Coral post updateRef tests', function () {
         }
       }
             // data to be pass into post request
-      var data = {
-        name: 'test article'
+      const data = {
+        name: 'test article 1'
       }
 
             // call router get with the config
@@ -71,21 +69,21 @@ describe('Coral post updateRef tests', function () {
 
             // invoke path with supertest
       request(app)
-                .post(config.path)
+                .put(config.path + '/article-two')
                 .set('accept', 'application/json')
                 .send(data)
                 .expect(200)
-                .end(function (err, res) {
-                  res.body.name.should.equal('test article')
+                .end((err, res) => {
+                  res.body.name.should.equal('test article 1')
                   done(err) // pass err so that fail expect errors will get caught
                 })
     })
 
         // verify that the article reference properly got inserted
-    afterEach(function (done) {
-      var query = new Query(db.getModel('User'))
+    afterEach((done) => {
+      const query = new Query(db.getModel('User'))
             // unique identifier to find data
-      var config = {
+      const config = {
         conditions: {
           '_id': findOneUserId
         },
@@ -94,47 +92,61 @@ describe('Coral post updateRef tests', function () {
         }
       }
 
-      query.findOne(config, function (err, record) {
+      query.findOne(config, (err, record) => {
         if (err) {
           throw err
         }
         record.name.should.equal('abc')
-        record.articles.length.should.equal(2)
-        record.articles[1].name.should.equal('test article')
+        record.articles.length.should.equal(1)
+        record.articles[0].name.should.equal('article-one')
         done()
       })
     })
   })
 
-  describe('update Ref - must add record the update location reference', function () {
-    var findOneUserId
+  describe('update Ref - must update record and should not update location reference', () => {
+    let findOneUserId
 
         // use this to retrive the findOneUserId
-    beforeEach(function (done) {
-      var query = new Query(db.getModel('User'))
+    beforeEach((done) => {
+      const query = new Query(db.getModel('User'))
+      const locationQuery = new Query(db.getModel('Location'))
             // unique identifier to find data
-      var config = {
+      const config = {
         conditions: {
           name: 'abc',
           age: 10
         }
       }
-      query.findOne(config, function (err, record) {
+      query.findOne(config, (err, record) => {
         if (err) {
           throw err
         }
         record.name.should.equal('abc')
         findOneUserId = record._id
-        done()
+
+                // data to insert
+        const data = {
+          streetOne: 'buckland'
+        }
+                // invoke query create method
+        locationQuery.create({}, data, (err, record) => {
+          if (err) {
+            throw err
+          }
+          record.streetOne.should.equal('buckland')
+          done()
+        })
       })
     })
 
-    it('post - must create proper post route and updateReference ', function (done) {
+    it('put - must create proper put route and and should not updateReference ', (done) => {
             // config to pass router find method
-      var config = {
+      const config = {
         path: '/localhost/location',
         model: db.getModel('Location'),
-        methods: ['POST'],
+        methods: ['PUT'],
+        idAttribute: 'streetOne',
         updateRef: {
           model: db.getModel('User'),
           path: 'location',
@@ -142,10 +154,8 @@ describe('Coral post updateRef tests', function () {
         }
       }
             // data to be pass into post request
-      var data = {
-        streetOne: '250 Main St',
-        city: 'Hartford',
-        state: 'CT'
+      const data = {
+        streetOne: '345 Buckland Hills Dr'
       }
 
             // call router get with the config
@@ -153,21 +163,21 @@ describe('Coral post updateRef tests', function () {
 
             // invoke path with supertest
       request(app)
-                .post(config.path)
+                .put(config.path + '/buckland')
                 .set('accept', 'application/json')
                 .send(data)
                 .expect(200)
-                .end(function (err, res) {
-                  res.body.streetOne.should.equal('250 Main St')
+                .end((err, res) => {
+                  res.body.streetOne.should.equal('345 Buckland Hills Dr')
                   done(err) // pass err so that fail expect errors will get caught
                 })
     })
 
         // verify that the article reference properly got inserted
-    afterEach(function (done) {
-      var query = new Query(db.getModel('User'))
+    afterEach((done) => {
+      const query = new Query(db.getModel('User'))
             // unique identifier to find data
-      var config = {
+      const config = {
         conditions: {
           '_id': findOneUserId
         },
@@ -176,12 +186,12 @@ describe('Coral post updateRef tests', function () {
         }
       }
 
-      query.findOne(config, function (err, record) {
+      query.findOne(config, (err, record) => {
         if (err) {
           throw err
         }
         record.name.should.equal('abc')
-        record.location.streetOne.should.equal('250 Main St')
+        should.not.exist(record.location)
         done()
       })
     })

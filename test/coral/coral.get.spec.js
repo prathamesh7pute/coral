@@ -1,28 +1,28 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
 
-describe('Coral get tests', function () {
-  before(function (done) {
+describe('Coral get tests', () => {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  describe('Coral get config', function () {
-    var app, config
+  describe('Coral get config', () => {
+    let app, config
 
-    before(function () {
+    before(() => {
       // config to pass router find method
       config = {
-        path: '/localhost/user',
+        path: '/api/user',
         model: db.getModel('User'),
         methods: ['GET']
       }
@@ -32,19 +32,19 @@ describe('Coral get tests', function () {
       app.use(new Coral(config))
     })
 
-    it('get - must create proper get route return all records if no queries provided', function (done) {
+    it('get - must create proper get route return all records if no queries provided', (done) => {
       // invoke path with supertest
       request(app)
         .get(config.path)
         .set('accept', 'application/json')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.length.should.equal(3)
           done(err) // pass err so that fail expect errors will get caught
         })
     })
 
-    it('get - must create proper get route return sorted records if sort query provided (ascending)', function (done) {
+    it('get - must create proper get route return sorted records if sort query provided (ascending)', (done) => {
       // invoke path with supertest
       request(app)
         .get(config.path)
@@ -54,7 +54,7 @@ describe('Coral get tests', function () {
           order: 'asc'
         })
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.length.should.equal(3)
           res.body[0].name.should.equal('abc')
           res.body[1].name.should.equal('def')
@@ -63,7 +63,7 @@ describe('Coral get tests', function () {
         })
     })
 
-    it('get - must create proper get route return sorted records if sort query provided (descending)', function (done) {
+    it('get - must create proper get route return sorted records if sort query provided (descending)', (done) => {
       // invoke path with supertest
       request(app)
         .get(config.path)
@@ -73,7 +73,7 @@ describe('Coral get tests', function () {
           order: 'desc'
         })
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.length.should.equal(3)
           res.body[0].name.should.equal('xyz')
           res.body[1].name.should.equal('def')

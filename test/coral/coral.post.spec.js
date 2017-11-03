@@ -1,36 +1,36 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
-var bodyParser = require('body-parser')
-var app = express()
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
+const bodyParser = require('body-parser')
+const app = express()
 
-describe('Coral post tests', function () {
+describe('Coral post tests', () => {
   // require to get req body parameters
   app.use(bodyParser.json())
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     db.disconnect(done)
   })
 
-  it('post - must create proper post route and return matching record', function (done) {
+  it('post - must create proper post route and return matching record', (done) => {
     // config to pass router find method
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       methods: ['POST']
     }
 
     // data to be pass into post request
-    var data = {
+    const data = {
       name: 'test',
       age: 40
     }
@@ -44,23 +44,23 @@ describe('Coral post tests', function () {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         res.body.name.should.equal('test')
         res.body.age.should.equal(40)
         done(err) // pass err so that fail expect errors will get caught
       })
   })
 
-  it('post - must return bad request if improper request is send', function (done) {
+  it('post - must return bad request if improper request is send', (done) => {
     // config to pass router find method
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       methods: ['POST']
     }
 
     // data to be pass into post request
-    var data = {
+    const data = {
       name: 'test',
       email: 'invalid-email-id',
       age: 40

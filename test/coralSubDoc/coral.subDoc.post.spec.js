@@ -1,29 +1,29 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
-var bodyParser = require('body-parser')
-var app = express()
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
+const bodyParser = require('body-parser')
+const app = express()
 
-xdescribe('Coral subDoc post tests', function () {
+describe('Coral subDoc post tests', () => {
   // require to get req body parameters
   app.use(bodyParser.json())
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  afterEach((done) => {
     db.disconnect(done)
   })
 
-  it('subDoc post - must create proper post route and return matching record', function (done) {
+  it('subDoc post - must create proper post route and return matching record', (done) => {
     // config to pass router find method
-    var config = {
+    const config = {
       path: '/localhost/articles/:name/comments',
       model: db.getModel('Article'),
       methods: ['POST'],
@@ -36,7 +36,7 @@ xdescribe('Coral subDoc post tests', function () {
     }
 
     // data to be pass into post request
-    var data = {
+    const data = {
       'name': 'comment-three',
       'body': 'Article One Third Comment',
       'replies': [{
@@ -54,15 +54,15 @@ xdescribe('Coral subDoc post tests', function () {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         res.body.name.should.equal('comment-three')
         done(err) // pass err so that fail expect errors will get caught
       })
   })
 
-  it('sub subDoc post - must create proper post route and return matching record', function (done) {
+  xit('sub subDoc post - must create proper post route and return matching record', (done) => {
     // config to pass router find method
-    var config = {
+    const config = {
       path: '/localhost/articles/:articleName/comments/:commentName/replies',
       model: db.getModel('Article'),
       methods: ['POST'],
@@ -80,7 +80,7 @@ xdescribe('Coral subDoc post tests', function () {
     }
 
     // data to be pass into post request
-    var data = {
+    const data = {
       'name': 'reply-three',
       'body': 'Article One Second Comment Third Reply'
     }
@@ -94,7 +94,7 @@ xdescribe('Coral subDoc post tests', function () {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         res.body.name.should.equal('reply-three')
         done(err) // pass err so that fail expect errors will get caught
       })

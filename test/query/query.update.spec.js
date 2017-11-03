@@ -1,37 +1,37 @@
 /**
  * Test dependencies.
  */
-var Query = require('../lib/query')
-var db = require('./helper/db')
+const Query = require('../../lib/query')
+const db = require('../helper/db')
 
-describe('query findOneAndUpdate tests', function () {
-  var query
+describe('query findOneAndUpdate tests', () => {
+  let query
 
-  before(function (done) {
+  before((done) => {
     db.connect()
     query = new Query(db.getModel('User'))
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  it('findOneAndUpdate - must update proper record', function (done) {
+  it('findOneAndUpdate - must update proper record', (done) => {
     // update data
-    var data = {
+    const data = {
       name: 'pqr'
     }
 
     // identifier to update the specific record
-    var config = {
+    const config = {
       conditions: {
         name: 'abc'
       }
     }
 
     // invoke findOne and update
-    query.findOneAndUpdate(config, data, function (err, record) {
+    query.findOneAndUpdate(config, data, (err, record) => {
       if (err) {
         throw err
       }

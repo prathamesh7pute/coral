@@ -1,28 +1,28 @@
 /**
  * Test dependencies.
  */
-var SubDocQuery = require('../lib/subDocQuery')
-var db = require('./helper/db')
-var should = require('should')
+const SubDocQuery = require('../../lib/subDocQuery')
+const db = require('../helper/db')
+const should = require('should')
 
-describe('subDocQuery remove tests', function () {
-  var subDocQuery
+describe('subDocQuery remove tests', () => {
+  let subDocQuery
 
-  before(function () {
+  before(() => {
     db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.initialise(done)
   })
 
-  it('remove subDoc - must remove specific record', function (done) {
-    var config = {
+  it('remove subDoc - must remove specific record', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -34,7 +34,7 @@ describe('subDocQuery remove tests', function () {
       }
     }
 
-    subDocQuery.findOneAndRemove(config, function (err) {
+    subDocQuery.findOneAndRemove(config, (err, doc) => {
       should.not.exist(err)
       if (!err) {
         done()
@@ -42,8 +42,8 @@ describe('subDocQuery remove tests', function () {
     })
   })
 
-  it('remove subDoc subDoc - must remove specific record', function (done) {
-    var config = {
+  it('remove subDoc subDoc - must remove specific record', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -61,7 +61,7 @@ describe('subDocQuery remove tests', function () {
       }
     }
 
-    subDocQuery.findOneAndRemove(config, function (err) {
+    subDocQuery.findOneAndRemove(config, (err) => {
       should.not.exist(err)
       if (!err) {
         done()

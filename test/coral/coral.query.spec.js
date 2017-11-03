@@ -1,28 +1,28 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var should = require('should')
-var request = require('supertest')
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const should = require('should')
+const request = require('supertest')
 
-describe('Coral query tests', function () {
-  var app
+describe('Coral query tests', () => {
+  let app
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.connect()
     app = express()
     db.initialise(done)
   })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     db.disconnect(done)
   })
 
-  it('coral query - must create proper routes and return results according to query provided', function (done) {
+  it('coral query - must create proper routes and return results according to query provided', (done) => {
     // config to pass
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       query: {
@@ -51,8 +51,8 @@ describe('Coral query tests', function () {
       .get(config.path)
       .set('accept', 'application/json')
       .expect(200)
-      .end(function (err, res) {
-        var records = res.body
+      .end((err, res) => {
+        const records = res.body
         records.length.should.equal(1)
         should.exist(records[0].name)
         should.exist(records[0].age)
@@ -61,9 +61,9 @@ describe('Coral query tests', function () {
       })
   })
 
-  it('coral query - must return sorted records with overrrided parameters from routes', function (done) {
+  it('coral query - must return sorted records with overrrided parameters from routes', (done) => {
     // config to pass
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       query: {
@@ -84,7 +84,7 @@ describe('Coral query tests', function () {
         sort: 'name'
       })
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         res.body.length.should.equal(3)
         res.body[0].name.should.equal('xyz')
         res.body[1].name.should.equal('def')

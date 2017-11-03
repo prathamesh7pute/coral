@@ -1,27 +1,27 @@
 /**
  * Test dependencies.
  */
-var SubDocQuery = require('../lib/subDocQuery')
-var db = require('./helper/db')
+const SubDocQuery = require('../../lib/subDocQuery')
+const db = require('../helper/db')
 
-describe('subDocQuery findOne tests', function () {
-  var subDocQuery
+describe('subDocQuery findOne tests', () => {
+  let subDocQuery
 
-  before(function () {
+  before(() => {
     db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     db.initialise(done)
   })
 
-  it('findOne subDoc - must return one specific available record', function (done) {
-    var config = {
+  it('findOne subDoc - must return one specific available record', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -33,7 +33,7 @@ describe('subDocQuery findOne tests', function () {
       }
     }
 
-    subDocQuery.findOne(config, function (err, record) {
+    subDocQuery.findOne(config, (err, record) => {
       if (err) {
         throw err
       }
@@ -43,8 +43,8 @@ describe('subDocQuery findOne tests', function () {
     })
   })
 
-  it('findOne subDoc subDoc - must return one specific available record', function (done) {
-    var config = {
+  it('findOne subDoc subDoc - must return one specific available record', (done) => {
+    const config = {
       conditions: {
         name: 'article-one'
       },
@@ -62,7 +62,7 @@ describe('subDocQuery findOne tests', function () {
       }
     }
 
-    subDocQuery.findOne(config, function (err, record) {
+    subDocQuery.findOne(config, (err, record) => {
       if (err) {
         throw err
       }

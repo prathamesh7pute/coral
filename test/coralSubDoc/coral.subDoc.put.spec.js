@@ -1,30 +1,33 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
+const bodyParser = require('body-parser')
 
-describe('Coral subDoc get tests', function () {
-  before(function (done) {
+describe('Coral subDoc put tests', () => {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  describe('Coral subDoc get config', function () {
-    var app, config
+  describe('Coral subDoc put config', () => {
+    let app, config
 
-    it('subDoc get - must create proper get route return all records if no queries provided', function (done) {
+    before(() => {})
+
+    it('subDoc put - must create proper put route', (done) => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments',
         model: db.getModel('Article'),
-        methods: ['GET'],
+        methods: ['PUT'],
         idAttribute: 'name',
         idParam: 'articleName',
         subDoc: {
@@ -33,27 +36,38 @@ describe('Coral subDoc get tests', function () {
         }
       }
 
+      // data to be pass into post request
+      const data = {
+        'body': 'Article One First Comment - modified'
+      }
+
       app = express()
+
+      // require to get req body parameters
+      app.use(bodyParser.json())
+
       // call router get with the config
       app.use(new Coral(config))
 
       // invoke path with supertest
       request(app)
-        .get('/localhost/articles/article-one/comments/comment-one')
+        .put('/localhost/articles/article-one/comments/comment-one')
         .set('accept', 'application/json')
+        .send(data)
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.name.should.equal('comment-one')
+          res.body.body.should.equal('Article One First Comment - modified')
           done(err) // pass err so that fail expect errors will get caught
         })
     })
 
-    it('subDoc get - must create proper get route return sorted records if sort query provided', function (done) {
+    it('subDoc put - must create proper put route to update records', (done) => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments/:commentName/replies',
         model: db.getModel('Article'),
-        methods: ['GET'],
+        methods: ['PUT'],
         idAttribute: 'name',
         idParam: 'articleName',
         subDoc: {
@@ -67,17 +81,28 @@ describe('Coral subDoc get tests', function () {
         }
       }
 
+      // data to be pass into post request
+      const data = {
+        'body': 'Article One First Comment First Reply - modified'
+      }
+
       app = express()
+
+      // require to get req body parameters
+      app.use(bodyParser.json())
+
       // call router get with the config
       app.use(new Coral(config))
 
       // invoke path with supertest
       request(app)
-        .get('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
+        .put('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
         .set('accept', 'application/json')
+        .send(data)
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.name.should.equal('reply-one')
+          res.body.body.should.equal('Article One First Comment First Reply - modified')
           done(err) // pass err so that fail expect errors will get caught
         })
     })

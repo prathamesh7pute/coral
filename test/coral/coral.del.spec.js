@@ -1,25 +1,25 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
-var app = express()
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
+const app = express()
 
-describe('Coral del tests', function () {
-  before(function (done) {
+describe('Coral del tests', () => {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  it('del - must create proper del route and remove matching record', function (done) {
+  it('del - must create proper del route and remove matching record', (done) => {
     // config for route
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       idAttribute: 'name',
@@ -34,7 +34,7 @@ describe('Coral del tests', function () {
       .del(config.path + '/abc')
       .set('accept', 'application/json')
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         done(err) // pass err so that fail expect errors will get caught
       })
   })
