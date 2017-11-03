@@ -1,27 +1,27 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
 
-describe('Coral subDoc query tests', function () {
-  before(function (done) {
+describe('Coral subDoc query tests', () => {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  describe('Coral subDoc query config', function () {
-    var app, config
+  describe('Coral subDoc query config', () => {
+    let app, config
 
-    before(function () {})
+    before(() => {})
 
-    it('subDoc query - must create proper get route return all records if no queries provided', function (done) {
+    it('subDoc query - must create proper get route return all records if no queries provided', (done) => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:name/comments',
@@ -43,13 +43,13 @@ describe('Coral subDoc query tests', function () {
         .get('/localhost/articles/article-one/comments')
         .set('accept', 'application/json')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.length.should.equal(2)
           done(err) // pass err so that fail expect errors will get caught
         })
     })
 
-    it('subDoc query - must create proper get route return sorted records if sort query provided', function (done) {
+    it('subDoc query - must create proper get route return sorted records if sort query provided', (done) => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments/:commentName/replies',
@@ -76,7 +76,7 @@ describe('Coral subDoc query tests', function () {
         .get('/localhost/articles/article-one/comments/comment-one/replies')
         .set('accept', 'application/json')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           res.body.length.should.equal(1)
           done(err) // pass err so that fail expect errors will get caught
         })

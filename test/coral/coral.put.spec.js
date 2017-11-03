@@ -1,29 +1,29 @@
 /**
  * Test dependencies.
  */
-var Coral = require('../lib/coral')
-var db = require('./helper/db')
-var express = require('express')
-var request = require('supertest')
-var bodyParser = require('body-parser')
-var app = express()
+const Coral = require('../../lib/coral')
+const db = require('../helper/db')
+const express = require('express')
+const request = require('supertest')
+const bodyParser = require('body-parser')
+const app = express()
 
-describe('Coral put tests', function () {
+describe('Coral put tests', () => {
   // require to get req body parameters
   app.use(bodyParser.json())
 
-  before(function (done) {
+  before((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after(function (done) {
+  after((done) => {
     db.disconnect(done)
   })
 
-  it('put - must create proper put route and update matching record', function (done) {
+  it('put - must create proper put route and update matching record', (done) => {
     // config for route
-    var config = {
+    const config = {
       path: '/localhost/user',
       model: db.getModel('User'),
       idAttribute: 'name',
@@ -31,7 +31,7 @@ describe('Coral put tests', function () {
     }
 
     // data to be pass to update data
-    var data = {
+    const data = {
       name: 'test',
       age: 40
     }
@@ -45,7 +45,7 @@ describe('Coral put tests', function () {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end(function (err, res) {
+      .end((err, res) => {
         res.body.name.should.equal('test')
         res.body.age.should.equal(40)
         done(err) // pass err so that fail expect errors will get caught
