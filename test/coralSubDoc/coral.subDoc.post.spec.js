@@ -12,12 +12,12 @@ describe('Coral subDoc post tests', () => {
   // require to get req body parameters
   app.use(bodyParser.json())
 
-  before((done) => {
+  beforeEach((done) => {
     db.connect()
     db.initialise(done)
   })
 
-  after((done) => {
+  afterEach((done) => {
     db.disconnect(done)
   })
 
