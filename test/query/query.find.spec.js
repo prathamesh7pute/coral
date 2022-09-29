@@ -168,7 +168,7 @@ describe('query find tests', () => {
     const config = {
       options: {
         sort: 'name',
-        populate: [{path: 'articles location'}]
+        populate: [{ path: 'articles location' }]
       }
     }
 

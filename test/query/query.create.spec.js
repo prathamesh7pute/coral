@@ -29,7 +29,7 @@ describe('query create tests', () => {
     }]
 
     // invoke query create method
-    query.create({data: records}, {}, (err, docs) => {
+    query.create({ data: records }, {}, (err, docs) => {
       if (err) {
         throw err
       }

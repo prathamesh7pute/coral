@@ -37,11 +37,11 @@ describe('Coral subDoc post tests', () => {
 
     // data to be pass into post request
     const data = {
-      'name': 'comment-three',
-      'body': 'Article One Third Comment',
-      'replies': [{
-        'name': 'reply-one',
-        'body': 'Article One Third Comment First Reply'
+      name: 'comment-three',
+      body: 'Article One Third Comment',
+      replies: [{
+        name: 'reply-one',
+        body: 'Article One Third Comment First Reply'
       }]
     }
 
@@ -81,8 +81,8 @@ describe('Coral subDoc post tests', () => {
 
     // data to be pass into post request
     const data = {
-      'name': 'reply-three',
-      'body': 'Article One Second Comment Third Reply'
+      name: 'reply-three',
+      body: 'Article One Second Comment Third Reply'
     }
 
     // call router get with the config

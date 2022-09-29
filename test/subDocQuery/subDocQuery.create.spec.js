@@ -32,11 +32,11 @@ describe('subDocQuery create tests', () => {
     }
 
     const data = {
-      'name': 'comment-three',
-      'body': 'Article One Third Comment',
-      'replies': [{
-        'name': 'reply-one',
-        'body': 'Article One Third Comment First Reply'
+      name: 'comment-three',
+      body: 'Article One Third Comment',
+      replies: [{
+        name: 'reply-one',
+        body: 'Article One Third Comment First Reply'
       }]
     }
 
@@ -67,8 +67,8 @@ describe('subDocQuery create tests', () => {
     }
 
     const data = {
-      'name': 'reply-three',
-      'body': 'Article One Second Comment Third Reply'
+      name: 'reply-three',
+      body: 'Article One Second Comment Third Reply'
     }
 
     subDocQuery.create(config, data, (err, record) => {

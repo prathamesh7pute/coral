@@ -71,9 +71,9 @@ describe('Coral post tests', () => {
 
     // invoke path with supertest
     request(app)
-        .post(config.path)
-        .set('accept', 'application/json')
-        .send(data)
-        .expect(400, done)
+      .post(config.path)
+      .set('accept', 'application/json')
+      .send(data)
+      .expect(400, done)
   })
 })

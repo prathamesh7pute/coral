@@ -19,7 +19,7 @@ describe('Coral subDoc del tests', () => {
   let app, config
 
   it('subDoc del - must create proper del route and delete records', (done) => {
-      // config to pass router find method
+    // config to pass router find method
     config = {
       path: '/localhost/articles/:articleName/comments',
       model: db.getModel('Article'),
@@ -33,20 +33,20 @@ describe('Coral subDoc del tests', () => {
     }
 
     app = express()
-      // call router get with the config
+    // call router get with the config
     app.use(new Coral(config))
 
-      // invoke path with supertest
+    // invoke path with supertest
     request(app)
-        .del('/localhost/articles/article-one/comments/comment-one')
-        .set('accept', 'application/json')
-        .end((err, res) => {
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      .del('/localhost/articles/article-one/comments/comment-one')
+      .set('accept', 'application/json')
+      .end((err, res) => {
+        done(err) // pass err so that fail expect errors will get caught
+      })
   })
 
   it('subDoc del - must create proper del route and delete records', (done) => {
-      // config to pass router find method
+    // config to pass router find method
     config = {
       path: '/localhost/articles/:articleName/comments/:commentName/replies',
       model: db.getModel('Article'),
@@ -65,15 +65,15 @@ describe('Coral subDoc del tests', () => {
     }
 
     app = express()
-      // call router get with the config
+    // call router get with the config
     app.use(new Coral(config))
 
-      // invoke path with supertest
+    // invoke path with supertest
     request(app)
-        .del('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
-        .set('accept', 'application/json')
-        .end((err, res) => {
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      .del('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
+      .set('accept', 'application/json')
+      .end((err, res) => {
+        done(err) // pass err so that fail expect errors will get caught
+      })
   })
 })

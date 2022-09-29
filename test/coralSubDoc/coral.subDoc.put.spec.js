@@ -38,7 +38,7 @@ describe('Coral subDoc put tests', () => {
 
       // data to be pass into post request
       const data = {
-        'body': 'Article One First Comment - modified'
+        body: 'Article One First Comment - modified'
       }
 
       app = express()
@@ -83,7 +83,7 @@ describe('Coral subDoc put tests', () => {
 
       // data to be pass into post request
       const data = {
-        'body': 'Article One First Comment First Reply - modified'
+        body: 'Article One First Comment First Reply - modified'
       }
 
       app = express()

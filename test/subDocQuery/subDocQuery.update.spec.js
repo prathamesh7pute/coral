@@ -35,7 +35,7 @@ describe('subDocQuery update tests', () => {
     }
 
     const data = {
-      'body': 'Article One Second Comment - modified'
+      body: 'Article One Second Comment - modified'
     }
 
     subDocQuery.findOneAndUpdate(config, data, (err, record) => {
@@ -69,7 +69,7 @@ describe('subDocQuery update tests', () => {
     }
 
     const data = {
-      'body': 'Article One Second Comment Second Reply - modified'
+      body: 'Article One Second Comment Second Reply - modified'
     }
 
     subDocQuery.findOneAndUpdate(config, data, (err, record) => {
