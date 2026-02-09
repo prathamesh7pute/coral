@@ -1,10 +1,8 @@
 Coral
 =====
 
-[![Build Status](https://secure.travis-ci.org/prathamesh7pute/coral.png?branch=master)](http://travis-ci.org/prathamesh7pute/coral)
+[![CI](https://github.com/prathamesh7pute/coral/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/prathamesh7pute/coral/actions/workflows/ci.yml)
 [![NPM version](https://badge.fury.io/js/coral.png)](http://badge.fury.io/js/coral)
-[![Dependency Status](https://david-dm.org/prathamesh7pute/coral.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral)
-[![devDependency Status](https://david-dm.org/prathamesh7pute/coral/dev-status.svg?theme=shields.io)](https://david-dm.org/prathamesh7pute/coral#info=devDependencies)
 
 Node.js framework to create REST API with express and mongoose models
 
@@ -126,3 +124,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
