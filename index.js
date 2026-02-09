@@ -1,1 +1,1 @@
-module.exports = require('./lib/coral')
+export { default } from './lib/coral.js'

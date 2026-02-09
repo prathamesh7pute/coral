@@ -1,11 +1,11 @@
 /**
  * Test dependencies.
  */
-const Coral = require('../../lib/coral')
-const Query = require('../../lib/query')
-const db = require('../helper/db')
-const express = require('express')
-const request = require('supertest')
+import Coral from '../../lib/coral.js'
+import Query from '../../lib/query.js'
+import db from '../helper/db.js'
+import express from 'express'
+import request from 'supertest'
 const app = express()
 
 describe('Coral post updateRef tests', () => {

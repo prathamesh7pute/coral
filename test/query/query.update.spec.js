@@ -1,8 +1,8 @@
 /**
  * Test dependencies.
  */
-const Query = require('../../lib/query')
-const db = require('../helper/db')
+import Query from '../../lib/query.js'
+import db from '../helper/db.js'
 
 describe('query findOneAndUpdate tests', () => {
   let query

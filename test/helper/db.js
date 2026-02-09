@@ -7,25 +7,24 @@
  * initialise with sample data
  */
 
-var mongoose = require('mongoose')
-var _ = require('underscore')
-var async = require('async')
-var testData = require('./data')
-var MongoMemoryServer
-try {
-  MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
-} catch (err) {
-  MongoMemoryServer = null
-}
+import mongoose from 'mongoose'
+import _ from 'underscore'
+import async from 'async'
+import testData from './data.json' with { type: 'json' }
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import buildModels from './models.js'
 
 mongoose.Promise = global.Promise
 
-module.exports = new DB()
+export default new DB()
 
 function DB () {
-  var connection, models, mongoServer, readyPromise
+  let connection
+  let models
+  let mongoServer
+  let readyPromise
 
-  var connect = function (done) {
+  const connect = function (done) {
     if (readyPromise) {
       if (done) {
         readyPromise.then(function () { done() }).catch(done)
@@ -35,22 +34,18 @@ function DB () {
 
     if (!connection) {
       connection = mongoose.createConnection()
-      models = require('./models')(mongoose, connection)
+      models = buildModels(mongoose, connection)
     }
 
     readyPromise = (async function () {
-      var uri = process.env.MONGO_URL
+      let uri = process.env.MONGO_URL
       if (!uri) {
-        if (!MongoMemoryServer) {
-          throw new Error('No MongoDB connection available. Set MONGO_URL or install mongodb-memory-server.')
-        }
         mongoServer = await MongoMemoryServer.create({
           instance: { ip: '127.0.0.1' }
         })
         uri = mongoServer.getUri()
       }
       await connection.openUri(uri, {})
-      // ensure indexes/collections are ready before tests run
       await connection.asPromise()
     })()
 
@@ -59,8 +54,8 @@ function DB () {
     }
   }
 
-  var disconnect = function (done) {
-    var finish = function () {
+  const disconnect = function (done) {
+    const finish = function () {
       if (mongoServer) {
         mongoServer.stop()
           .then(function () {
@@ -89,26 +84,26 @@ function DB () {
     }
   }
 
-  var getModel = function (modelName) {
+  const getModel = function (modelName) {
     if (!models) {
       throw new Error('Models not initialised; call connect() first.')
     }
-    var model = models[modelName]
+    const model = models[modelName]
     if (!model) {
       throw new Error('Model not initialised: ' + modelName)
     }
     return model
   }
 
-  var insertRecords = function (callback) {
-    var insertUsers = function (done) {
+  const insertRecords = function (callback) {
+    const insertUsers = function (done) {
       getModel('User').create(testData.users, function (err, users) {
         done(err, users)
       })
     }
 
-    var insertArticles = function (users, done) {
-      var articles = testData.articles
+    const insertArticles = function (users, done) {
+      const articles = testData.articles
 
       // article one
       articles[0].author = users[0]
@@ -148,10 +143,10 @@ function DB () {
     ], callback)
   }
 
-  var removeRecords = function (callback) {
+  const removeRecords = function (callback) {
     // iterator to remove docs for each model
-    var iterator = function (modelName, cb) {
-      var model = getModel(modelName)
+    const iterator = function (modelName, cb) {
+      const model = getModel(modelName)
       if (!model) return cb(new Error('Model not initialised: ' + modelName))
       model.deleteMany({}, cb)
     }
@@ -160,7 +155,7 @@ function DB () {
     async.each(_.keys(models), iterator, callback)
   }
 
-  var initialise = function (done) {
+  const initialise = function (done) {
     if (!readyPromise) {
       connect(function (err) {
         if (err) return done(err)

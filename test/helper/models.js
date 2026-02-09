@@ -1,28 +1,32 @@
-module.exports = models
+export default function buildModels (mongoose, connection) {
+  const Schema = mongoose.Schema
 
-function models (mongoose, connection) {
-  var Schema = mongoose.Schema
-
-  var UserSchema = new Schema({
+  const UserSchema = new Schema({
     name: String,
     age: Number,
     email: String,
-    location: {
-      type: Schema.Types.ObjectId,
-      ref: 'Location'
-    },
     articles: [{
       type: Schema.Types.ObjectId,
       ref: 'Article'
-    }]
+    }],
+    location: {
+      type: Schema.Types.ObjectId,
+      ref: 'Location'
+    }
   })
 
+  UserSchema.virtual('info').get(function () {
+    return this.name + ' is ' + this.age + ' years old'
+  })
+
+  UserSchema.set('toJSON', { virtuals: true })
+
   UserSchema.path('email').validate(function (email) {
-    var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
+    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
     return emailRegex.test(email)
   }, 'Invalid email address')
 
-  var LocationSchema = new Schema({
+  const LocationSchema = new Schema({
     streetOne: String,
     streetTwo: String,
     state: String,
@@ -34,7 +38,7 @@ function models (mongoose, connection) {
     }
   })
 
-  var ReplySchema = new Schema({
+  const ReplySchema = new Schema({
     name: String,
     user: {
       type: Schema.Types.ObjectId,
@@ -51,7 +55,7 @@ function models (mongoose, connection) {
     }
   })
 
-  var CommentSchema = new Schema({
+  const CommentSchema = new Schema({
     name: String,
     user: {
       type: Schema.Types.ObjectId,
@@ -69,7 +73,7 @@ function models (mongoose, connection) {
     }
   })
 
-  var ArticleSchema = new Schema({
+  const ArticleSchema = new Schema({
     name: String,
     title: String,
     body: String,

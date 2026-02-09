@@ -1,9 +1,9 @@
 /**
  * Test dependencies.
  */
-const SubDocQuery = require('../../lib/subDocQuery')
-const db = require('../helper/db')
-const should = require('should')
+import SubDocQuery from '../../lib/subDocQuery.js'
+import db from '../helper/db.js'
+import should from 'should'
 
 describe('subDocQuery update tests', () => {
   let subDocQuery
