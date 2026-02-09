@@ -7,12 +7,11 @@ const db = require('../helper/db')
 const express = require('express')
 const should = require('should')
 const request = require('supertest')
-const bodyParser = require('body-parser')
 const app = express()
 
 describe('Coral put  updateRef tests', () => {
   // require to get req body parameters
-  app.use(bodyParser.json())
+  app.use(express.json())
 
   beforeEach((done) => {
     db.connect()

@@ -11,26 +11,93 @@ var mongoose = require('mongoose')
 var _ = require('underscore')
 var async = require('async')
 var testData = require('./data')
+var MongoMemoryServer
+try {
+  MongoMemoryServer = require('mongodb-memory-server').MongoMemoryServer
+} catch (err) {
+  MongoMemoryServer = null
+}
 
 mongoose.Promise = global.Promise
 
 module.exports = new DB()
 
 function DB () {
-  var connection, models
+  var connection, models, mongoServer, readyPromise
 
-  var connect = function () {
-    connection = mongoose.createConnection(process.env.MONGO_URL || 'mongodb://localhost/coral_test', {})
-    // initialise models
-    models = require('./models')(mongoose, connection)
+  var connect = function (done) {
+    if (readyPromise) {
+      if (done) {
+        readyPromise.then(function () { done() }).catch(done)
+      }
+      return
+    }
+
+    if (!connection) {
+      connection = mongoose.createConnection()
+      models = require('./models')(mongoose, connection)
+    }
+
+    readyPromise = (async function () {
+      var uri = process.env.MONGO_URL
+      if (!uri) {
+        if (!MongoMemoryServer) {
+          throw new Error('No MongoDB connection available. Set MONGO_URL or install mongodb-memory-server.')
+        }
+        mongoServer = await MongoMemoryServer.create({
+          instance: { ip: '127.0.0.1' }
+        })
+        uri = mongoServer.getUri()
+      }
+      await connection.openUri(uri, {})
+      // ensure indexes/collections are ready before tests run
+      await connection.asPromise()
+    })()
+
+    if (done) {
+      readyPromise.then(function () { done() }).catch(done)
+    }
   }
 
   var disconnect = function (done) {
-    connection.close(done)
+    var finish = function () {
+      if (mongoServer) {
+        mongoServer.stop()
+          .then(function () {
+            mongoServer = null
+            readyPromise = null
+            connection = null
+            models = null
+            done()
+          })
+          .catch(done)
+      } else {
+        readyPromise = null
+        connection = null
+        models = null
+        done()
+      }
+    }
+
+    if (connection) {
+      connection.close(function (err) {
+        if (err) return done(err)
+        finish()
+      })
+    } else {
+      finish()
+    }
   }
 
   var getModel = function (modelName) {
-    return models[modelName]
+    if (!models) {
+      throw new Error('Models not initialised; call connect() first.')
+    }
+    var model = models[modelName]
+    if (!model) {
+      throw new Error('Model not initialised: ' + modelName)
+    }
+    return model
   }
 
   var insertRecords = function (callback) {
@@ -84,7 +151,9 @@ function DB () {
   var removeRecords = function (callback) {
     // iterator to remove docs for each model
     var iterator = function (modelName, cb) {
-      getModel(modelName).remove(cb)
+      var model = getModel(modelName)
+      if (!model) return cb(new Error('Model not initialised: ' + modelName))
+      model.deleteMany({}, cb)
     }
 
     // onsert all records for model one by one
@@ -92,10 +161,23 @@ function DB () {
   }
 
   var initialise = function (done) {
-    async.series([
-      removeRecords,
-      insertRecords
-    ], done)
+    if (!readyPromise) {
+      connect(function (err) {
+        if (err) return done(err)
+        async.series([
+          removeRecords,
+          insertRecords
+        ], done)
+      })
+      return
+    }
+
+    readyPromise.then(function () {
+      async.series([
+        removeRecords,
+        insertRecords
+      ], done)
+    }).catch(done)
   }
 
   return {

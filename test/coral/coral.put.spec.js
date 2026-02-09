@@ -5,12 +5,11 @@ const Coral = require('../../lib/coral')
 const db = require('../helper/db')
 const express = require('express')
 const request = require('supertest')
-const bodyParser = require('body-parser')
 const app = express()
 
 describe('Coral put tests', () => {
   // require to get req body parameters
-  app.use(bodyParser.json())
+  app.use(express.json())
 
   before((done) => {
     db.connect()
