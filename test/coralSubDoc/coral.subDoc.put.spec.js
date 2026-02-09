@@ -5,7 +5,6 @@ const Coral = require('../../lib/coral')
 const db = require('../helper/db')
 const express = require('express')
 const request = require('supertest')
-const bodyParser = require('body-parser')
 
 describe('Coral subDoc put tests', () => {
   before((done) => {
@@ -44,7 +43,7 @@ describe('Coral subDoc put tests', () => {
       app = express()
 
       // require to get req body parameters
-      app.use(bodyParser.json())
+      app.use(express.json())
 
       // call router get with the config
       app.use(new Coral(config))
@@ -89,7 +88,7 @@ describe('Coral subDoc put tests', () => {
       app = express()
 
       // require to get req body parameters
-      app.use(bodyParser.json())
+      app.use(express.json())
 
       // call router get with the config
       app.use(new Coral(config))
