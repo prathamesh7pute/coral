@@ -1,11 +1,11 @@
 /**
  * Test dependencies.
  */
-const Coral = require('../../lib/coral')
-const db = require('../helper/db')
-const should = require('should')
-const express = require('express')
-const request = require('supertest')
+import Coral from '../../lib/coral.js'
+import db from '../helper/db.js'
+import should from 'should'
+import express from 'express'
+import request from 'supertest'
 
 describe('Coral get with idAttribute tests', () => {
   before((done) => {

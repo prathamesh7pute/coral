@@ -7,6 +7,15 @@
     "email": "prathamesh.satpute@gmail.com"
   },
   "license": "MIT",
+  "type": "module",
+  "main": "./lib/coral.js",
+  "types": "./lib/coral.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/coral.d.ts",
+      "default": "./lib/coral.js"
+    }
+  },
   "keywords": [
     "rest",
     "mongoose",
@@ -14,8 +23,10 @@
     "node"
   ],
   "scripts": {
-    "lint": "XDG_CACHE_HOME=.cache standard ./lib/**/*.js ./test/**/*.spec.js",
-    "test": "istanbul cover _mocha ./test/**/*.spec.js",
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/**/*.ts test/**/*.js index.js",
+    "prepare": "npm run build",
+    "test": "npm run lint && npm run build && c8 mocha ./test/**/*.spec.js",
     "test:watch": "mocha --watch ./test/**/*.spec.js"
   },
   "engines": {
@@ -31,18 +42,19 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "istanbul": "^0.4.5",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.17.19",
+    "@types/underscore": "^1.11.15",
+    "c8": "^10.1.2",
+    "eslint": "^9.20.1",
+    "globals": "^15.15.0",
     "mongodb-memory-server": "^10.2.0",
     "mocha": "^10.0.0",
     "mongoose": "^6.6.2",
     "should": "^13.2.3",
-    "standard": "^17.0.0",
-    "supertest": "^6.2.4"
-  },
-  "standard": {
-    "envs": [
-      "node",
-      "mocha"
-    ]
+    "supertest": "^6.2.4",
+    "typescript": "^5.7.3"
   }
 }

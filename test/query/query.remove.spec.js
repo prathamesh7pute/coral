@@ -1,9 +1,9 @@
 /**
  * Test dependencies.
  */
-const Query = require('../../lib/query')
-const db = require('../helper/db')
-const should = require('should')
+import Query from '../../lib/query.js'
+import db from '../helper/db.js'
+import should from 'should'
 
 describe('query findOneAndRemove tests', () => {
   let query

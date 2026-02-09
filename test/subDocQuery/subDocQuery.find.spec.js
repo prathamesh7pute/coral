@@ -1,8 +1,8 @@
 /**
  * Test dependencies.
  */
-const SubDocQuery = require('../../lib/subDocQuery')
-const db = require('../helper/db')
+import SubDocQuery from '../../lib/subDocQuery.js'
+import db from '../helper/db.js'
 
 describe('subDocQuery find tests', () => {
   let subDocQuery
