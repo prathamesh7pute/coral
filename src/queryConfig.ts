@@ -1,4 +1,4 @@
-import _ from 'underscore'
+// import _ from 'underscore'
 // export QueryConfig
 export default QueryConfig
 
@@ -23,7 +23,7 @@ const callback = function (req: any, res: any, updateRef: any) {
   const updateDocReference = function (data: any) {
     let findOneId = updateRef.findOneId
 
-    if (_.isFunction(updateRef.findOneId)) {
+    if (typeof updateRef.findOneId === 'function') {
       findOneId = updateRef.findOneId(req, res)
     }
 
@@ -32,7 +32,7 @@ const callback = function (req: any, res: any, updateRef: any) {
         return res.status(400).json(err)
       }
 
-      if (_.isArray(doc[updateRef.path])) {
+      if (Array.isArray(doc[updateRef.path])) {
         doc[updateRef.path].push(data._id)
       } else {
         doc[updateRef.path] = data._id
@@ -62,7 +62,7 @@ const callback = function (req: any, res: any, updateRef: any) {
 }
 
 // returns the process object with the passed data for pagination and sorting
-function QueryConfig (req: any, res: any, config: any): QueryConfigResult {
+function QueryConfig(req: any, res: any, config: any): QueryConfigResult {
   const sort = req.query.sort
   const order = req.query.order
   const select = req.query.select
@@ -131,7 +131,7 @@ function QueryConfig (req: any, res: any, config: any): QueryConfigResult {
   }
 }
 
-function cloneSubDoc (subDoc?: SubDocConfig): SubDocConfig | undefined {
+function cloneSubDoc(subDoc?: SubDocConfig): SubDocConfig | undefined {
   if (!subDoc) return subDoc
   const cloned: SubDocConfig = Object.assign({}, subDoc)
   if (cloned.conditions) {

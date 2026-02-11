@@ -59,7 +59,7 @@ describe('Coral subDoc post tests', () => {
       })
   })
 
-  xit('sub subDoc post - must create proper post route and return matching record', (done) => {
+  it('sub subDoc post - must create proper post route and return matching record', (done) => {
     // config to pass router find method
     const config = {
       path: '/localhost/articles/:articleName/comments/:commentName/replies',

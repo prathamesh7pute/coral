@@ -8,8 +8,6 @@
  */
 
 import mongoose from 'mongoose'
-import _ from 'underscore'
-import async from 'async'
 import testData from './data.json' with { type: 'json' }
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import buildModels from './models.js'
@@ -18,7 +16,7 @@ mongoose.Promise = global.Promise
 
 export default new DB()
 
-function DB () {
+function DB() {
   let connection
   let models
   let mongoServer
@@ -95,83 +93,87 @@ function DB () {
     return model
   }
 
-  const insertRecords = function (callback) {
-    const insertUsers = function (done) {
-      getModel('User').create(testData.users, function (err, users) {
-        done(err, users)
-      })
-    }
+  const insertRecords = async function (callback) {
+    try {
+      const users = await getModel('User').create(testData.users)
 
-    const insertArticles = function (users, done) {
-      const articles = testData.articles
+      const articles = JSON.parse(JSON.stringify(testData.articles))
 
       // article one
-      articles[0].author = users[0]
-      articles[0].likes = [users[1], users[2]]
+      articles[0].author = users[0]._id
+      articles[0].likes = [users[1]._id, users[2]._id]
       // comment first
-      articles[0].comments[0].user = users[1]
-      articles[0].comments[0].likes = [users[0], users[2]]
-      articles[0].comments[0].replies[0].user = users[2]
-      articles[0].comments[0].replies[0].likes = [users[0], users[1]]
+      articles[0].comments[0].user = users[1]._id
+      articles[0].comments[0].likes = [users[0]._id, users[2]._id]
+      articles[0].comments[0].replies[0].user = users[2]._id
+      articles[0].comments[0].replies[0].likes = [users[0]._id, users[1]._id]
       // comment second
-      articles[0].comments[1].user = users[0]
-      articles[0].comments[1].likes = [users[1], users[2]]
-      articles[0].comments[1].replies[0].user = users[1]
-      articles[0].comments[1].replies[0].likes = [users[2], users[1]]
-      articles[0].comments[1].replies[1].user = users[0]
-      articles[0].comments[1].replies[1].likes = [users[0], users[2]]
+      articles[0].comments[1].user = users[0]._id
+      articles[0].comments[1].likes = [users[1]._id, users[2]._id]
+      articles[0].comments[1].replies[0].user = users[1]._id
+      articles[0].comments[1].replies[0].likes = [users[2]._id, users[1]._id]
+      articles[0].comments[1].replies[1].user = users[0]._id
+      articles[0].comments[1].replies[1].likes = [users[0]._id, users[2]._id]
 
       // article two
-      articles[1].author = users[1]
-      articles[1].likes = [users[1], users[2]]
-      articles[1].comments[0].user = users[2]
-      articles[1].comments[0].likes = [users[0], users[2]]
-      articles[1].comments[0].replies[0].user = users[0]
-      articles[1].comments[0].replies[0] = [users[0], users[1]]
+      articles[1].author = users[1]._id
+      articles[1].likes = [users[1]._id, users[2]._id]
+      articles[1].comments[0].user = users[2]._id
+      articles[1].comments[0].likes = [users[0]._id, users[2]._id]
+      articles[1].comments[0].replies[0].user = users[0]._id
+      articles[1].comments[0].replies[0].likes = [users[0]._id, users[1]._id] // Fixed assignment
 
-      getModel('Article').create(articles, function (err, article) {
-        if (!err) {
-          users[0].articles.push(article[0])
-          users[0].save(done)
-        }
-      })
+      const createdArticles = await getModel('Article').create(articles)
+
+      users[0].articles.push(createdArticles[0]._id)
+      await users[0].save()
+
+      if (callback) callback(null, createdArticles)
+      return createdArticles
+    } catch (err) {
+      if (callback) callback(err)
+      throw err
     }
-
-    async.waterfall([
-      insertUsers,
-      insertArticles
-    ], callback)
   }
 
-  const removeRecords = function (callback) {
-    // iterator to remove docs for each model
-    const iterator = function (modelName, cb) {
-      const model = getModel(modelName)
-      if (!model) return cb(new Error('Model not initialised: ' + modelName))
-      model.deleteMany({}, cb)
+  const removeRecords = async function (callback) {
+    try {
+      const modelNames = Object.keys(models)
+      await Promise.all(modelNames.map(async (modelName) => {
+        const model = getModel(modelName)
+        if (!model) throw new Error('Model not initialised: ' + modelName)
+        await model.deleteMany({})
+      }))
+      if (callback) callback(null)
+    } catch (err) {
+      if (callback) callback(err)
+      throw err
     }
-
-    // onsert all records for model one by one
-    async.each(_.keys(models), iterator, callback)
   }
 
   const initialise = function (done) {
     if (!readyPromise) {
-      connect(function (err) {
+      connect(async function (err) {
         if (err) return done(err)
-        async.series([
-          removeRecords,
-          insertRecords
-        ], done)
+        try {
+          await removeRecords()
+          await insertRecords()
+          done()
+        } catch (e) {
+          done(e)
+        }
       })
       return
     }
 
-    readyPromise.then(function () {
-      async.series([
-        removeRecords,
-        insertRecords
-      ], done)
+    readyPromise.then(async function () {
+      try {
+        await removeRecords()
+        await insertRecords()
+        done()
+      } catch (e) {
+        done(e)
+      }
     }).catch(done)
   }
 
