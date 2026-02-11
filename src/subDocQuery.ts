@@ -7,7 +7,7 @@
  * findOneAndUpdate -  update the one specific record
  * findOneAndRemove -  delete the one specific record
  */
-import _ from 'underscore'
+// import _ from 'underscore'
 
 type Callback = (err?: any, data?: any, parent?: any) => void
 
@@ -35,12 +35,12 @@ type QueryConfig = {
 class SubDocQuery {
   model: any
 
-  constructor (model: any) {
+  constructor(model: any) {
     this.model = model
   }
 
   // finds the parent doc and perform the
-  findSubDoc (config: QueryConfig, cb: Callback) {
+  findSubDoc(config: QueryConfig, cb: Callback) {
     this.model.findOne(config.conditions, config.fields, config.options, (err: any, doc: any) => {
       if (doc) {
         const parent = doc
@@ -48,7 +48,10 @@ class SubDocQuery {
         while (subDoc) {
           doc = doc[subDoc.path]
           if (subDoc.conditions) {
-            doc = _.findWhere(doc, subDoc.conditions)
+            // doc = _.findWhere(doc, subDoc.conditions)
+            doc = doc.find((d: any) => {
+              return Object.keys(subDoc.conditions).every(key => d[key] === subDoc.conditions[key])
+            })
           }
           subDoc = subDoc.subDoc
         }
@@ -60,19 +63,19 @@ class SubDocQuery {
   }
 
   // find all available records
-  find (config: QueryConfig, cb?: Callback) {
+  find(config: QueryConfig, cb?: Callback) {
     cb = config.callback || cb
     this.findSubDoc(config, cb as Callback)
   }
 
   // find one specific record
-  findOne (config: QueryConfig, cb?: Callback) {
+  findOne(config: QueryConfig, cb?: Callback) {
     cb = config.callback || cb
     this.findSubDoc(config, cb as Callback)
   }
 
   // creates the one specific record
-  create (config: QueryConfig, data?: any, cb?: Callback) {
+  create(config: QueryConfig, data?: any, cb?: Callback) {
     const callback = (err: any, children: any, parent: any) => {
       if (err) {
         if (cb) cb(err)
@@ -83,7 +86,7 @@ class SubDocQuery {
         children.push(data)
         parent.save((err: any, doc: any) => {
           if (doc) {
-            if (cb) cb(err, _.last(children))
+            if (cb) cb(err, children[children.length - 1])
           } else {
             if (cb) cb(err)
           }
@@ -94,7 +97,7 @@ class SubDocQuery {
   }
 
   // updates the one specific record
-  findOneAndUpdate (config: QueryConfig, data?: any, cb?: Callback) {
+  findOneAndUpdate(config: QueryConfig, data?: any, cb?: Callback) {
     const callback = (err: any, children: any, parent: any) => {
       if (err) {
         if (cb) cb(err)
@@ -116,7 +119,7 @@ class SubDocQuery {
   }
 
   // removes the one specific record
-  findOneAndRemove (config: QueryConfig, cb?: Callback) {
+  findOneAndRemove(config: QueryConfig, cb?: Callback) {
     const callback = (err: any, children: any, parent: any) => {
       if (err) {
         if (cb) cb(err)
