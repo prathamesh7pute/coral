@@ -7,22 +7,22 @@
  * initialise with sample data
  */
 
-import mongoose from 'mongoose'
+import mongoose, { type Connection } from 'mongoose'
 import testData from './data.json' with { type: 'json' }
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import buildModels from './models.js'
 
 mongoose.Promise = global.Promise
 
-export default new DB()
+export default DB()
 
 function DB() {
-  let connection
-  let models
-  let mongoServer
-  let readyPromise
+  let connection: Connection | null = null
+  let models: ReturnType<typeof buildModels> | null = null
+  let mongoServer: MongoMemoryServer | null = null
+  let readyPromise: Promise<void> | null = null
 
-  const connect = function (done) {
+  const connect = function (done?: (err?: unknown) => void) {
     if (readyPromise) {
       if (done) {
         readyPromise.then(function () { done() }).catch(done)
@@ -43,8 +43,10 @@ function DB() {
         })
         uri = mongoServer.getUri()
       }
-      await connection.openUri(uri, {})
-      await connection.asPromise()
+      if (connection) {
+        await connection.openUri(uri, {})
+        await connection.asPromise()
+      }
     })()
 
     if (done) {
@@ -52,7 +54,7 @@ function DB() {
     }
   }
 
-  const disconnect = function (done) {
+  const disconnect = function (done: (err?: unknown) => void) {
     const finish = function () {
       if (mongoServer) {
         mongoServer.stop()
@@ -82,7 +84,7 @@ function DB() {
     }
   }
 
-  const getModel = function (modelName) {
+  const getModel = function <T extends keyof ReturnType<typeof buildModels>>(modelName: T): ReturnType<typeof buildModels>[T] {
     if (!models) {
       throw new Error('Models not initialised; call connect() first.')
     }
@@ -90,14 +92,19 @@ function DB() {
     if (!model) {
       throw new Error('Model not initialised: ' + modelName)
     }
-    return model
+    return model as ReturnType<typeof buildModels>[T]
   }
 
-  const insertRecords = async function (callback) {
+  const insertRecords = async function (callback?: (err: unknown, result?: unknown) => void) {
     try {
-      const users = await getModel('User').create(testData.users)
+      const User = getModel('User')
+      const Article = getModel('Article')
 
-      const articles = JSON.parse(JSON.stringify(testData.articles))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const users: any = await User.create(testData.users)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const articles: any = JSON.parse(JSON.stringify(testData.articles))
 
       // article one
       articles[0].author = users[0]._id
@@ -121,9 +128,10 @@ function DB() {
       articles[1].comments[0].user = users[2]._id
       articles[1].comments[0].likes = [users[0]._id, users[2]._id]
       articles[1].comments[0].replies[0].user = users[0]._id
-      articles[1].comments[0].replies[0].likes = [users[0]._id, users[1]._id] // Fixed assignment
+      articles[1].comments[0].replies[0].likes = [users[0]._id, users[1]._id]
 
-      const createdArticles = await getModel('Article').create(articles)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const createdArticles: any = await Article.create(articles)
 
       users[0].articles.push(createdArticles[0]._id)
       await users[0].save()
@@ -136,14 +144,17 @@ function DB() {
     }
   }
 
-  const removeRecords = async function (callback) {
+  const removeRecords = async function (callback?: (err?: unknown) => void) {
     try {
-      const modelNames = Object.keys(models)
-      await Promise.all(modelNames.map(async (modelName) => {
-        const model = getModel(modelName)
-        if (!model) throw new Error('Model not initialised: ' + modelName)
-        await model.deleteMany({})
-      }))
+      if (models) {
+        const modelNames = Object.keys(models) as (keyof typeof models)[]
+        await Promise.all(modelNames.map(async (modelName) => {
+          const model = getModel(modelName)
+          if (!model) throw new Error('Model not initialised: ' + modelName)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await model.deleteMany({} as any)
+        }))
+      }
       if (callback) callback(null)
     } catch (err) {
       if (callback) callback(err)
@@ -151,7 +162,7 @@ function DB() {
     }
   }
 
-  const initialise = function (done) {
+  const initialise = function (done: (err?: unknown) => void) {
     if (!readyPromise) {
       connect(async function (err) {
         if (err) return done(err)

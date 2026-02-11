@@ -26,11 +26,11 @@ describe('Coral methods tests', () => {
         model: db.getModel('User')
       }
       app = express()
-      app.use(new Coral(config))
+      app.use(Coral(config))
     })
 
     // without idAttributes
-    it('get - must create proper get route', (done) => {
+    it('get - must create proper get route', () => {
       request(app)
         .get(config.path)
         .expect(200, done)
@@ -91,11 +91,11 @@ describe('Coral methods tests', () => {
         methods: ['GET', 'PUT']
       }
       app = express()
-      app.use(new Coral(config))
+      app.use(Coral(config))
     })
 
     // without idAttributes
-    it('get - must create proper get route', (done) => {
+    it('get - must create proper get route', () => {
       request(app)
         .get(config.path)
         .expect(200, done)
@@ -156,11 +156,11 @@ describe('Coral methods tests', () => {
         methods: ['POST', 'DELETE']
       }
       app = express()
-      app.use(new Coral(config))
+      app.use(Coral(config))
     })
 
     // without idAttributes
-    it('get - must create proper get route', (done) => {
+    it('get - must create proper get route', () => {
       request(app)
         .get(config.path)
         .expect(404, done)

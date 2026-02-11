@@ -1,4 +1,6 @@
-export default function buildModels (mongoose, connection) {
+import type { Mongoose, Connection } from 'mongoose'
+
+export default function buildModels(mongoose: Mongoose, connection: Connection) {
   const Schema = mongoose.Schema
 
   const UserSchema = new Schema({
@@ -21,7 +23,7 @@ export default function buildModels (mongoose, connection) {
 
   UserSchema.set('toJSON', { virtuals: true })
 
-  UserSchema.path('email').validate(function (email) {
+  UserSchema.path('email').validate(function (email: string) {
     const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
     return emailRegex.test(email)
   }, 'Invalid email address')
@@ -101,3 +103,4 @@ export default function buildModels (mongoose, connection) {
     Location: connection.model('Location', LocationSchema)
   }
 }
+

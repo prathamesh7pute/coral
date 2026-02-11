@@ -23,7 +23,6 @@ const config = [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
-      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -32,21 +31,27 @@ const config = [
     }
   },
   {
-    files: ['test/**/*.js', 'index.js'],
+    files: ['test/**/*.ts'],
     languageOptions: {
-      parser: eslintParser,
-      sourceType: 'module',
-      ecmaVersion: 'latest',
+      parser: tsParser,
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 'latest'
+      },
       globals: {
         ...globals.node,
         ...globals.mocha
       }
     },
+    plugins: {
+      '@typescript-eslint': tseslint
+    },
     rules: {
-      'no-unused-vars': 'off',
+      ...tseslint.configs.recommended.rules,
       'no-useless-escape': 'off'
     }
   }
 ]
+
 
 export default config

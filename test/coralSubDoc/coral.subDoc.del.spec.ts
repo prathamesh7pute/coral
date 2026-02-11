@@ -34,13 +34,13 @@ describe('Coral subDoc del tests', () => {
 
     app = express()
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
     request(app)
       .del('/localhost/articles/article-one/comments/comment-one')
       .set('accept', 'application/json')
-      .end((err, res) => {
+      .end((err) => {
         done(err) // pass err so that fail expect errors will get caught
       })
   })
@@ -66,13 +66,13 @@ describe('Coral subDoc del tests', () => {
 
     app = express()
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
     request(app)
       .del('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
       .set('accept', 'application/json')
-      .end((err, res) => {
+      .end((err) => {
         done(err) // pass err so that fail expect errors will get caught
       })
   })

@@ -97,7 +97,7 @@ describe('query create tests', () => {
     }
 
     // invoke query create method
-    query.create({}, records, (err, record) => {
+    query.create({}, records, (err) => {
       err.errors.email.message.should.equal('Invalid email address')
       done()
     })
