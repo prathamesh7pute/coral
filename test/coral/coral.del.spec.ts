@@ -27,14 +27,14 @@ describe('Coral del tests', () => {
     }
 
     // call router put with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
     request(app)
       .del(config.path + '/abc')
       .set('accept', 'application/json')
       .expect(200)
-      .end((err, res) => {
+      .end((err) => {
         done(err) // pass err so that fail expect errors will get caught
       })
   })

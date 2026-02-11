@@ -34,7 +34,7 @@ describe('subDocQuery remove tests', () => {
       }
     }
 
-    subDocQuery.findOneAndRemove(config, (err, doc) => {
+    subDocQuery.findOneAndRemove(config, (err) => {
       should.not.exist(err)
       if (!err) {
         done()

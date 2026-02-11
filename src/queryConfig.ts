@@ -1,60 +1,80 @@
-// import _ from 'underscore'
-// export QueryConfig
-export default QueryConfig
+
+import type { Request, Response } from 'express'
 
 type SubDocConfig = {
   path: string
   idAttribute?: string
   idParam?: string
-  conditions?: any
+  conditions?: Record<string, unknown>
+  subDoc?: SubDocConfig
+}
+
+type UpdateRefConfig = {
+  path: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  model: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  findOneId?: ((req: Request, res: Response) => any) | string
+}
+
+type QueryConfigType = {
+  perPage?: number
+  idParam?: string
+  idAttribute?: string
+  query?: {
+    conditions?: Record<string, unknown>
+    options?: Record<string, unknown>
+    fields?: string
+  }
+  updateRef?: UpdateRefConfig
   subDoc?: SubDocConfig
 }
 
 type QueryConfigResult = {
-  conditions: any
+  conditions: Record<string, unknown>
   subDoc?: SubDocConfig
-  fields: any
-  options: any
-  data: any
-  callback: (err?: any, data?: any) => void
+  fields: string
+  options: Record<string, unknown>
+  data: unknown
+  callback: (err?: unknown, data?: unknown) => void | Response
 }
 
-const callback = function (req: any, res: any, updateRef: any) {
-  const updateDocReference = function (data: any) {
-    let findOneId = updateRef.findOneId
-
-    if (typeof updateRef.findOneId === 'function') {
-      findOneId = updateRef.findOneId(req, res)
-    }
-
-    updateRef.model.findOne({ _id: findOneId }, function (err: any, doc: any) {
-      if (err) {
-        return res.status(400).json(err)
-      }
-
-      if (Array.isArray(doc[updateRef.path])) {
-        doc[updateRef.path].push(data._id)
-      } else {
-        doc[updateRef.path] = data._id
-      }
-
-      doc.save(function (saveErr: any) {
-        if (saveErr) {
-          return res.status(400).json(saveErr)
-        }
-
-        return res.json(data)
-      })
-    })
-  }
-
-  return function (err: any, data: any) {
+const callback = function (req: Request, res: Response, updateRef?: UpdateRefConfig) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function (err: unknown, data: any) {
     if (err) {
       return res.status(400).json(err)
     }
 
     if (data && updateRef && req.method === 'POST') {
-      updateDocReference(data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let findOneId: any = updateRef.findOneId
+
+      if (typeof updateRef.findOneId === 'function') {
+        findOneId = updateRef.findOneId(req, res)
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      updateRef.model.findOne({ _id: findOneId }, function (err: unknown, doc: any) {
+        if (err) {
+          return res.status(400).json(err)
+        }
+
+        if (Array.isArray(doc[updateRef.path])) {
+          doc[updateRef.path].push(data._id)
+        } else {
+          doc[updateRef.path] = data._id
+        }
+
+         
+        doc.save(function (saveErr: unknown) {
+          if (saveErr) {
+            return res.status(400).json(saveErr)
+          }
+
+          return res.json(data)
+        })
+      })
     } else {
       return res.json(data)
     }
@@ -62,13 +82,14 @@ const callback = function (req: any, res: any, updateRef: any) {
 }
 
 // returns the process object with the passed data for pagination and sorting
-function QueryConfig(req: any, res: any, config: any): QueryConfigResult {
-  const sort = req.query.sort
-  const order = req.query.order
-  const select = req.query.select
-  const skip = req.query.skip
-  const limit = req.query.limit
-  const page = req.query.page
+export default function QueryConfig(req: Request, res: Response, config: QueryConfigType): QueryConfigResult {
+  const sort = req.query.sort as string
+  const order = req.query.order as string
+  const select = req.query.select as string
+  const skip = req.query.skip ? parseInt(req.query.skip as string) : undefined
+  const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined
+  const page = req.query.page ? parseInt(req.query.page as string) : undefined
+
   const perPage = config.perPage || 10
   let idAttribute = config.idParam ? req.params[config.idParam] : req.params.idAttribute
   const query = config.query || {}
@@ -112,7 +133,9 @@ function QueryConfig(req: any, res: any, config: any): QueryConfigResult {
     idAttribute = subDoc.idParam ? req.params[subDoc.idParam] : req.params.idAttribute
     if (idAttribute) {
       subDoc.conditions = {}
-      subDoc.conditions[subDoc.idAttribute as string] = idAttribute
+      if (subDoc.idAttribute) {
+        subDoc.conditions[subDoc.idAttribute] = idAttribute
+      }
     }
     subDoc = subDoc.subDoc
   }
@@ -137,6 +160,8 @@ function cloneSubDoc(subDoc?: SubDocConfig): SubDocConfig | undefined {
   if (cloned.conditions) {
     cloned.conditions = Object.assign({}, cloned.conditions)
   }
-  cloned.subDoc = cloneSubDoc(subDoc.subDoc)
+  if (subDoc.subDoc) {
+    cloned.subDoc = cloneSubDoc(subDoc.subDoc)
+  }
   return cloned
 }

@@ -8,72 +8,80 @@
  * findOneAndRemove -  delete the one specific record
  */
 
-type Callback = (err?: any, data?: any) => void
+import { Model, Document } from 'mongoose'
+
+type QueryCallback = (err?: unknown, data?: unknown) => void
 
 type QueryConfig = {
-  conditions?: any
-  fields?: any
-  options?: any
-  data?: any
-  callback?: Callback
+  conditions?: Record<string, unknown>
+  fields?: string | Record<string, unknown>
+  options?: Record<string, unknown>
+  data?: unknown
+  callback?: QueryCallback
 }
 
 /*
  * @params Model - mongoose model
  * returns the utility methods
  */
-class Query {
-  model: any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+class Query<T extends Document = any> {
+  model: Model<T>
 
-  constructor (model: any) {
+  constructor(model: Model<T>) {
     this.model = model
   }
 
   // find all available records
-  find (config: QueryConfig, cb?: Callback) {
-    cb = config.callback || cb
-    this.model.find(config.conditions, config.fields, config.options, cb)
+  find(config: QueryConfig, cb?: QueryCallback) {
+    const callback = config.callback || cb
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model.find(config.conditions, config.fields, config.options, callback as any)
   }
 
   // find one specific record
-  findOne (config: QueryConfig, cb?: Callback) {
-    cb = config.callback || cb
-    this.model.findOne(config.conditions, config.fields, config.options, cb)
+  findOne(config: QueryConfig, cb?: QueryCallback) {
+    const callback = config.callback || cb
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model.findOne(config.conditions, config.fields, config.options, callback as any)
   }
 
   // creates the one specific record
-  create (config: QueryConfig, data?: any, cb?: Callback) {
-    data = config.data || data
-    cb = config.callback || cb
-    if (Array.isArray(data) && data.length === 0) {
-      if (cb) cb(null)
+  create(config: QueryConfig, data?: unknown, cb?: QueryCallback) {
+    const docData = config.data || data
+    const callback = config.callback || cb
+    if (Array.isArray(docData) && docData.length === 0) {
+      if (callback) callback(null)
       return
     }
-    this.model.create(data, cb)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model.create(docData as any, callback as any)
   }
 
   // updates the one specific record
-  findOneAndUpdate (config: QueryConfig, data?: any, cb?: Callback) {
-    data = config.data || data
-    cb = config.callback || cb
-    this.model.findOne(config.conditions, config.fields, config.options, (err: any, doc: any) => {
+  findOneAndUpdate(config: QueryConfig, data?: unknown, cb?: QueryCallback) {
+    const docData = config.data || data
+    const callback = config.callback || cb
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model.findOne(config.conditions, config.fields, config.options, (err: unknown, doc: any) => {
       if (doc) {
-        doc = Object.assign(doc, data)
-        doc.save(cb)
+        Object.assign(doc, docData)
+        doc.save(callback)
       } else {
-        if (cb) cb(err) // error or no docs
+        if (callback) callback(err) // error or no docs
       }
     })
   }
 
   // removes the one specific record
-  findOneAndRemove (config: QueryConfig, cb?: Callback) {
-    cb = config.callback || cb
-    this.model.findOne(config.conditions, config.fields, config.options, (err: any, doc: any) => {
+  findOneAndRemove(config: QueryConfig, cb?: QueryCallback) {
+    const callback = config.callback || cb
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model.findOne(config.conditions, config.fields, config.options, (err: unknown, doc: any) => {
       if (doc) {
-        doc.deleteOne(cb)
+        doc.deleteOne(callback)
       } else {
-        if (cb) cb(err) // error or no docs
+        if (callback) callback(err) // error or no docs
       }
     })
   }

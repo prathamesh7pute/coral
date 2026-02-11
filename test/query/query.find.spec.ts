@@ -188,7 +188,7 @@ describe('query find tests', () => {
     const config = {}
 
     // remove all the records first
-    db.removeRecords((err, records) => {
+    db.removeRecords((err) => {
       if (err) {
         throw err
       }
