@@ -3,8 +3,7 @@
  */
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { User } from '../helper/models.js'
 
 describe('query create tests', () => {
@@ -35,10 +34,10 @@ describe('query create tests', () => {
     if (!docs || !Array.isArray(docs)) {
       throw new Error('Expected created records array')
     }
-    docs[0].name.should.equal('ghi')
-    docs[0].age.should.equal(27)
-    docs[1].name.should.equal('pqr')
-    docs[1].age.should.equal(18)
+    expect(docs[0].name).toBe('ghi')
+    expect(docs[0].age).toBe(27)
+    expect(docs[1].name).toBe('pqr')
+    expect(docs[1].age).toBe(18)
   })
 
   it('create - must create proper records if pass object', async () => {
@@ -53,17 +52,17 @@ describe('query create tests', () => {
     if (!record || Array.isArray(record)) {
       throw new Error('Expected one created record')
     }
-    record.name.should.equal('pqr')
-    record.age.should.equal(27)
+    expect(record.name).toBe('pqr')
+    expect(record.age).toBe(27)
   })
 
   it('create - records should not exists if pass blank array', async () => {
     // data to insert
-    const data = []
+    const data: Record<string, unknown>[] = []
 
     // invoke query create method
     const records = await query.create({}, data)
-    should.not.exist(records)
+    expect(records).toBeUndefined()
   })
 
   it('create - must create blank record if pass blank object', async () => {
@@ -75,8 +74,8 @@ describe('query create tests', () => {
     if (!record || Array.isArray(record)) {
       throw new Error('Expected one created record')
     }
-    should.not.exist(record.name)
-    should.not.exist(record.age)
+    expect(record.name).toBeUndefined()
+    expect(record.age).toBeUndefined()
   })
 
   it('create - must throw error with improper email address', async () => {
@@ -96,6 +95,6 @@ describe('query create tests', () => {
     }
 
     const error = thrown as { errors: { email: { message: string } } }
-    error.errors.email.message.should.equal('Invalid email address')
+    expect(error.errors.email.message).toBe('Invalid email address')
   })
 })

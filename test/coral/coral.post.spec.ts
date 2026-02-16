@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { describe, it, beforeEach, afterEach } from 'vitest'
+import { describe, it, beforeEach, afterEach, expect } from 'vitest'
 const app = express()
 
 describe('Coral post tests', () => {
@@ -44,8 +44,8 @@ describe('Coral post tests', () => {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-    res.body.name.should.equal('test')
-    res.body.age.should.equal(40)
+    expect(res.body.name).toBe('test')
+    expect(res.body.age).toBe(40)
   })
 
   it('post - must return bad request if improper request is send', async () => {

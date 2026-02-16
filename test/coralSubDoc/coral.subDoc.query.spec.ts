@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral subDoc query tests', () => {
@@ -22,7 +22,7 @@ describe('Coral subDoc query tests', () => {
     let app: express.Express
     let config: CoralConfig
 
-    beforeAll(() => {})
+    beforeAll(() => { })
 
     it('subDoc query - must create proper get route return all records if no queries provided', async () => {
       // config to pass router find method
@@ -46,7 +46,7 @@ describe('Coral subDoc query tests', () => {
         .get('/localhost/articles/article-one/comments')
         .set('accept', 'application/json')
         .expect(200)
-      res.body.length.should.equal(2)
+      expect(res.body).toHaveLength(2)
     })
 
     it('subDoc query - must create proper get route return sorted records if sort query provided', async () => {
@@ -76,7 +76,7 @@ describe('Coral subDoc query tests', () => {
         .get('/localhost/articles/article-one/comments/comment-one/replies')
         .set('accept', 'application/json')
         .expect(200)
-      res.body.length.should.equal(1)
+      expect(res.body).toHaveLength(1)
     })
   })
 })

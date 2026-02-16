@@ -3,10 +3,11 @@
  */
 import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
-import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
+import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
+import type { Article } from '../helper/models.js'
 
 describe('subDocQuery find tests', () => {
-  let subDocQuery: SubDocQuery
+  let subDocQuery: SubDocQuery<Article>
 
   beforeAll(async () => {
     await db.connect()
@@ -32,7 +33,7 @@ describe('subDocQuery find tests', () => {
     }
 
     const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
-    records.length.should.equal(2)
+    expect(records).toHaveLength(2)
   })
 
   it('find subDoc subDoc - must return all available records', async () => {
@@ -52,6 +53,6 @@ describe('subDocQuery find tests', () => {
     }
 
     const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
-    records.length.should.equal(2)
+    expect(records).toHaveLength(2)
   })
 })

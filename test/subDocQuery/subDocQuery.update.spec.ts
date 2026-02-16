@@ -3,11 +3,11 @@
  */
 import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
+import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
+import type { Article } from '../helper/models.js'
 
 describe('subDocQuery update tests', () => {
-  let subDocQuery: SubDocQuery
+  let subDocQuery: SubDocQuery<Article>
 
   beforeAll(async () => {
     await db.connect()
@@ -40,9 +40,9 @@ describe('subDocQuery update tests', () => {
     }
 
     const record = await subDocQuery.findOneAndUpdate(config, data) as Record<string, unknown>
-    record.name.should.equal('comment-two')
-    record.body.should.equal('Article One Second Comment - modified')
-    should.exist(record._id)
+    expect(record.name).toBe('comment-two')
+    expect(record.body).toBe('Article One Second Comment - modified')
+    expect(record._id).toBeDefined()
   })
 
   it('update subDoc subDoc - must update record with chnaged value', async () => {
@@ -69,8 +69,8 @@ describe('subDocQuery update tests', () => {
     }
 
     const record = await subDocQuery.findOneAndUpdate(config, data) as Record<string, unknown>
-    record.name.should.equal('reply-two')
-    record.body.should.equal('Article One Second Comment Second Reply - modified')
-    should.exist(record._id)
+    expect(record.name).toBe('reply-two')
+    expect(record.body).toBe('Article One Second Comment Second Reply - modified')
+    expect(record._id).toBeDefined()
   })
 })

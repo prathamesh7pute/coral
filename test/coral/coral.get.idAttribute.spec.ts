@@ -3,10 +3,9 @@
  */
 import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
-import should from 'should'
 import express from 'express'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral get with idAttribute tests', () => {
@@ -43,7 +42,7 @@ describe('Coral get with idAttribute tests', () => {
         .get(config.path + '/abc')
         .set('accept', 'application/json')
         .expect(200)
-      res.body.name.should.equal('abc')
+      expect(res.body.name).toBe('abc')
     })
 
     it('get with idAttribute - must create proper get route and return exact record with options', async () => {
@@ -55,8 +54,8 @@ describe('Coral get with idAttribute tests', () => {
           select: 'name'
         })
         .expect(200)
-      res.body.name.should.equal('abc')
-      should.not.exists(res.body.age)
+      expect(res.body.name).toBe('abc')
+      expect(res.body.age).toBeUndefined()
     })
   })
 })

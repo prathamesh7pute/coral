@@ -3,7 +3,7 @@
  */
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { User } from '../helper/models.js'
 
 describe('query findOneAndUpdate tests', () => {
@@ -36,8 +36,7 @@ describe('query findOneAndUpdate tests', () => {
     const record = await query.findOneAndUpdate(config, data)
     if (!record) throw new Error('Expected one updated record')
     // name should get modify from abc to Ryan
-    record.name.should.equal('pqr')
-    // age should not chage
-    record.age.should.equal(10)
+    expect(record.name).toBe('pqr')
+    expect(record.age).toBe(10)
   })
 })

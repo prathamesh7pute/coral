@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral subDoc get tests', () => {
@@ -45,7 +45,7 @@ describe('Coral subDoc get tests', () => {
         .get('/localhost/articles/article-one/comments/comment-one')
         .set('accept', 'application/json')
         .expect(200)
-      res.body.name.should.equal('comment-one')
+      expect(res.body.name).toBe('comment-one')
     })
 
     it('subDoc get - must create proper get route return sorted records if sort query provided', async () => {
@@ -76,7 +76,7 @@ describe('Coral subDoc get tests', () => {
         .get('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
         .set('accept', 'application/json')
         .expect(200)
-      res.body.name.should.equal('reply-one')
+      expect(res.body.name).toBe('reply-one')
     })
   })
 })
