@@ -1,25 +1,26 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeAll, afterAll } from 'vitest'
 
 describe('Coral methods tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  describe('no methods - must create all required routes', (done) => {
+  describe('no methods - must create all required routes', () => {
     let config, app
 
-    before(() => {
+    beforeAll(() => {
       config = {
         path: '/localhost/user',
         idAttribute: 'name',
@@ -30,60 +31,60 @@ describe('Coral methods tests', () => {
     })
 
     // without idAttributes
-    it('get - must create proper get route', () => {
-      request(app)
+    it('get - must create proper get route', async () => {
+      await request(app)
         .get(config.path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('post - must create proper post route', (done) => {
-      request(app)
+    it('post - must create proper post route', async () => {
+      await request(app)
         .post(config.path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('put - must create proper put route', (done) => {
-      request(app)
+    it('put - must create proper put route', async () => {
+      await request(app)
         .put(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('del - must create proper del route', (done) => {
-      request(app)
+    it('del - must create proper del route', async () => {
+      await request(app)
         .del(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
     // with idAttributes
-    it('get - must create proper get route with idAttribute', (done) => {
-      request(app)
+    it('get - must create proper get route with idAttribute', async () => {
+      await request(app)
         .get(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('post - must create proper post route with idAttribute', (done) => {
-      request(app)
+    it('post - must create proper post route with idAttribute', async () => {
+      await request(app)
         .post(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('put - must create proper put route with idAttribute', (done) => {
-      request(app)
+    it('put - must create proper put route with idAttribute', async () => {
+      await request(app)
         .put(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('del - must create proper del route with idAttribute', (done) => {
-      request(app)
+    it('del - must create proper del route with idAttribute', async () => {
+      await request(app)
         .del(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
   })
 
-  describe('get, put - must create only get, put route', (done) => {
+  describe('get, put - must create only get, put route', () => {
     let config, app
 
-    before(() => {
+    beforeAll(() => {
       config = {
         path: '/localhost/user',
         idAttribute: 'name',
@@ -95,60 +96,60 @@ describe('Coral methods tests', () => {
     })
 
     // without idAttributes
-    it('get - must create proper get route', () => {
-      request(app)
+    it('get - must create proper get route', async () => {
+      await request(app)
         .get(config.path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('post - must create proper post route', (done) => {
-      request(app)
+    it('post - must create proper post route', async () => {
+      await request(app)
         .post(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('put - must create proper put route', (done) => {
-      request(app)
+    it('put - must create proper put route', async () => {
+      await request(app)
         .put(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('del - must create proper del route', (done) => {
-      request(app)
+    it('del - must create proper del route', async () => {
+      await request(app)
         .del(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
     // with idAttributes
-    it('get - must create proper get route with idAttribute', (done) => {
-      request(app)
+    it('get - must create proper get route with idAttribute', async () => {
+      await request(app)
         .get(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('post - must create proper post route with idAttribute', (done) => {
-      request(app)
+    it('post - must create proper post route with idAttribute', async () => {
+      await request(app)
         .post(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('put - must create proper put route with idAttribute', (done) => {
-      request(app)
+    it('put - must create proper put route with idAttribute', async () => {
+      await request(app)
         .put(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('del - must create proper del route with idAttribute', (done) => {
-      request(app)
+    it('del - must create proper del route with idAttribute', async () => {
+      await request(app)
         .del(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
   })
 
-  describe('post, delete - must create only post, delete route', (done) => {
+  describe('post, delete - must create only post, delete route', () => {
     let config, app
 
-    before(() => {
+    beforeAll(() => {
       config = {
         path: '/localhost/user',
         idAttribute: 'name',
@@ -160,53 +161,53 @@ describe('Coral methods tests', () => {
     })
 
     // without idAttributes
-    it('get - must create proper get route', () => {
-      request(app)
+    it('get - must create proper get route', async () => {
+      await request(app)
         .get(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('post - must create proper post route', (done) => {
-      request(app)
+    it('post - must create proper post route', async () => {
+      await request(app)
         .post(config.path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('put - must create proper put route', (done) => {
-      request(app)
+    it('put - must create proper put route', async () => {
+      await request(app)
         .put(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('del - must create proper del route', (done) => {
-      request(app)
+    it('del - must create proper del route', async () => {
+      await request(app)
         .del(config.path)
-        .expect(404, done)
+        .expect(404)
     })
 
     // with idAttributes
-    it('get - must create proper get route with idAttribute', (done) => {
-      request(app)
+    it('get - must create proper get route with idAttribute', async () => {
+      await request(app)
         .get(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('post - must create proper post route with idAttribute', (done) => {
-      request(app)
+    it('post - must create proper post route with idAttribute', async () => {
+      await request(app)
         .post(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('put - must create proper put route with idAttribute', (done) => {
-      request(app)
+    it('put - must create proper put route with idAttribute', async () => {
+      await request(app)
         .put(config.path + '/abc')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('del - must create proper del route with idAttribute', (done) => {
-      request(app)
+    it('del - must create proper del route with idAttribute', async () => {
+      await request(app)
         .del(config.path + '/abc')
-        .expect(200, done)
+        .expect(200)
     })
   })
 })

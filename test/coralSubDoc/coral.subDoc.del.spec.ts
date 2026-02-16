@@ -1,24 +1,25 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeEach, afterEach } from 'vitest'
 
 describe('Coral subDoc del tests', () => {
-  beforeEach((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  afterEach((done) => {
-    db.disconnect(done)
+  afterEach(async () => {
+    await db.disconnect()
   })
 
   let app, config
 
-  it('subDoc del - must create proper del route and delete records', (done) => {
+  it('subDoc del - must create proper del route and delete records', async () => {
     // config to pass router find method
     config = {
       path: '/localhost/articles/:articleName/comments',
@@ -37,15 +38,13 @@ describe('Coral subDoc del tests', () => {
     app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    await request(app)
       .del('/localhost/articles/article-one/comments/comment-one')
       .set('accept', 'application/json')
-      .end((err) => {
-        done(err) // pass err so that fail expect errors will get caught
-      })
+      .expect(200)
   })
 
-  it('subDoc del - must create proper del route and delete records', (done) => {
+  it('subDoc del - must create proper del route and delete records', async () => {
     // config to pass router find method
     config = {
       path: '/localhost/articles/:articleName/comments/:commentName/replies',
@@ -69,11 +68,9 @@ describe('Coral subDoc del tests', () => {
     app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    await request(app)
       .del('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
       .set('accept', 'application/json')
-      .end((err) => {
-        done(err) // pass err so that fail expect errors will get caught
-      })
+      .expect(200)
   })
 })

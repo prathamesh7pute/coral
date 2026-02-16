@@ -1,27 +1,28 @@
 /**
  * Test dependencies.
  */
-import SubDocQuery from '../../lib/subDocQuery.js'
+import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
 import should from 'should'
+import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
 
 describe('subDocQuery create tests', () => {
-  let subDocQuery
+  let subDocQuery: SubDocQuery
 
-  before(() => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  beforeEach((done) => {
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.initialise()
   })
 
-  it('create subDoc - must create record with data passed', (done) => {
+  it('create subDoc - must create record with data passed', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -40,17 +41,12 @@ describe('subDocQuery create tests', () => {
       }]
     }
 
-    subDocQuery.create(config, data, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('comment-three')
-      should.exist(record._id)
-      done()
-    })
+    const record = await subDocQuery.create(config, data) as Record<string, unknown>
+    record.name.should.equal('comment-three')
+    should.exist(record._id)
   })
 
-  it('create subDoc subDoc - must create record with data passed', (done) => {
+  it('create subDoc subDoc - must create record with data passed', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -71,13 +67,8 @@ describe('subDocQuery create tests', () => {
       body: 'Article One Second Comment Third Reply'
     }
 
-    subDocQuery.create(config, data, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('reply-three')
-      should.exist(record._id)
-      done()
-    })
+    const record = await subDocQuery.create(config, data) as Record<string, unknown>
+    record.name.should.equal('reply-three')
+    should.exist(record._id)
   })
 })

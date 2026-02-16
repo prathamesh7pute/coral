@@ -1,26 +1,27 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeAll, afterAll } from 'vitest'
 const app = express()
 
 describe('Coral put tests', () => {
   // require to get req body parameters
   app.use(express.json())
 
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  it('put - must create proper put route and update matching record', (done) => {
+  it('put - must create proper put route and update matching record', async () => {
     // config for route
     const config = {
       path: '/localhost/user',
@@ -36,18 +37,15 @@ describe('Coral put tests', () => {
     }
 
     // call router put with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    const res = await request(app)
       .put(config.path + '/abc')
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end((err, res) => {
-        res.body.name.should.equal('test')
-        res.body.age.should.equal(40)
-        done(err) // pass err so that fail expect errors will get caught
-      })
+    res.body.name.should.equal('test')
+    res.body.age.should.equal(40)
   })
 })

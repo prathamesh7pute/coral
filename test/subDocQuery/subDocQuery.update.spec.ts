@@ -1,27 +1,28 @@
 /**
  * Test dependencies.
  */
-import SubDocQuery from '../../lib/subDocQuery.js'
+import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
 import should from 'should'
+import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
 
 describe('subDocQuery update tests', () => {
-  let subDocQuery
+  let subDocQuery: SubDocQuery
 
-  before(() => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  beforeEach((done) => {
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.initialise()
   })
 
-  it('update subDoc - must update record with chnaged value', (done) => {
+  it('update subDoc - must update record with chnaged value', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -38,18 +39,13 @@ describe('subDocQuery update tests', () => {
       body: 'Article One Second Comment - modified'
     }
 
-    subDocQuery.findOneAndUpdate(config, data, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('comment-two')
-      record.body.should.equal('Article One Second Comment - modified')
-      should.exist(record._id)
-      done()
-    })
+    const record = await subDocQuery.findOneAndUpdate(config, data) as Record<string, unknown>
+    record.name.should.equal('comment-two')
+    record.body.should.equal('Article One Second Comment - modified')
+    should.exist(record._id)
   })
 
-  it('update subDoc subDoc - must update record with chnaged value', (done) => {
+  it('update subDoc subDoc - must update record with chnaged value', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -72,14 +68,9 @@ describe('subDocQuery update tests', () => {
       body: 'Article One Second Comment Second Reply - modified'
     }
 
-    subDocQuery.findOneAndUpdate(config, data, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('reply-two')
-      record.body.should.equal('Article One Second Comment Second Reply - modified')
-      should.exist(record._id)
-      done()
-    })
+    const record = await subDocQuery.findOneAndUpdate(config, data) as Record<string, unknown>
+    record.name.should.equal('reply-two')
+    record.body.should.equal('Article One Second Comment Second Reply - modified')
+    should.exist(record._id)
   })
 })

@@ -1,24 +1,26 @@
 /**
  * Test dependencies.
  */
-import Query from '../../lib/query.js'
+import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import should from 'should'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { Article, User } from '../helper/models.js'
 
 describe('query findOne tests', () => {
-  let query
+  let query: Query<User>
 
-  before((done) => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     query = new Query(db.getModel('User'))
-    db.initialise(done)
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  it('findOne - must return exact available record when call with name identifier', (done) => {
+  it('findOne - must return exact available record when call with name identifier', async () => {
     // unique identifier to find data
     const config = {
       conditions: {
@@ -26,16 +28,12 @@ describe('query findOne tests', () => {
       }
     }
 
-    query.findOne(config, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('abc')
-      done()
-    })
+    const record = await query.findOne(config)
+    if (!record) throw new Error('Expected one record')
+    record.name.should.equal('abc')
   })
 
-  it('findOne - must return available record when call with multiple identifier', (done) => {
+  it('findOne - must return available record when call with multiple identifier', async () => {
     // unique identifier to find data
     const config = {
       conditions: {
@@ -44,16 +42,12 @@ describe('query findOne tests', () => {
       }
     }
 
-    query.findOne(config, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('abc')
-      done()
-    })
+    const record = await query.findOne(config)
+    if (!record) throw new Error('Expected one record')
+    record.name.should.equal('abc')
   })
 
-  it('findOne - must return exact record with only selected values when call with name identifier', (done) => {
+  it('findOne - must return exact record with only selected values when call with name identifier', async () => {
     // unique identifier to find data
     const config = {
       conditions: {
@@ -62,17 +56,13 @@ describe('query findOne tests', () => {
       fields: 'name'
     }
 
-    query.findOne(config, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('abc')
-      should.not.exist(record.age)
-      done()
-    })
+    const record = await query.findOne(config)
+    if (!record) throw new Error('Expected one record')
+    record.name.should.equal('abc')
+    should.not.exist(record.age)
   })
 
-  it('findOne - must return exact record with only selected values and populated articles', (done) => {
+  it('findOne - must return exact record with only selected values and populated articles', async () => {
     // unique identifier to find data
     const config = {
       conditions: {
@@ -84,14 +74,10 @@ describe('query findOne tests', () => {
       }
     }
 
-    query.findOne(config, (err, record) => {
-      if (err) {
-        throw err
-      }
-      record.name.should.equal('abc')
-      record.articles[0].title.should.equal('Article One')
-      should.not.exist(record.age)
-      done()
-    })
+    const record = await query.findOne(config)
+    if (!record) throw new Error('Expected one record')
+    record.name.should.equal('abc')
+    ;(record.articles[0] as unknown as Article).title.should.equal('Article One')
+    should.not.exist(record.age)
   })
 })

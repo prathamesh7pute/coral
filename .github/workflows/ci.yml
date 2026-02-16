@@ -11,6 +11,10 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,5 +31,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Build
+        run: npm run build
+
       - name: Test
-        run: npm test
+        run: npm run test:coverage

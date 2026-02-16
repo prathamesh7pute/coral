@@ -1,26 +1,27 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeEach, afterEach } from 'vitest'
 const app = express()
 
 describe('Coral subDoc post tests', () => {
   // require to get req body parameters
   app.use(express.json())
 
-  beforeEach((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  afterEach((done) => {
-    db.disconnect(done)
+  afterEach(async () => {
+    await db.disconnect()
   })
 
-  it('subDoc post - must create proper post route and return matching record', (done) => {
+  it('subDoc post - must create proper post route and return matching record', async () => {
     // config to pass router find method
     const config = {
       path: '/localhost/articles/:name/comments',
@@ -45,21 +46,18 @@ describe('Coral subDoc post tests', () => {
     }
 
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    const res = await request(app)
       .post('/localhost/articles/article-one/comments')
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end((err, res) => {
-        res.body.name.should.equal('comment-three')
-        done(err) // pass err so that fail expect errors will get caught
-      })
+    res.body.name.should.equal('comment-three')
   })
 
-  it('sub subDoc post - must create proper post route and return matching record', (done) => {
+  it('sub subDoc post - must create proper post route and return matching record', async () => {
     // config to pass router find method
     const config = {
       path: '/localhost/articles/:articleName/comments/:commentName/replies',
@@ -85,17 +83,14 @@ describe('Coral subDoc post tests', () => {
     }
 
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    const res = await request(app)
       .post('/localhost/articles/article-one/comments/comment-one/replies')
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end((err, res) => {
-        res.body.name.should.equal('reply-three')
-        done(err) // pass err so that fail expect errors will get caught
-      })
+    res.body.name.should.equal('reply-three')
   })
 })

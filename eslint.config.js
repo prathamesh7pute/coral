@@ -2,7 +2,6 @@ import js from '@eslint/js'
 import tseslint from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import globals from 'globals'
-import * as eslintParser from 'espree'
 
 const config = [
   js.configs.recommended,
@@ -40,7 +39,7 @@ const config = [
       },
       globals: {
         ...globals.node,
-        ...globals.mocha
+        ...globals.vitest
       }
     },
     plugins: {

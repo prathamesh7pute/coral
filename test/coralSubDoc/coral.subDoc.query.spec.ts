@@ -1,27 +1,30 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral subDoc query tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
   describe('Coral subDoc query config', () => {
-    let app, config
+    let app: express.Express
+    let config: CoralConfig
 
-    before(() => {})
+    beforeAll(() => {})
 
-    it('subDoc query - must create proper get route return all records if no queries provided', (done) => {
+    it('subDoc query - must create proper get route return all records if no queries provided', async () => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:name/comments',
@@ -36,20 +39,17 @@ describe('Coral subDoc query tests', () => {
 
       app = express()
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get('/localhost/articles/article-one/comments')
         .set('accept', 'application/json')
         .expect(200)
-        .end((err, res) => {
-          res.body.length.should.equal(2)
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.length.should.equal(2)
     })
 
-    it('subDoc query - must create proper get route return sorted records if sort query provided', (done) => {
+    it('subDoc query - must create proper get route return sorted records if sort query provided', async () => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments/:commentName/replies',
@@ -69,17 +69,14 @@ describe('Coral subDoc query tests', () => {
 
       app = express()
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get('/localhost/articles/article-one/comments/comment-one/replies')
         .set('accept', 'application/json')
         .expect(200)
-        .end((err, res) => {
-          res.body.length.should.equal(1)
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.length.should.equal(1)
     })
   })
 })

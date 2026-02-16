@@ -1,23 +1,25 @@
 /**
  * Test dependencies.
  */
-import Query from '../../lib/query.js'
+import Query from '../../src/query.js'
 import db from '../helper/db.js'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { User } from '../helper/models.js'
 
 describe('query findOneAndUpdate tests', () => {
-  let query
+  let query: Query<User>
 
-  before((done) => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     query = new Query(db.getModel('User'))
-    db.initialise(done)
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  it('findOneAndUpdate - must update proper record', (done) => {
+  it('findOneAndUpdate - must update proper record', async () => {
     // update data
     const data = {
       name: 'pqr'
@@ -31,15 +33,11 @@ describe('query findOneAndUpdate tests', () => {
     }
 
     // invoke findOne and update
-    query.findOneAndUpdate(config, data, (err, record) => {
-      if (err) {
-        throw err
-      }
-      // name should get modify from abc to Ryan
-      record.name.should.equal('pqr')
-      // age should not chage
-      record.age.should.equal(10)
-      done()
-    })
+    const record = await query.findOneAndUpdate(config, data)
+    if (!record) throw new Error('Expected one updated record')
+    // name should get modify from abc to Ryan
+    record.name.should.equal('pqr')
+    // age should not chage
+    record.age.should.equal(10)
   })
 })

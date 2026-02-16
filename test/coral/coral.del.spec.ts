@@ -1,23 +1,24 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeAll, afterAll } from 'vitest'
 const app = express()
 
 describe('Coral del tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  it('del - must create proper del route and remove matching record', (done) => {
+  it('del - must create proper del route and remove matching record', async () => {
     // config for route
     const config = {
       path: '/localhost/user',
@@ -30,12 +31,9 @@ describe('Coral del tests', () => {
     app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    await request(app)
       .del(config.path + '/abc')
       .set('accept', 'application/json')
       .expect(200)
-      .end((err) => {
-        done(err) // pass err so that fail expect errors will get caught
-      })
   })
 })

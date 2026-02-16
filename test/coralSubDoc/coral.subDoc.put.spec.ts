@@ -1,27 +1,30 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral subDoc put tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
   describe('Coral subDoc put config', () => {
-    let app, config
+    let app: express.Express
+    let config: CoralConfig
 
-    before(() => {})
+    beforeAll(() => {})
 
-    it('subDoc put - must create proper put route', (done) => {
+    it('subDoc put - must create proper put route', async () => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments',
@@ -46,22 +49,19 @@ describe('Coral subDoc put tests', () => {
       app.use(express.json())
 
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .put('/localhost/articles/article-one/comments/comment-one')
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-        .end((err, res) => {
-          res.body.name.should.equal('comment-one')
-          res.body.body.should.equal('Article One First Comment - modified')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.name.should.equal('comment-one')
+      res.body.body.should.equal('Article One First Comment - modified')
     })
 
-    it('subDoc put - must create proper put route to update records', (done) => {
+    it('subDoc put - must create proper put route to update records', async () => {
       // config to pass router find method
       config = {
         path: '/localhost/articles/:articleName/comments/:commentName/replies',
@@ -91,19 +91,16 @@ describe('Coral subDoc put tests', () => {
       app.use(express.json())
 
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .put('/localhost/articles/article-one/comments/comment-one/replies/reply-one')
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-        .end((err, res) => {
-          res.body.name.should.equal('reply-one')
-          res.body.body.should.equal('Article One First Comment First Reply - modified')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.name.should.equal('reply-one')
+      res.body.body.should.equal('Article One First Comment First Reply - modified')
     })
   })
 })

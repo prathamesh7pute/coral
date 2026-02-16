@@ -1,40 +1,38 @@
 /**
  * Test dependencies.
  */
-import Query from '../../lib/query.js'
+import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import should from 'should'
+import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest'
+import type { Article, User } from '../helper/models.js'
 
 describe('query find tests', () => {
-  let query
+  let query: Query<User>
 
-  before(() => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     query = new Query(db.getModel('User'))
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  beforeEach((done) => {
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.initialise()
   })
 
-  it('find - must return all available records', (done) => {
+  it('find - must return all available records', async () => {
     // query config
     const config = {}
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(3)
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(3)
   })
 
-  it('find - must return all available records with sort and in descending order', (done) => {
+  it('find - must return all available records with sort and in descending order', async () => {
     // query config
     const config = {
       options: {
@@ -44,19 +42,15 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(3)
-      records[0].name.should.equal('xyz')
-      records[1].name.should.equal('def')
-      records[2].name.should.equal('abc')
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(3)
+    records[0].name.should.equal('xyz')
+    records[1].name.should.equal('def')
+    records[2].name.should.equal('abc')
   })
 
-  it('find - must return all available records with sort, in ascending order and limit of 2', (done) => {
+  it('find - must return all available records with sort, in ascending order and limit of 2', async () => {
     // query config
     const config = {
       options: {
@@ -66,18 +60,14 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(2)
-      records[0].name.should.equal('abc')
-      records[1].name.should.equal('def')
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(2)
+    records[0].name.should.equal('abc')
+    records[1].name.should.equal('def')
   })
 
-  it('find - must return all records with asc sort order with skip first record and limit of 2', (done) => {
+  it('find - must return all records with asc sort order with skip first record and limit of 2', async () => {
     // query config
     const config = {
       options: {
@@ -87,34 +77,26 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(1)
-      records[0].name.should.equal('xyz')
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(1)
+    records[0].name.should.equal('xyz')
   })
 
-  it('find - must return all available records with select of age only', (done) => {
+  it('find - must return all available records with select of age only', async () => {
     // query config
     const config = {
       fields: '-name -_id -articles'
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(3)
-      should.exist(records[0].age)
-      should.not.exist(records[0].names)
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(3)
+    should.exist(records[0].age)
+    should.not.exist((records[0] as unknown as Record<string, unknown>).names)
   })
 
-  it('find - must return all records with sort, filters, skip and limit', (done) => {
+  it('find - must return all records with sort, filters, skip and limit', async () => {
     // query config
     const config = {
       options: {
@@ -132,16 +114,12 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(1)
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(1)
   })
 
-  it('find - must return specific records available records with article populated', (done) => {
+  it('find - must return specific records available records with article populated', async () => {
     // query config
     const config = {
       options: {
@@ -152,18 +130,14 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(1)
-      records[0].name.should.equal('abc')
-      records[0].articles[0].title.should.equal('Article One')
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(1)
+    records[0].name.should.equal('abc')
+    ;(records[0].articles[0] as unknown as Article).title.should.equal('Article One')
   })
 
-  it('find - must return all records available records with article populated', (done) => {
+  it('find - must return all records available records with article populated', async () => {
     // query config
     const config = {
       options: {
@@ -172,34 +146,23 @@ describe('query find tests', () => {
       }
     }
 
-    query.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(3)
-      records[0].name.should.equal('abc')
-      records[0].articles[0].title.should.equal('Article One')
-      done()
-    })
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(3)
+    records[0].name.should.equal('abc')
+    ;(records[0].articles[0] as unknown as Article).title.should.equal('Article One')
   })
 
-  it('find - must return zero records for empty collection', (done) => {
+  it('find - must return zero records for empty collection', async () => {
     // find config on the query
     const config = {}
 
     // remove all the records first
-    db.removeRecords((err) => {
-      if (err) {
-        throw err
-      }
-      // once removed all records call the find query now
-      query.find(config, (err, records) => {
-        if (err) {
-          throw err
-        }
-        records.length.should.equal(0)
-        done()
-      })
-    })
+    await db.removeRecords()
+
+    // once removed all records call the find query now
+    const records = await query.find(config)
+    if (!records) throw new Error('Expected records')
+    records.length.should.equal(0)
   })
 })

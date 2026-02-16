@@ -1,32 +1,36 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
-import Query from '../../lib/query.js'
+import Coral from '../../src/coral.js'
+import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { afterEach, beforeEach, describe, it } from 'vitest'
+import type { Article, Location, User } from '../helper/models.js'
+import type { CoralConfig } from '../../src/models/coral.js'
+import type { Types } from 'mongoose'
 const app = express()
 
 describe('Coral post updateRef tests', () => {
   // require to get req body parameters
   app.use(express.json())
 
-  beforeEach((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  afterEach((done) => {
-    db.disconnect(done)
+  afterEach(async () => {
+    await db.disconnect()
   })
 
   describe('update Ref - must add record the push article reference', () => {
-    let findOneUserId
+    let findOneUserId: Types.ObjectId
 
     // use this to retrive the findOneUserId
-    beforeEach((done) => {
-      const query = new Query(db.getModel('User'))
+    beforeEach(async () => {
+      const query = new Query<User>(db.getModel('User'))
       // unique identifier to find data
       const config = {
         conditions: {
@@ -37,25 +41,21 @@ describe('Coral post updateRef tests', () => {
           populate: 'articles'
         }
       }
-      query.findOne(config, (err, record) => {
-        if (err) {
-          throw err
-        }
-        record.name.should.equal('abc')
-        record.articles.length.should.equal(1)
-        findOneUserId = record._id
-        done()
-      })
+      const record = await query.findOne(config)
+      if (!record) throw new Error('Expected user record')
+      record.name.should.equal('abc')
+      record.articles.length.should.equal(1)
+      findOneUserId = record._id
     })
 
-    it('post - must create proper post route and updateReference ', (done) => {
+    it('post - must create proper post route and updateReference ', async () => {
       // config to pass router find method
-      const config = {
+      const config: CoralConfig = {
         path: '/localhost/article',
-        model: db.getModel('Article'),
+        model: db.getModel('Article') as unknown as import('mongoose').Model<unknown>,
         methods: ['POST'],
         updateRef: {
-          model: db.getModel('User'),
+          model: db.getModel('User') as unknown as import('mongoose').Model<unknown>,
           path: 'articles',
           findOneId: findOneUserId
         }
@@ -66,23 +66,20 @@ describe('Coral post updateRef tests', () => {
       }
 
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .post(config.path)
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-        .end((err, res) => {
-          res.body.name.should.equal('test article')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.name.should.equal('test article')
     })
 
     // verify that the article reference properly got inserted
-    afterEach((done) => {
-      const query = new Query(db.getModel('User'))
+    afterEach(async () => {
+      const query = new Query<User>(db.getModel('User'))
       // unique identifier to find data
       const config = {
         conditions: {
@@ -93,24 +90,20 @@ describe('Coral post updateRef tests', () => {
         }
       }
 
-      query.findOne(config, (err, record) => {
-        if (err) {
-          throw err
-        }
-        record.name.should.equal('abc')
-        record.articles.length.should.equal(2)
-        record.articles[1].name.should.equal('test article')
-        done()
-      })
+      const record = await query.findOne(config)
+      if (!record) throw new Error('Expected user record')
+      record.name.should.equal('abc')
+      record.articles.length.should.equal(2)
+      ;(record.articles[1] as unknown as Article).name.should.equal('test article')
     })
   })
 
   describe('update Ref - must add record the update location reference', () => {
-    let findOneUserId
+    let findOneUserId: Types.ObjectId
 
     // use this to retrive the findOneUserId
-    beforeEach((done) => {
-      const query = new Query(db.getModel('User'))
+    beforeEach(async () => {
+      const query = new Query<User>(db.getModel('User'))
       // unique identifier to find data
       const config = {
         conditions: {
@@ -118,24 +111,20 @@ describe('Coral post updateRef tests', () => {
           age: 10
         }
       }
-      query.findOne(config, (err, record) => {
-        if (err) {
-          throw err
-        }
-        record.name.should.equal('abc')
-        findOneUserId = record._id
-        done()
-      })
+      const record = await query.findOne(config)
+      if (!record) throw new Error('Expected user record')
+      record.name.should.equal('abc')
+      findOneUserId = record._id
     })
 
-    it('post - must create proper post route and updateReference ', (done) => {
+    it('post - must create proper post route and updateReference ', async () => {
       // config to pass router find method
-      const config = {
+      const config: CoralConfig = {
         path: '/localhost/location',
-        model: db.getModel('Location'),
+        model: db.getModel('Location') as unknown as import('mongoose').Model<unknown>,
         methods: ['POST'],
         updateRef: {
-          model: db.getModel('User'),
+          model: db.getModel('User') as unknown as import('mongoose').Model<unknown>,
           path: 'location',
           findOneId: findOneUserId
         }
@@ -148,23 +137,20 @@ describe('Coral post updateRef tests', () => {
       }
 
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
 
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .post(config.path)
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-        .end((err, res) => {
-          res.body.streetOne.should.equal('250 Main St')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.streetOne.should.equal('250 Main St')
     })
 
     // verify that the article reference properly got inserted
-    afterEach((done) => {
-      const query = new Query(db.getModel('User'))
+    afterEach(async () => {
+      const query = new Query<User>(db.getModel('User'))
       // unique identifier to find data
       const config = {
         conditions: {
@@ -175,14 +161,10 @@ describe('Coral post updateRef tests', () => {
         }
       }
 
-      query.findOne(config, (err, record) => {
-        if (err) {
-          throw err
-        }
-        record.name.should.equal('abc')
-        record.location.streetOne.should.equal('250 Main St')
-        done()
-      })
+      const record = await query.findOne(config)
+      if (!record) throw new Error('Expected user record')
+      record.name.should.equal('abc')
+      ;(record.location as unknown as Location).streetOne.should.equal('250 Main St')
     })
   })
 })

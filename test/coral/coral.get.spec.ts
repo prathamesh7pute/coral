@@ -1,25 +1,28 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral get tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
   describe('Coral get config', () => {
-    let app, config
+    let app: express.Express
+    let config: CoralConfig
 
-    before(() => {
+    beforeAll(() => {
       // config to pass router find method
       config = {
         path: '/api/user',
@@ -29,24 +32,21 @@ describe('Coral get tests', () => {
 
       app = express()
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
     })
 
-    it('get - must create proper get route return all records if no queries provided', (done) => {
+    it('get - must create proper get route return all records if no queries provided', async () => {
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get(config.path)
         .set('accept', 'application/json')
         .expect(200)
-        .end((err, res) => {
-          res.body.length.should.equal(3)
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.length.should.equal(3)
     })
 
-    it('get - must create proper get route return sorted records if sort query provided (ascending)', (done) => {
+    it('get - must create proper get route return sorted records if sort query provided (ascending)', async () => {
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get(config.path)
         .set('accept', 'application/json')
         .query({
@@ -54,18 +54,15 @@ describe('Coral get tests', () => {
           order: 'asc'
         })
         .expect(200)
-        .end((err, res) => {
-          res.body.length.should.equal(3)
-          res.body[0].name.should.equal('abc')
-          res.body[1].name.should.equal('def')
-          res.body[2].name.should.equal('xyz')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.length.should.equal(3)
+      res.body[0].name.should.equal('abc')
+      res.body[1].name.should.equal('def')
+      res.body[2].name.should.equal('xyz')
     })
 
-    it('get - must create proper get route return sorted records if sort query provided (descending)', (done) => {
+    it('get - must create proper get route return sorted records if sort query provided (descending)', async () => {
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get(config.path)
         .set('accept', 'application/json')
         .query({
@@ -73,13 +70,10 @@ describe('Coral get tests', () => {
           order: 'desc'
         })
         .expect(200)
-        .end((err, res) => {
-          res.body.length.should.equal(3)
-          res.body[0].name.should.equal('xyz')
-          res.body[1].name.should.equal('def')
-          res.body[2].name.should.equal('abc')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.length.should.equal(3)
+      res.body[0].name.should.equal('xyz')
+      res.body[1].name.should.equal('def')
+      res.body[2].name.should.equal('abc')
     })
   })
 })
