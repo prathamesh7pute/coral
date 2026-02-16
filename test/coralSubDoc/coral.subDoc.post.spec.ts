@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { describe, it, beforeEach, afterEach } from 'vitest'
+import { describe, it, beforeEach, afterEach, expect } from 'vitest'
 const app = express()
 
 describe('Coral subDoc post tests', () => {
@@ -54,7 +54,7 @@ describe('Coral subDoc post tests', () => {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-    res.body.name.should.equal('comment-three')
+    expect(res.body.name).toBe('comment-three')
   })
 
   it('sub subDoc post - must create proper post route and return matching record', async () => {
@@ -91,6 +91,6 @@ describe('Coral subDoc post tests', () => {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-    res.body.name.should.equal('reply-three')
+    expect(res.body.name).toBe('reply-three')
   })
 })

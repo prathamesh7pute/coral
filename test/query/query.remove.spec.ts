@@ -3,8 +3,7 @@
  */
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { User } from '../helper/models.js'
 
 describe('query findOneAndRemove tests', () => {
@@ -30,6 +29,6 @@ describe('query findOneAndRemove tests', () => {
 
     // invoke findOne and remove
     const record = await query.findOneAndRemove(config)
-    should.exist(record)
+    expect(record).toBeDefined()
   })
 })

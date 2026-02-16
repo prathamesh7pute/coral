@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral subDoc put tests', () => {
@@ -22,7 +22,7 @@ describe('Coral subDoc put tests', () => {
     let app: express.Express
     let config: CoralConfig
 
-    beforeAll(() => {})
+    beforeAll(() => { })
 
     it('subDoc put - must create proper put route', async () => {
       // config to pass router find method
@@ -57,8 +57,8 @@ describe('Coral subDoc put tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.name.should.equal('comment-one')
-      res.body.body.should.equal('Article One First Comment - modified')
+      expect(res.body.name).toBe('comment-one')
+      expect(res.body.body).toBe('Article One First Comment - modified')
     })
 
     it('subDoc put - must create proper put route to update records', async () => {
@@ -99,8 +99,8 @@ describe('Coral subDoc put tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.name.should.equal('reply-one')
-      res.body.body.should.equal('Article One First Comment First Reply - modified')
+      expect(res.body.name).toBe('reply-one')
+      expect(res.body.body).toBe('Article One First Comment First Reply - modified')
     })
   })
 })

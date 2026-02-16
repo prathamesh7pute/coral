@@ -3,8 +3,7 @@
  */
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import type { Article, User } from '../helper/models.js'
 
 describe('query find tests', () => {
@@ -29,7 +28,7 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(3)
+    expect(records).toHaveLength(3)
   })
 
   it('find - must return all available records with sort and in descending order', async () => {
@@ -44,10 +43,10 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(3)
-    records[0].name.should.equal('xyz')
-    records[1].name.should.equal('def')
-    records[2].name.should.equal('abc')
+    expect(records).toHaveLength(3)
+    expect(records[0].name).toBe('xyz')
+    expect(records[1].name).toBe('def')
+    expect(records[2].name).toBe('abc')
   })
 
   it('find - must return all available records with sort, in ascending order and limit of 2', async () => {
@@ -62,9 +61,9 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(2)
-    records[0].name.should.equal('abc')
-    records[1].name.should.equal('def')
+    expect(records).toHaveLength(2)
+    expect(records[0].name).toBe('abc')
+    expect(records[1].name).toBe('def')
   })
 
   it('find - must return all records with asc sort order with skip first record and limit of 2', async () => {
@@ -79,8 +78,8 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(1)
-    records[0].name.should.equal('xyz')
+    expect(records).toHaveLength(1)
+    expect(records[0].name).toBe('xyz')
   })
 
   it('find - must return all available records with select of age only', async () => {
@@ -91,9 +90,9 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(3)
-    should.exist(records[0].age)
-    should.not.exist((records[0] as unknown as Record<string, unknown>).names)
+    expect(records).toHaveLength(3)
+    expect(records[0].age).toBeDefined()
+    expect((records[0] as unknown as Record<string, unknown>).names).toBeUndefined()
   })
 
   it('find - must return all records with sort, filters, skip and limit', async () => {
@@ -116,7 +115,7 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(1)
+    expect(records).toHaveLength(1)
   })
 
   it('find - must return specific records available records with article populated', async () => {
@@ -132,9 +131,9 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(1)
-    records[0].name.should.equal('abc')
-    ;(records[0].articles[0] as unknown as Article).title.should.equal('Article One')
+    expect(records).toHaveLength(1)
+    expect(records[0].name).toBe('abc')
+    expect((records[0].articles[0] as unknown as Article).title).toBe('Article One')
   })
 
   it('find - must return all records available records with article populated', async () => {
@@ -148,9 +147,9 @@ describe('query find tests', () => {
 
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(3)
-    records[0].name.should.equal('abc')
-    ;(records[0].articles[0] as unknown as Article).title.should.equal('Article One')
+    expect(records).toHaveLength(3)
+    expect(records[0].name).toBe('abc')
+    expect((records[0].articles[0] as unknown as Article).title).toBe('Article One')
   })
 
   it('find - must return zero records for empty collection', async () => {
@@ -163,6 +162,6 @@ describe('query find tests', () => {
     // once removed all records call the find query now
     const records = await query.find(config)
     if (!records) throw new Error('Expected records')
-    records.length.should.equal(0)
+    expect(records).toHaveLength(0)
   })
 })

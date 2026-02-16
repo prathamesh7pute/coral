@@ -3,10 +3,11 @@
  */
 import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
-import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
+import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
+import type { Article } from '../helper/models.js'
 
 describe('subDocQuery findOne tests', () => {
-  let subDocQuery: SubDocQuery
+  let subDocQuery: SubDocQuery<Article>
 
   beforeAll(async () => {
     await db.connect()
@@ -35,8 +36,8 @@ describe('subDocQuery findOne tests', () => {
     }
 
     const record = await subDocQuery.findOne(config) as Record<string, unknown>
-    record.name.should.equal('comment-one')
-    record.body.should.equal('Article One First Comment')
+    expect(record.name).toBe('comment-one')
+    expect(record.body).toBe('Article One First Comment')
   })
 
   it('findOne subDoc subDoc - must return one specific available record', async () => {
@@ -59,7 +60,7 @@ describe('subDocQuery findOne tests', () => {
     }
 
     const record = await subDocQuery.findOne(config) as Record<string, unknown>
-    record.name.should.equal('reply-two')
-    record.body.should.equal('Article One Second Comment Second Reply')
+    expect(record.name).toBe('reply-two')
+    expect(record.body).toBe('Article One Second Comment Second Reply')
   })
 })

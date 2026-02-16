@@ -1,1 +1,1 @@
-import 'should'
+export { }

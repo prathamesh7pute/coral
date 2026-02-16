@@ -86,7 +86,7 @@ class Query<TSchema = unknown> {
 
     return withCallback(callback, async () => {
       const created = await this.model.create(
-        docData as Partial<TSchema> | Array<Partial<TSchema>>
+        docData as any
       )
       return created as HydratedDocument<TSchema> | Array<HydratedDocument<TSchema>>
     })

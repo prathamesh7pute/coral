@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral get tests', () => {
@@ -41,7 +41,7 @@ describe('Coral get tests', () => {
         .get(config.path)
         .set('accept', 'application/json')
         .expect(200)
-      res.body.length.should.equal(3)
+      expect(res.body).toHaveLength(3)
     })
 
     it('get - must create proper get route return sorted records if sort query provided (ascending)', async () => {
@@ -54,10 +54,10 @@ describe('Coral get tests', () => {
           order: 'asc'
         })
         .expect(200)
-      res.body.length.should.equal(3)
-      res.body[0].name.should.equal('abc')
-      res.body[1].name.should.equal('def')
-      res.body[2].name.should.equal('xyz')
+      expect(res.body).toHaveLength(3)
+      expect(res.body[0].name).toBe('abc')
+      expect(res.body[1].name).toBe('def')
+      expect(res.body[2].name).toBe('xyz')
     })
 
     it('get - must create proper get route return sorted records if sort query provided (descending)', async () => {
@@ -70,10 +70,10 @@ describe('Coral get tests', () => {
           order: 'desc'
         })
         .expect(200)
-      res.body.length.should.equal(3)
-      res.body[0].name.should.equal('xyz')
-      res.body[1].name.should.equal('def')
-      res.body[2].name.should.equal('abc')
+      expect(res.body).toHaveLength(3)
+      expect(res.body[0].name).toBe('xyz')
+      expect(res.body[1].name).toBe('def')
+      expect(res.body[2].name).toBe('abc')
     })
   })
 })

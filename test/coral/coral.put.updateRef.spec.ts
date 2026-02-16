@@ -5,9 +5,8 @@ import Coral from '../../src/coral.js'
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import express from 'express'
-import should from 'should'
 import request from 'supertest'
-import { afterEach, beforeEach, describe, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { Article, Location, User } from '../helper/models.js'
 import type { CoralConfig } from '../../src/models/coral.js'
 import type { Types } from 'mongoose'
@@ -41,7 +40,7 @@ describe('Coral put  updateRef tests', () => {
       }
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
+      expect(record.name).toBe('abc')
       findOneUserId = record._id
     })
 
@@ -72,7 +71,7 @@ describe('Coral put  updateRef tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.name.should.equal('test article 1')
+      expect(res.body.name).toBe('test article 1')
     })
 
     // verify that the article reference properly got inserted
@@ -90,9 +89,9 @@ describe('Coral put  updateRef tests', () => {
 
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
-      record.articles.length.should.equal(1)
-      ;(record.articles[0] as unknown as Article).name.should.equal('article-one')
+      expect(record.name).toBe('abc')
+      expect(record.articles).toHaveLength(1)
+      expect((record.articles[0] as unknown as Article).name).toBe('article-one')
     })
   })
 
@@ -112,7 +111,7 @@ describe('Coral put  updateRef tests', () => {
       }
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
+      expect(record.name).toBe('abc')
       findOneUserId = record._id
 
       // data to insert
@@ -124,7 +123,7 @@ describe('Coral put  updateRef tests', () => {
       if (!createdLocation || Array.isArray(createdLocation)) {
         throw new Error('Expected one created location')
       }
-      createdLocation.streetOne.should.equal('buckland')
+      expect(createdLocation.streetOne).toBe('buckland')
     })
 
     it('put - must create proper put route and and should not updateReference ', async () => {
@@ -154,7 +153,7 @@ describe('Coral put  updateRef tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.streetOne.should.equal('345 Buckland Hills Dr')
+      expect(res.body.streetOne).toBe('345 Buckland Hills Dr')
     })
 
     // verify that the article reference properly got inserted
@@ -172,8 +171,8 @@ describe('Coral put  updateRef tests', () => {
 
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
-      should.not.exist(record.location)
+      expect(record.name).toBe('abc')
+      expect(record.location).toBeFalsy()
     })
   })
 })

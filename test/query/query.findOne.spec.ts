@@ -3,8 +3,7 @@
  */
 import Query from '../../src/query.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { afterAll, beforeAll, describe, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Article, User } from '../helper/models.js'
 
 describe('query findOne tests', () => {
@@ -30,7 +29,7 @@ describe('query findOne tests', () => {
 
     const record = await query.findOne(config)
     if (!record) throw new Error('Expected one record')
-    record.name.should.equal('abc')
+    expect(record.name).toBe('abc')
   })
 
   it('findOne - must return available record when call with multiple identifier', async () => {
@@ -44,7 +43,7 @@ describe('query findOne tests', () => {
 
     const record = await query.findOne(config)
     if (!record) throw new Error('Expected one record')
-    record.name.should.equal('abc')
+    expect(record.name).toBe('abc')
   })
 
   it('findOne - must return exact record with only selected values when call with name identifier', async () => {
@@ -58,8 +57,8 @@ describe('query findOne tests', () => {
 
     const record = await query.findOne(config)
     if (!record) throw new Error('Expected one record')
-    record.name.should.equal('abc')
-    should.not.exist(record.age)
+    expect(record.name).toBe('abc')
+    expect(record.age).toBeUndefined()
   })
 
   it('findOne - must return exact record with only selected values and populated articles', async () => {
@@ -76,8 +75,8 @@ describe('query findOne tests', () => {
 
     const record = await query.findOne(config)
     if (!record) throw new Error('Expected one record')
-    record.name.should.equal('abc')
-    ;(record.articles[0] as unknown as Article).title.should.equal('Article One')
-    should.not.exist(record.age)
+    expect(record.name).toBe('abc')
+    expect((record.articles[0] as unknown as Article).title).toBe('Article One')
+    expect(record.age).toBeUndefined()
   })
 })

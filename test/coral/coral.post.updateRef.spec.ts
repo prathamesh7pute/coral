@@ -6,7 +6,7 @@ import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { afterEach, beforeEach, describe, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { Article, Location, User } from '../helper/models.js'
 import type { CoralConfig } from '../../src/models/coral.js'
 import type { Types } from 'mongoose'
@@ -43,8 +43,8 @@ describe('Coral post updateRef tests', () => {
       }
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
-      record.articles.length.should.equal(1)
+      expect(record.name).toBe('abc')
+      expect(record.articles).toHaveLength(1)
       findOneUserId = record._id
     })
 
@@ -74,7 +74,7 @@ describe('Coral post updateRef tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.name.should.equal('test article')
+      expect(res.body.name).toBe('test article')
     })
 
     // verify that the article reference properly got inserted
@@ -92,9 +92,9 @@ describe('Coral post updateRef tests', () => {
 
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
-      record.articles.length.should.equal(2)
-      ;(record.articles[1] as unknown as Article).name.should.equal('test article')
+      expect(record.name).toBe('abc')
+      expect(record.articles).toHaveLength(2)
+      expect((record.articles[1] as unknown as Article).name).toBe('test article')
     })
   })
 
@@ -113,7 +113,7 @@ describe('Coral post updateRef tests', () => {
       }
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
+      expect(record.name).toBe('abc')
       findOneUserId = record._id
     })
 
@@ -145,7 +145,7 @@ describe('Coral post updateRef tests', () => {
         .set('accept', 'application/json')
         .send(data)
         .expect(200)
-      res.body.streetOne.should.equal('250 Main St')
+      expect(res.body.streetOne).toBe('250 Main St')
     })
 
     // verify that the article reference properly got inserted
@@ -163,8 +163,8 @@ describe('Coral post updateRef tests', () => {
 
       const record = await query.findOne(config)
       if (!record) throw new Error('Expected user record')
-      record.name.should.equal('abc')
-      ;(record.location as unknown as Location).streetOne.should.equal('250 Main St')
+      expect(record.name).toBe('abc')
+      expect((record.location as unknown as Location).streetOne).toBe('250 Main St')
     })
   })
 })

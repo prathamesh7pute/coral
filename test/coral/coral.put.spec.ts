@@ -5,7 +5,7 @@ import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
-import { describe, it, beforeAll, afterAll } from 'vitest'
+import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 const app = express()
 
 describe('Coral put tests', () => {
@@ -45,7 +45,7 @@ describe('Coral put tests', () => {
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-    res.body.name.should.equal('test')
-    res.body.age.should.equal(40)
+    expect(res.body.name).toBe('test')
+    expect(res.body.age).toBe(40)
   })
 })

@@ -4,12 +4,11 @@
 import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
-import should from 'should'
 import request from 'supertest'
-import { describe, it, beforeEach, afterEach } from 'vitest'
+import { describe, it, beforeEach, afterEach, expect } from 'vitest'
 
 describe('Coral query tests', () => {
-  let app
+  let app: express.Express
 
   beforeEach(async () => {
     await db.connect()
@@ -54,10 +53,10 @@ describe('Coral query tests', () => {
       .expect(200)
 
     const records = res.body
-    records.length.should.equal(1)
-    should.exist(records[0].name)
-    should.exist(records[0].age)
-    should.not.exist(records[0]._id)
+    expect(records).toHaveLength(1)
+    expect(records[0].name).toBeDefined()
+    expect(records[0].age).toBeDefined()
+    expect(records[0]._id).toBeUndefined()
   })
 
   it('coral query - must return sorted records with overrrided parameters from routes', async () => {
@@ -84,9 +83,9 @@ describe('Coral query tests', () => {
       })
       .expect(200)
 
-    res.body.length.should.equal(3)
-    res.body[0].name.should.equal('xyz')
-    res.body[1].name.should.equal('def')
-    res.body[2].name.should.equal('abc')
+    expect(res.body).toHaveLength(3)
+    expect(res.body[0].name).toBe('xyz')
+    expect(res.body[1].name).toBe('def')
+    expect(res.body[2].name).toBe('abc')
   })
 })

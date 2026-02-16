@@ -3,11 +3,11 @@
  */
 import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
-import should from 'should'
-import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
+import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
+import type { Article } from '../helper/models.js'
 
 describe('subDocQuery create tests', () => {
-  let subDocQuery: SubDocQuery
+  let subDocQuery: SubDocQuery<Article>
 
   beforeAll(async () => {
     await db.connect()
@@ -42,8 +42,8 @@ describe('subDocQuery create tests', () => {
     }
 
     const record = await subDocQuery.create(config, data) as Record<string, unknown>
-    record.name.should.equal('comment-three')
-    should.exist(record._id)
+    expect(record.name).toBe('comment-three')
+    expect(record._id).toBeDefined()
   })
 
   it('create subDoc subDoc - must create record with data passed', async () => {
@@ -68,7 +68,7 @@ describe('subDocQuery create tests', () => {
     }
 
     const record = await subDocQuery.create(config, data) as Record<string, unknown>
-    record.name.should.equal('reply-three')
-    should.exist(record._id)
+    expect(record.name).toBe('reply-three')
+    expect(record._id).toBeDefined()
   })
 })
