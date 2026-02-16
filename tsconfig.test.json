@@ -3,8 +3,13 @@
     "compilerOptions": {
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "rootDir": ".",
         "noEmit": true,
-        "allowJs": false
+        "allowJs": false,
+        "types": [
+            "node",
+            "vitest/globals"
+        ]
     },
     "include": [
         "src/**/*.ts",

@@ -1,26 +1,29 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import should from 'should'
 import express from 'express'
 import request from 'supertest'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { CoralConfig } from '../../src/models/coral.js'
 
 describe('Coral get with idAttribute tests', () => {
-  before((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeAll(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
   describe('Coral get config', () => {
-    let app, config
+    let app: express.Express
+    let config: CoralConfig
 
-    before(() => {
+    beforeAll(() => {
       // config to pass router find method
       config = {
         path: '/api/user',
@@ -31,36 +34,29 @@ describe('Coral get with idAttribute tests', () => {
 
       app = express()
       // call router get with the config
-      app.use(new Coral(config))
+      app.use(Coral(config))
     })
 
-    it('get with idAttribute - must create proper get route and return exact record', (done) => {
+    it('get with idAttribute - must create proper get route and return exact record', async () => {
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get(config.path + '/abc')
         .set('accept', 'application/json')
         .expect(200)
-        .end((err, res) => {
-          console.log(err)
-          res.body.name.should.equal('abc')
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.name.should.equal('abc')
     })
 
-    it('get with idAttribute - must create proper get route and return exact record with options', (done) => {
+    it('get with idAttribute - must create proper get route and return exact record with options', async () => {
       // invoke path with supertest
-      request(app)
+      const res = await request(app)
         .get(config.path + '/abc')
         .set('accept', 'application/json')
         .query({
           select: 'name'
         })
         .expect(200)
-        .end((err, res) => {
-          res.body.name.should.equal('abc')
-          should.not.exists(res.body.age)
-          done(err) // pass err so that fail expect errors will get caught
-        })
+      res.body.name.should.equal('abc')
+      should.not.exists(res.body.age)
     })
   })
 })

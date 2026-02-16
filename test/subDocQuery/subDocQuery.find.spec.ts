@@ -1,26 +1,27 @@
 /**
  * Test dependencies.
  */
-import SubDocQuery from '../../lib/subDocQuery.js'
+import SubDocQuery from '../../src/subDocQuery.js'
 import db from '../helper/db.js'
+import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
 
 describe('subDocQuery find tests', () => {
-  let subDocQuery
+  let subDocQuery: SubDocQuery
 
-  before(() => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     subDocQuery = new SubDocQuery(db.getModel('Article'))
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  beforeEach((done) => {
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.initialise()
   })
 
-  it('find subDoc - must return all available records', (done) => {
+  it('find subDoc - must return all available records', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -30,16 +31,11 @@ describe('subDocQuery find tests', () => {
       }
     }
 
-    subDocQuery.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(2)
-      done()
-    })
+    const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
+    records.length.should.equal(2)
   })
 
-  it('find subDoc subDoc - must return all available records', (done) => {
+  it('find subDoc subDoc - must return all available records', async () => {
     const config = {
       conditions: {
         name: 'article-one'
@@ -55,12 +51,7 @@ describe('subDocQuery find tests', () => {
       }
     }
 
-    subDocQuery.find(config, (err, records) => {
-      if (err) {
-        throw err
-      }
-      records.length.should.equal(2)
-      done()
-    })
+    const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
+    records.length.should.equal(2)
   })
 })

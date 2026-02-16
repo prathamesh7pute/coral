@@ -1,26 +1,27 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../lib/coral.js'
+import Coral from '../../src/coral.js'
 import db from '../helper/db.js'
 import express from 'express'
 import request from 'supertest'
+import { describe, it, beforeEach, afterEach } from 'vitest'
 const app = express()
 
 describe('Coral post tests', () => {
   // require to get req body parameters
   app.use(express.json())
 
-  beforeEach((done) => {
-    db.connect()
-    db.initialise(done)
+  beforeEach(async () => {
+    await db.connect()
+    await db.initialise()
   })
 
-  afterEach((done) => {
-    db.disconnect(done)
+  afterEach(async () => {
+    await db.disconnect()
   })
 
-  it('post - must create proper post route and return matching record', (done) => {
+  it('post - must create proper post route and return matching record', async () => {
     // config to pass router find method
     const config = {
       path: '/localhost/user',
@@ -35,22 +36,19 @@ describe('Coral post tests', () => {
     }
 
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    const res = await request(app)
       .post(config.path)
       .set('accept', 'application/json')
       .send(data)
       .expect(200)
-      .end((err, res) => {
-        res.body.name.should.equal('test')
-        res.body.age.should.equal(40)
-        done(err) // pass err so that fail expect errors will get caught
-      })
+    res.body.name.should.equal('test')
+    res.body.age.should.equal(40)
   })
 
-  it('post - must return bad request if improper request is send', (done) => {
+  it('post - must return bad request if improper request is send', async () => {
     // config to pass router find method
     const config = {
       path: '/localhost/user',
@@ -66,13 +64,13 @@ describe('Coral post tests', () => {
     }
 
     // call router get with the config
-    app.use(new Coral(config))
+    app.use(Coral(config))
 
     // invoke path with supertest
-    request(app)
+    await request(app)
       .post(config.path)
       .set('accept', 'application/json')
       .send(data)
-      .expect(400, done)
+      .expect(400)
   })
 })

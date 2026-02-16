@@ -1,24 +1,26 @@
 /**
  * Test dependencies.
  */
-import Query from '../../lib/query.js'
+import Query from '../../src/query.js'
 import db from '../helper/db.js'
 import should from 'should'
+import { afterAll, beforeAll, describe, it } from 'vitest'
+import type { User } from '../helper/models.js'
 
 describe('query findOneAndRemove tests', () => {
-  let query
+  let query: Query<User>
 
-  before((done) => {
-    db.connect()
+  beforeAll(async () => {
+    await db.connect()
     query = new Query(db.getModel('User'))
-    db.initialise(done)
+    await db.initialise()
   })
 
-  after((done) => {
-    db.disconnect(done)
+  afterAll(async () => {
+    await db.disconnect()
   })
 
-  it('findOneAndRemove - must remove proper record', (done) => {
+  it('findOneAndRemove - must remove proper record', async () => {
     // identifier to remove the specific record
     const config = {
       conditions: {
@@ -27,11 +29,7 @@ describe('query findOneAndRemove tests', () => {
     }
 
     // invoke findOne and remove
-    query.findOneAndRemove(config, (err) => {
-      should.not.exist(err)
-      if (!err) {
-        done()
-      }
-    })
+    const record = await query.findOneAndRemove(config)
+    should.exist(record)
   })
 })
