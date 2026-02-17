@@ -98,7 +98,8 @@ function createCallback(
       await doc.save()
       res.json(data)
     } catch (saveErr) {
-      res.status(400).json(saveErr)
+      console.error('Error saving reference document:', saveErr)
+      res.status(400).json({ message: 'Failed to update reference document' })
     }
   }
 }
