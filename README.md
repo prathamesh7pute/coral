@@ -1,127 +1,191 @@
-Coral
-=====
+# Coral 🪸
 
 [![CI](https://github.com/prathamesh7pute/coral/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/prathamesh7pute/coral/actions/workflows/ci.yml)
-[![NPM version](https://badge.fury.io/js/coral.png)](http://badge.fury.io/js/coral)
+[![NPM version](https://img.shields.io/npm/v/coral.svg)](https://www.npmjs.com/package/coral)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Node.js framework to create REST API with express and mongoose models
+**Coral** is a lightweight Node.js framework designed to dynamically generate RESTful API routes for Express applications using Mongoose models. It eliminates boilerplate code by automatically creating CRUD routes with built-in support for pagination, sorting, filtering, and nested sub-documents.
 
-## Table of Contents
+## Features
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
-- [License](#license)
+- ⚡ **Auto-generated CRUD**: Instantly create GET, POST, PUT, and DELETE routes.
+- 🔍 **Powerful Queries**: Built-in support for `skip`, `limit`, `sort`, and `order` via query parameters.
+- 📂 **Sub-document Support**: Easily manage nested Mongoose documents.
+- 🛡️ **Middleware Support**: Inject custom Express middlewares into your routes.
+- 🔗 **Reference Updates**: Automatically update references in related models (via `updateRef`).
+- 🛠️ **Configurable**: Fine-tune available methods, pagination limits, and more.
+
+---
 
 ## Installation
 
 ```bash
-# NPM
-npm install coral --save
+npm install coral
 ```
+
+---
 
 ## Usage
 
-**Creating Routes**
+### 🚀 Basic Example
 
-pass path and mongoose models as configuration to Coral to generate routes
+Creating a full REST API for a "Product" model:
 
-```js
-var app = express();
+```javascript
+import express from 'express';
+import mongoose from 'mongoose';
+import Coral from 'coral';
 
-//define mongoose schema
-var ProductSchema = new Schema({
-    name: String
+const app = express();
+app.use(express.json());
+
+// 1. Define Mongoose Schema & Model
+const ProductSchema = new mongoose.Schema({ name: String, price: Number });
+const Product = mongoose.model('Product', ProductSchema);
+
+// 2. Initialize Coral Router
+const productRouter = Coral({
+  path: '/products',
+  model: Product
 });
-//create the mongoose model
-var Product = mongoose.model('Product', ProductSchema);
 
-//Coral will return the express router with REST routes 
-var productRouter = new Coral({
-    path: '/product',
-    model:	Product
-});
-
-//use the Coral router in express app
+// 3. Use the generated router
 app.use(productRouter);
+
+app.listen(3000, () => console.log('Server running on port 3000'));
 ```
 
-Above Coral router will generate the following routes
+---
 
-	/product							-	get
-	/product/:id						-	get
-	/product							-	post
-	/product/:id						-	put
-	/product/:id						-	delete
+## Advanced Documentation
 
-## Configuration
+### 🛠️ Configuration API
 
+The `Coral` constructor takes a configuration object. Here are the available options with examples for each:
 
-Following get parameters are supported to get sorted data and pagination
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `path` | `string` | The base path for the routes. |
+| `model` | `Model` | The Mongoose model to bind to. |
+| `methods` | `string[]` | Allowed HTTP methods. Default: `['GET', 'POST', 'PUT', 'DELETE']`. |
+| `middlewares` | `RequestHandler[]` | Custom Express middlewares to run before handlers. |
+| `perPage` | `number` | Default records per page for pagination. |
+| `idAttribute` | `string` | Custom field used for finding records by ID. Default: `_id`. |
+| `subDoc` | `SubDocConfig` | Configuration for nested sub-documents. |
+| `updateRef` | `UpdateRefConfig`| Update a reference in a parent model on create. |
 
-	skip, limit, order, sort and page
+#### 1. Path & Model (`path`, `model`)
+Define the endpoint and the Mongoose model it interacts with.
+```javascript
+Coral({
+  path: '/api/v1/users',
+  model: User
+});
+```
 
-In the skip, limit or page by default per page 10 records are returned this can be change through perPage option 
+#### 2. Restrict HTTP Methods (`methods`)
+If you want to create a read-only endpoint:
+```javascript
+Coral({
+  path: '/products',
+  model: Product,
+  methods: ['GET'] // Only GET /products and GET /products/:id will be created
+});
+```
 
-	var productRoutes = new Coral({
-		path: '/product',
-		model:	Product,
-		perPage: 50
-	});
+#### 3. Custom Middlewares (`middlewares`)
+Secure your routes with authentication or add logging:
+```javascript
+const auth = (req, res, next) => {
+  if (req.headers.authorization === 'secret') return next();
+  res.status(401).send('Unauthorized');
+};
 
-In some cases routes specific to some methods are needed like only want to provide user read, create and update functionality without delete this can be done by specifying methods option
+Coral({
+  path: '/secure-data',
+  model: SecureModel,
+  middlewares: [auth]
+});
+```
 
-	var productRoutes = new Coral({
-		path: '/product',
-		model:	Product,
-		methods: ['GET', 'POST', 'PUT']
-	});
+#### 4. Pagination Settings (`perPage`)
+Control the default number of records returned for list requests:
+```javascript
+Coral({
+  path: '/logs',
+  model: Log,
+  perPage: 50 // Default is 10
+});
+```
 
-Above coral route method will only generate the following routes without delete
+#### 5. Custom ID Attribute (`idAttribute`)
+Use a field other than `_id` for lookup (e.g., lookup by `slug` or `email`):
+```javascript
+Coral({
+  path: '/profiles',
+  model: Profile,
+  idAttribute: 'username' 
+});
+// Endpoint becomes: GET /profiles/:username
+```
 
-	/product							-	get
-	/product/:id						-	get
-	/product?skip=10&limit=10	  		-	get (limited records)
-	/product?sort=name&order=asc&page=1	-	get	(pagination with sorting)
-	/product							-	post
-	/product/:id						-	put
+#### 6. Nested Sub-Documents (`subDoc`)
+Manage embedded arrays in your Mongoose models:
+```javascript
+// Model: { name: String, comments: [{ body: String }] }
+Coral({
+  path: '/posts',
+  model: Post,
+  subDoc: {
+    path: 'comments',
+    idAttribute: '_id'
+  }
+});
+// Generates: POST /posts/:postId/comments, DELETE /posts/:postId/comments/:commentId, etc.
+```
 
-Following options are supported to create specific methods routes
+#### 7. Reference Updates (`updateRef`)
+Automatically push the ID of a newly created record into a parent model's array:
+```javascript
+Coral({
+  path: '/articles',
+  model: Article,
+  updateRef: {
+    model: User,
+    path: 'articles', // Array field in User model
+    findOneId: (req) => req.body.authorId // Find the user using this ID from request
+  }
+});
+```
 
-	GET, POST, PUT and DELETE
+---
 
+## 🔍 Querying & Pagination Reference
 
-## API Reference
+Coral supports the following query parameters for all `GET` list requests:
 
-TODO.
+- `?limit=20` - Limit results.
+- `?skip=10` - Skip results.
+- `?page=2` - Pagination (multiplies by `perPage`).
+- `?sort=createdAt&order=desc` - Sorting (order can be `asc` or `desc`).
+
+---
+
+## Developer Setup
+
+To contribute or run tests locally:
+
+1. **Clone the repo**: `git clone https://github.com/prathamesh7pute/coral.git`
+2. **Install deps**: `npm install`
+3. **Build**: `npm run build`
+4. **Test**: `npm test`
+
+---
 
 ## Contributing
 
-Found a bug or something needs to be refactored, please let me know. Pull requests are always welcome.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute and the process for submitting pull requests.
 
 ## License
 
-The MIT License (MIT)
-
-Copyright (c) 2017 Prathamesh Satpute
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
