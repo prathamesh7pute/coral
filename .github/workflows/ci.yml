@@ -1,4 +1,6 @@
 name: CI
+permissions:
+  contents: read
 
 on:
   push:
@@ -6,11 +8,11 @@ on:
   pull_request:
 
 jobs:
-  build:
+  lint_build_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [20, 22, 24]
 
     steps:
       - name: Checkout
