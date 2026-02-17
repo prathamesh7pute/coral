@@ -1,22 +1,28 @@
-name: Publish NPM Package on Release
+name: Publish Package
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*' 
-          registry-url: 'https://registry.npmjs.org/'
-      - name: Install dependencies and build
-        run: npm ci && npm run build
-      - name: Publish package
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          node-version: '22' # Using Node 22 (Current LTS) instead of 24 for stability, matching the pattern
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test
+      - run: npm publish --provenance --access public
+
