@@ -171,6 +171,29 @@ Coral supports the following query parameters for all `GET` list requests:
 
 ---
 
+## 🛡️ Security
+
+Here are a few tips to keep your data extra secure:
+
+- **Mass Assignment**: Use Mongoose's `strict` mode (default) and `express-validator` to ensure only the right fields (like `email` and `name`) are saved to your database.
+- **Resource Protection**: Coral automatically caps `?limit=` to prevent your server from being overwhelmed. For heavy traffic, also try [express-rate-limit](https://www.npmjs.com/package/express-rate-limit).
+
+```javascript
+// Example: Using express-validator to sanitize inputs
+const validateUser = [
+  body('email').isEmail(),
+  body('name').notEmpty(),
+  (req, res, next) => {
+    req.body = matchedData(req); // Only keep validated fields!
+    next();
+  }
+];
+
+Coral({ path: '/users', model: User, middlewares: [validateUser] });
+```
+
+---
+
 ## Developer Setup
 
 To contribute or run tests locally:
