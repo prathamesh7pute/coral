@@ -1,7 +1,7 @@
 {
   "name": "coral",
   "description": "A lightweight Node.js framework designed to dynamically generate RESTful API routes for Express applications using Mongoose models",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Prathamesh Satpute",
     "email": "prathamesh.satpute@gmail.com"
