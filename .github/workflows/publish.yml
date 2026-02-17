@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 permissions:
-  id-token: write  # Required for OIDC
+  id-token: write
   contents: read
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22' # Using Node 22 (Current LTS) instead of 24 for stability, matching the pattern
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
