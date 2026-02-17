@@ -90,7 +90,7 @@ function createCallback(
       if (Array.isArray(target)) {
         target.push((data as Document & { _id: unknown })._id)
       } else {
-        ;(doc as Document & Record<string, unknown>)[updateRef.path] = (
+        ; (doc as Document & Record<string, unknown>)[updateRef.path] = (
           data as Document & { _id: unknown }
         )._id
       }
@@ -142,7 +142,8 @@ export default function createQueryConfig(
   }
 
   if (limit) {
-    options.limit = limit
+    const maxLimit = config.perPage ? config.perPage * 10 : 100
+    options.limit = Math.min(limit, maxLimit)
   }
 
   if (page) {
@@ -173,12 +174,24 @@ export default function createQueryConfig(
     fields = select.split(',').join(' ')
   }
 
+  let data = req.body
+  if (config.bodyFilter && data && typeof data === 'object') {
+    data = Object.keys(data)
+      .filter((key) => config.bodyFilter!.includes(key))
+      .reduce((obj, key) => {
+        ; (obj as Record<string, unknown>)[key] = (
+          data as Record<string, unknown>
+        )[key]
+        return obj
+      }, {})
+  }
+
   return {
     conditions,
     subDoc: subDocRoot,
     fields,
     options,
-    data: req.body,
+    data,
     callback: createCallback(req, res, config.updateRef)
   }
 }

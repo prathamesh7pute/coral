@@ -41,6 +41,7 @@ export interface CoralConfig<TModel = any> {
   perPage?: number
   query?: QueryDefaults
   updateRef?: UpdateRefConfig
+  bodyFilter?: string[]
 }
 
 export interface CoralQueryConfig {

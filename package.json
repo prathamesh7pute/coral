@@ -68,5 +68,9 @@
     "supertest": "^7.2.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
