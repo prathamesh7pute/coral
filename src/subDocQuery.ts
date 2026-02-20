@@ -1,202 +1,207 @@
-import type { HydratedDocument, Model } from 'mongoose'
+import type { Model } from 'mongoose';
 import type {
   QueryCallback,
-  QueryConfig
-} from './models/query.js'
-import type { SubDocCallback, SubDocConfig } from './models/subDoc.js'
-
-type SubDocQueryConfig<TResult = unknown> = QueryConfig<unknown, TResult> & {
-  subDoc?: SubDocConfig
-}
-
-type FindResult = unknown
-type FindOneResult = unknown
-type CreateResult = unknown
-type UpdateResult = unknown
-type RemoveResult = null
+  QueryConfig,
+  QueryDocument,
+  QueryRecord,
+  QueryResult,
+  SubDocCallback,
+  SubDocConditionValue,
+  SubDocConfig,
+  SubDocRecord,
+  SubDocResult,
+} from './models/index.ts';
 
 function matchesConditions(
-  candidate: Record<string, unknown>,
-  conditions: Record<string, unknown>
+  candidate: SubDocRecord,
+  conditions: Record<string, SubDocConditionValue>,
 ) {
-  return Object.keys(conditions).every((key) => candidate[key] === conditions[key])
+  return Object.keys(conditions).every((key) => candidate[key] === conditions[key]);
 }
 
-function hasRemoveMethod(node: unknown): node is { remove: () => void } {
-  return Boolean(
-    node &&
-      typeof node === 'object' &&
-      'remove' in node &&
-      typeof (node as { remove: unknown }).remove === 'function'
-  )
-}
-
-function hasDeleteOneMethod(node: unknown): node is { deleteOne: () => void } {
-  return Boolean(
-    node &&
-      typeof node === 'object' &&
-      'deleteOne' in node &&
-      typeof (node as { deleteOne: unknown }).deleteOne === 'function'
-  )
-}
-
-async function withCallback<TResult>(
-  callback: QueryCallback<TResult> | undefined,
-  operation: () => Promise<TResult>
-): Promise<TResult | void> {
-  try {
-    const result = await operation()
-    if (callback) {
-      callback(null, result)
-      return
-    }
-    return result
-  } catch (err) {
-    if (callback) {
-      callback(err)
-      return
-    }
-    throw err
-  }
+function isSubDocRecord(value: SubDocResult): value is SubDocRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 /*
  * provides sub-document query utility functions:
  * find / findOne / create / findOneAndUpdate / findOneAndRemove
  */
-class SubDocQuery<TSchema = unknown> {
-  private readonly model: Model<TSchema>
+class SubDocQuery {
+  private readonly model: Model<object>;
 
-  constructor(model: Model<TSchema>) {
-    this.model = model
+  constructor(model: Model<object>) {
+    this.model = model;
   }
 
-  private async findSubDoc(config: SubDocQueryConfig): Promise<{
-    parent: HydratedDocument<TSchema>
-    child: unknown
+  private resolveCallback(
+    configCallback?: QueryCallback,
+    callback?: SubDocCallback,
+  ): ((err: Error | null, data?: SubDocResult | QueryResult) => void) | undefined {
+    if (configCallback) {
+      return (err, data) => {
+        configCallback(err, data as QueryResult);
+      };
+    }
+
+    if (callback) {
+      return (err, data) => {
+        callback(err, data as SubDocResult);
+      };
+    }
+
+    return undefined;
+  }
+
+  private async run(
+    operation: () => Promise<SubDocResult>,
+    callback?: (err: Error | null, data?: SubDocResult | QueryResult) => void,
+  ): Promise<SubDocResult> {
+    try {
+      const result = await operation();
+      if (callback) {
+        callback(null, result);
+        return undefined;
+      }
+      return result;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unexpected sub-document query error');
+      if (callback) {
+        callback(error);
+        return undefined;
+      }
+      throw error;
+    }
+  }
+
+  private async findSubDoc(config: QueryConfig & { subDoc?: SubDocConfig }): Promise<{
+    parent: QueryDocument;
+    child: SubDocResult;
   } | null> {
-    const parent = await this.model.findOne(
-      config.conditions,
-      config.fields,
-      config.options
-    ).exec()
+    const parent = (await this.model
+      .findOne(config.conditions, config.fields, config.options)
+      .exec()) as QueryDocument | null;
 
     if (!parent) {
-      return null
+      return null;
     }
 
-    let child: unknown = parent
-    let subDoc = config.subDoc
+    let currentNode: SubDocRecord = parent as SubDocRecord;
+    let child: SubDocResult;
+    let subDoc = config.subDoc;
 
-    while (subDoc && child != null) {
-      if (typeof child !== 'object') {
-        child = undefined
-        break
+    while (subDoc) {
+      const rawChild = currentNode[subDoc.path] as SubDocResult;
+      child = rawChild;
+
+      const subDocConditions = subDoc.conditions;
+      if (Array.isArray(rawChild) && subDocConditions) {
+        child = rawChild.find((entry) => matchesConditions(entry, subDocConditions));
       }
 
-      const current = child as Record<string, unknown>
-      child = current[subDoc.path]
-
-      if (subDoc.conditions && Array.isArray(child)) {
-        child = child.find((entry) => {
-          return (
-            typeof entry === 'object' &&
-            entry !== null &&
-            matchesConditions(entry as Record<string, unknown>, subDoc.conditions as Record<string, unknown>)
-          )
-        })
+      if (!subDoc.subDoc) {
+        return { parent, child };
       }
 
-      subDoc = subDoc.subDoc
+      if (!isSubDocRecord(child)) {
+        return { parent, child: undefined };
+      }
+
+      currentNode = child;
+      subDoc = subDoc.subDoc;
     }
 
-    return { parent, child }
+    return { parent, child: undefined };
   }
 
-  find(config: SubDocQueryConfig<FindResult>, cb?: SubDocCallback<FindResult>): Promise<FindResult | void> {
-    const callback = config.callback ?? cb
-    return withCallback(callback, async () => {
-      const result = await this.findSubDoc(config)
-      return result ? result.child : undefined
-    })
+  find(
+    config: QueryConfig & { subDoc?: SubDocConfig },
+    cb?: SubDocCallback,
+  ): Promise<SubDocResult> {
+    const callback = this.resolveCallback(config.callback, cb);
+    return this.run(async () => {
+      const result = await this.findSubDoc(config);
+      return result?.child;
+    }, callback);
   }
 
   findOne(
-    config: SubDocQueryConfig<FindOneResult>,
-    cb?: SubDocCallback<FindOneResult>
-  ): Promise<FindOneResult | void> {
-    const callback = config.callback ?? cb
-    return withCallback(callback, async () => {
-      const result = await this.findSubDoc(config)
-      return result ? result.child : undefined
-    })
+    config: QueryConfig & { subDoc?: SubDocConfig },
+    cb?: SubDocCallback,
+  ): Promise<SubDocResult> {
+    const callback = this.resolveCallback(config.callback, cb);
+    return this.run(async () => {
+      const result = await this.findSubDoc(config);
+      if (!result || Array.isArray(result.child)) {
+        return undefined;
+      }
+      return result.child;
+    }, callback);
   }
 
   create(
-    config: SubDocQueryConfig<CreateResult>,
-    data?: unknown,
-    cb?: SubDocCallback<CreateResult>
-  ): Promise<CreateResult | void> {
-    const callback = config.callback ?? cb
-    const docData = config.data ?? data
+    config: QueryConfig & { subDoc?: SubDocConfig },
+    data?: QueryRecord | Array<QueryRecord>,
+    cb?: SubDocCallback,
+  ): Promise<SubDocResult> {
+    const callback = this.resolveCallback(config.callback, cb);
+    const docData = config.data ?? data;
 
-    return withCallback(callback, async () => {
-      const result = await this.findSubDoc(config)
-      if (!result || !Array.isArray(result.child)) {
-        return undefined
+    return this.run(async () => {
+      const result = await this.findSubDoc(config);
+      if (!result || !Array.isArray(result.child) || !docData || Array.isArray(docData)) {
+        return undefined;
       }
 
-      result.child.push(docData)
-      await result.parent.save()
-      return result.child[result.child.length - 1]
-    })
+      result.child.push(docData as SubDocRecord);
+      await result.parent.save();
+      return result.child[result.child.length - 1];
+    }, callback);
   }
 
   findOneAndUpdate(
-    config: SubDocQueryConfig<UpdateResult>,
-    data?: unknown,
-    cb?: SubDocCallback<UpdateResult>
-  ): Promise<UpdateResult | void> {
-    const callback = config.callback ?? cb
-    const docData = config.data ?? data
+    config: QueryConfig & { subDoc?: SubDocConfig },
+    data?: QueryRecord | Array<QueryRecord>,
+    cb?: SubDocCallback,
+  ): Promise<SubDocResult> {
+    const callback = this.resolveCallback(config.callback, cb);
+    const docData = config.data ?? data;
 
-    return withCallback(callback, async () => {
-      const result = await this.findSubDoc(config)
-      if (!result || !result.child || typeof result.child !== 'object') {
-        return undefined
+    return this.run(async () => {
+      const result = await this.findSubDoc(config);
+      if (!result || !isSubDocRecord(result.child) || !docData || Array.isArray(docData)) {
+        return undefined;
       }
 
-      if (docData && typeof docData === 'object') {
-        Object.assign(result.child as Record<string, unknown>, docData)
-      }
-
-      await result.parent.save()
-      return result.child
-    })
+      Object.assign(result.child, docData as SubDocRecord);
+      await result.parent.save();
+      return result.child;
+    }, callback);
   }
 
   findOneAndRemove(
-    config: SubDocQueryConfig<RemoveResult>,
-    cb?: SubDocCallback<RemoveResult>
-  ): Promise<RemoveResult | void> {
-    const callback = config.callback ?? cb
+    config: QueryConfig & { subDoc?: SubDocConfig },
+    cb?: SubDocCallback,
+  ): Promise<SubDocResult> {
+    const callback = this.resolveCallback(config.callback, cb);
 
-    return withCallback(callback, async () => {
-      const result = await this.findSubDoc(config)
-      if (!result || !result.child) {
-        return null
+    return this.run(async () => {
+      const result = await this.findSubDoc(config);
+      if (!result || !isSubDocRecord(result.child)) {
+        return null;
       }
 
-      if (hasRemoveMethod(result.child)) {
-        result.child.remove()
-      } else if (hasDeleteOneMethod(result.child)) {
-        result.child.deleteOne()
+      const removableChild = result.child as { remove?: () => void; deleteOne?: () => void };
+      if (typeof removableChild.remove === 'function') {
+        removableChild.remove();
+      } else if (typeof removableChild.deleteOne === 'function') {
+        removableChild.deleteOne();
       }
 
-      await result.parent.save()
-      return null
-    })
+      await result.parent.save();
+      return null;
+    }, callback);
   }
 }
 
-export default SubDocQuery
+export default SubDocQuery;

@@ -1,58 +1,59 @@
 /**
  * Test dependencies.
  */
-import SubDocQuery from '../../src/subDocQuery.js'
-import db from '../helper/db.js'
-import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
-import type { Article } from '../helper/models.js'
+
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import SubDocQuery from '../../src/subDocQuery';
+import db from '../helper/db';
+import { getSubDocRecords } from '../helper/queryAccessors';
 
 describe('subDocQuery find tests', () => {
-  let subDocQuery: SubDocQuery<Article>
+  let subDocQuery: SubDocQuery;
 
   beforeAll(async () => {
-    await db.connect()
-    subDocQuery = new SubDocQuery(db.getModel('Article'))
-  })
+    await db.connect();
+    subDocQuery = new SubDocQuery(db.getModel('Article'));
+  });
 
   afterAll(async () => {
-    await db.disconnect()
-  })
+    await db.disconnect();
+  });
 
   beforeEach(async () => {
-    await db.initialise()
-  })
+    await db.initialise();
+  });
 
   it('find subDoc - must return all available records', async () => {
     const config = {
       conditions: {
-        name: 'article-one'
+        name: 'article-one',
       },
       subDoc: {
-        path: 'comments'
-      }
-    }
+        path: 'comments',
+      },
+    };
 
-    const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
-    expect(records).toHaveLength(2)
-  })
+    const records = getSubDocRecords(await subDocQuery.find(config));
+    expect(records).toHaveLength(2);
+  });
 
   it('find subDoc subDoc - must return all available records', async () => {
     const config = {
       conditions: {
-        name: 'article-one'
+        name: 'article-one',
       },
       subDoc: {
         path: 'comments',
         conditions: {
-          name: 'comment-two'
+          name: 'comment-two',
         },
         subDoc: {
-          path: 'replies'
-        }
-      }
-    }
+          path: 'replies',
+        },
+      },
+    };
 
-    const records = await subDocQuery.find(config) as Array<Record<string, unknown>>
-    expect(records).toHaveLength(2)
-  })
-})
+    const records = getSubDocRecords(await subDocQuery.find(config));
+    expect(records).toHaveLength(2);
+  });
+});

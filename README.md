@@ -201,7 +201,8 @@ To contribute or run tests locally:
 1. **Clone the repo**: `git clone https://github.com/prathamesh7pute/coral.git`
 2. **Install deps**: `npm install`
 3. **Build**: `npm run build`
-4. **Test**: `npm test`
+4. **Check**: `npm run check` (Lint & format)
+5. **Test**: `npm test`
 
 ---
 

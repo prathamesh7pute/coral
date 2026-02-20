@@ -1,8 +1,8 @@
-export { default } from './coral.js'
+export { default } from './coral.ts';
 export type {
   CoralConfig,
   CoralQueryConfig,
   QueryDefaults,
-  UpdateRefConfig
-} from './models/coral.js'
-export type { SubDocConfig } from './models/subDoc.js'
+  SubDocConfig,
+  UpdateRefConfig,
+} from './models/index.ts';

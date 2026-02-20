@@ -2,109 +2,118 @@ import express, {
   type NextFunction,
   type Request,
   type RequestHandler,
-  type Response
-} from 'express'
-import Query from './query.js'
-import SubDocQuery from './subDocQuery.js'
-import createQueryConfig from './queryConfig.js'
+  type Response,
+} from 'express';
 import type {
   CoralConfig,
+  CoralQueryConfig,
   CoralQueryService,
-  CoralRequest
-} from './models/coral.js'
+  CoralRequest,
+} from './models/index.ts';
+import Query from './query.ts';
+import createQueryConfig from './queryConfig.ts';
+import SubDocQuery from './subDocQuery.ts';
 
-class CoralRouter<TModel = unknown> {
-  private readonly router: express.Router
-  private readonly query: CoralQueryService
-  private readonly middlewares: RequestHandler[]
+class CoralRouter {
+  private readonly router: express.Router;
+  private readonly query: CoralQueryService;
+  private readonly middlewares: RequestHandler[];
 
-  constructor(config: CoralConfig<TModel>) {
-    this.router = express.Router()
-    this.query = config.subDoc
-      ? new SubDocQuery<TModel>(config.model)
-      : new Query<TModel>(config.model)
-    this.middlewares = config.middlewares ?? []
+  constructor(config: CoralConfig) {
+    this.router = express.Router();
+    this.query = this.createQueryService(config);
+    this.middlewares = config.middlewares ?? [];
 
-    this.configureRouteWithIdAttribute(config)
-    this.configureRouteWithoutIdAttribute(config)
+    this.configureRouteWithIdAttribute(config);
+    this.configureRouteWithoutIdAttribute(config);
+  }
+
+  private createQueryService(config: CoralConfig): CoralQueryService {
+    const queryService = config.subDoc ? new SubDocQuery(config.model) : new Query(config.model);
+
+    return {
+      find: (queryConfig) => queryService.find(queryConfig),
+      findOne: (queryConfig) => queryService.findOne(queryConfig),
+      create: (queryConfig) => queryService.create(queryConfig),
+      findOneAndUpdate: (queryConfig) => queryService.findOneAndUpdate(queryConfig),
+      findOneAndRemove: (queryConfig) => queryService.findOneAndRemove(queryConfig),
+    };
+  }
+
+  private getRequestConfig(req: Request): CoralQueryConfig {
+    const config = (req as CoralRequest).coralQueryConfig;
+    if (!config) {
+      throw new Error('CoralQueryConfig is missing on request object');
+    }
+    return config;
   }
 
   getRouter() {
-    return this.router
+    return this.router;
   }
 
-  private configureRouteWithIdAttribute(config: CoralConfig<TModel>) {
-    const path = `${config.path}/:idAttribute`
+  private configureRouteWithIdAttribute(config: CoralConfig) {
+    const path = `${config.path}/:idAttribute`;
 
     const queryFindOne: RequestHandler = (req) => {
-      this.query.findOne((req as CoralRequest).coralQueryConfig!)
-    }
+      this.query.findOne(this.getRequestConfig(req));
+    };
 
     const queryFindOneAndUpdate: RequestHandler = (req) => {
-      this.query.findOneAndUpdate((req as CoralRequest).coralQueryConfig!)
-    }
+      this.query.findOneAndUpdate(this.getRequestConfig(req));
+    };
 
     const queryFindOneAndRemove: RequestHandler = (req) => {
-      this.query.findOneAndRemove((req as CoralRequest).coralQueryConfig!)
-    }
+      this.query.findOneAndRemove(this.getRequestConfig(req));
+    };
 
     this.router
       .route(path)
-      .all(
-        this.isMethodAllowed(config),
-        ...this.middlewares,
-        this.buildQueryConfig(config)
-      )
+      .all(this.isMethodAllowed(config), ...this.middlewares, this.buildQueryConfig(config))
       .get(queryFindOne)
       .put(queryFindOneAndUpdate)
-      .delete(queryFindOneAndRemove)
+      .delete(queryFindOneAndRemove);
   }
 
-  private configureRouteWithoutIdAttribute(config: CoralConfig<TModel>) {
-    const path = config.path
+  private configureRouteWithoutIdAttribute(config: CoralConfig) {
+    const path = config.path;
 
     const queryFind: RequestHandler = (req) => {
-      this.query.find((req as CoralRequest).coralQueryConfig!)
-    }
+      this.query.find(this.getRequestConfig(req));
+    };
 
     const queryCreate: RequestHandler = (req) => {
-      this.query.create((req as CoralRequest).coralQueryConfig!)
-    }
+      this.query.create(this.getRequestConfig(req));
+    };
 
     this.router
       .route(path)
-      .all(
-        this.isMethodAllowed(config),
-        ...this.middlewares,
-        this.buildQueryConfig(config)
-      )
+      .all(this.isMethodAllowed(config), ...this.middlewares, this.buildQueryConfig(config))
       .get(queryFind)
-      .post(queryCreate)
+      .post(queryCreate);
   }
 
-  private buildQueryConfig(config: CoralConfig<TModel>): RequestHandler {
+  private buildQueryConfig(config: CoralConfig): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
-      ;(req as CoralRequest).coralQueryConfig = createQueryConfig(req, res, config)
-      next()
-    }
+      (req as CoralRequest).coralQueryConfig = createQueryConfig(req, res, config);
+      next();
+    };
   }
 
-  private isMethodAllowed(config: CoralConfig<TModel>): RequestHandler {
+  private isMethodAllowed(config: CoralConfig): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
-      const isMethodAllowed = config.methods
-        ? config.methods.includes(req.method)
-        : true
+      const isMethodAllowed = config.methods ? config.methods.includes(req.method) : true;
 
       if (isMethodAllowed) {
-        next()
-        return
+        next();
+        return;
       }
 
-      res.status(404).end()
-    }
+      res.status(404).end();
+    };
   }
 }
 
-export default function Coral<TModel = unknown>(config: CoralConfig<TModel>) {
-  return new CoralRouter<TModel>(config).getRouter()
+export default function Coral(config: CoralConfig) {
+  return new CoralRouter(config).getRouter();
 }

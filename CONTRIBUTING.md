@@ -24,8 +24,8 @@ npm install
 
 ### 4. Verify Your Changes
 ```bash
-# Run linting
-npm run lint
+# Run checks (lint, format, import sorting)
+npm run check
 
 # Run tests
 npm test
@@ -34,11 +34,11 @@ npm test
 ### 5. Submit a Pull Request
 - Provide a clear description of the problem and your solution.
 - Link to any related issues.
-- Ensure all tests and linting pass in CI.
+- Ensure all tests and checks pass in CI.
 
 ## Development Standards
 - **Commit Messages**: Use clear, imperative summaries. A `.gitmessage` template is provided for convenience.
-- **Code Style**: We use ESLint and Prettier. Run `npm run lint` before committing.
+- **Code Style**: We use Biome for linting and formatting. Run `npm run check` before committing.
 - **Documentation**: If you're adding a feature, please update the `README.md`.
 
 ## Code of Conduct

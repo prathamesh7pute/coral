@@ -1,73 +1,73 @@
-import type {
-  NextFunction,
-  Request,
-  RequestHandler,
-  Response
-} from 'express'
-import type { Model } from 'mongoose'
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { Model, Types } from 'mongoose';
 import type {
   QueryCallback,
   QueryConditions,
   QueryFields,
-  QueryOptions
-} from './query.js'
-import type { SubDocConfig } from './subDoc.js'
+  QueryOptions,
+  QueryPayload,
+  QueryResult,
+} from './query.ts';
+import type { SubDocConfig, SubDocResult } from './subDoc.ts';
+
+export type UpdateRefId = Types.ObjectId | string | null | undefined;
+export type QueryParamValue =
+  | string
+  | number
+  | boolean
+  | Array<string | number | boolean>
+  | undefined;
+export type ReferenceFieldValue = UpdateRefId | Array<UpdateRefId>;
+export type CoralResult = QueryResult | SubDocResult;
 
 export interface UpdateRefConfig {
-  path: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  model: Model<any>
-  findOneId?: unknown | ((req: Request, res: Response) => unknown)
+  path: string;
+  model: Model<object>;
+  findOneId?: UpdateRefId | ((req: Request, res: Response) => UpdateRefId);
 }
 
 export interface QueryDefaults {
-  conditions?: QueryConditions
-  options?: QueryOptions
-  fields?: QueryFields
+  conditions?: QueryConditions;
+  options?: QueryOptions;
+  fields?: QueryFields;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface CoralConfig<TModel = any> {
-  path: string
-  model: Model<TModel>
-  subDoc?: SubDocConfig
-  conditions?: QueryConditions
-  options?: QueryOptions
-  fields?: QueryFields
-  middlewares?: RequestHandler[]
-  methods?: string[]
-  idAttribute?: string
-  idParam?: string
-  perPage?: number
-  query?: QueryDefaults
-  updateRef?: UpdateRefConfig
-  bodyFilter?: string[]
+export interface CoralConfig {
+  path: string;
+  model: Model<object>;
+  subDoc?: SubDocConfig;
+  conditions?: QueryConditions;
+  options?: QueryOptions;
+  fields?: QueryFields;
+  middlewares?: RequestHandler[];
+  methods?: string[];
+  idAttribute?: string;
+  idParam?: string;
+  perPage?: number;
+  query?: QueryDefaults;
+  updateRef?: UpdateRefConfig;
+  bodyFilter?: string[];
 }
 
 export interface CoralQueryConfig {
-  conditions: QueryConditions
-  fields: QueryFields
-  options: QueryOptions
-  data: unknown
-  subDoc?: SubDocConfig
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callback: QueryCallback<any>
+  conditions: QueryConditions;
+  fields: QueryFields;
+  options: QueryOptions;
+  data: QueryPayload;
+  subDoc?: SubDocConfig;
+  callback: QueryCallback;
 }
 
 export interface CoralRequest extends Request {
-  coralQueryConfig?: CoralQueryConfig
+  coralQueryConfig?: CoralQueryConfig;
 }
 
 export interface CoralQueryService {
-  find(config: CoralQueryConfig): Promise<unknown> | void
-  findOne(config: CoralQueryConfig): Promise<unknown> | void
-  create(config: CoralQueryConfig): Promise<unknown> | void
-  findOneAndUpdate(config: CoralQueryConfig): Promise<unknown> | void
-  findOneAndRemove(config: CoralQueryConfig): Promise<unknown> | void
+  find(config: CoralQueryConfig): Promise<CoralResult>;
+  findOne(config: CoralQueryConfig): Promise<CoralResult>;
+  create(config: CoralQueryConfig): Promise<CoralResult>;
+  findOneAndUpdate(config: CoralQueryConfig): Promise<CoralResult>;
+  findOneAndRemove(config: CoralQueryConfig): Promise<CoralResult>;
 }
 
-export type CoralRouteHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => void
+export type CoralRouteHandler = (req: Request, res: Response, next: NextFunction) => void;

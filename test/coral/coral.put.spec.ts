@@ -1,25 +1,27 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../src/coral.js'
-import db from '../helper/db.js'
-import express from 'express'
-import request from 'supertest'
-import { describe, it, beforeAll, afterAll, expect } from 'vitest'
-const app = express()
+
+import express from 'express';
+import request from 'supertest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import Coral from '../../src/coral';
+import db from '../helper/db';
+
+const app = express();
 
 describe('Coral put tests', () => {
   // require to get req body parameters
-  app.use(express.json())
+  app.use(express.json());
 
   beforeAll(async () => {
-    await db.connect()
-    await db.initialise()
-  })
+    await db.connect();
+    await db.initialise();
+  });
 
   afterAll(async () => {
-    await db.disconnect()
-  })
+    await db.disconnect();
+  });
 
   it('put - must create proper put route and update matching record', async () => {
     // config for route
@@ -27,25 +29,25 @@ describe('Coral put tests', () => {
       path: '/localhost/user',
       model: db.getModel('User'),
       idAttribute: 'name',
-      methods: ['PUT']
-    }
+      methods: ['PUT'],
+    };
 
     // data to be pass to update data
     const data = {
       name: 'test',
-      age: 40
-    }
+      age: 40,
+    };
 
     // call router put with the config
-    app.use(Coral(config))
+    app.use(Coral(config));
 
     // invoke path with supertest
     const res = await request(app)
-      .put(config.path + '/abc')
+      .put(`${config.path}/abc`)
       .set('accept', 'application/json')
       .send(data)
-      .expect(200)
-    expect(res.body.name).toBe('test')
-    expect(res.body.age).toBe(40)
-  })
-})
+      .expect(200);
+    expect(res.body.name).toBe('test');
+    expect(res.body.age).toBe(40);
+  });
+});

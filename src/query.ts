@@ -1,143 +1,131 @@
-import type { HydratedDocument, Model } from 'mongoose'
+import type { Model } from 'mongoose';
 import type {
   QueryCallback,
-  QueryConfig
-} from './models/query.js'
-
-type FindConfig<TSchema> = QueryConfig<unknown, Array<HydratedDocument<TSchema>>>
-type FindOneConfig<TSchema> = QueryConfig<unknown, HydratedDocument<TSchema> | null>
-type CreateConfig<TSchema> = QueryConfig<
-  unknown,
-  HydratedDocument<TSchema> | Array<HydratedDocument<TSchema>> | undefined
->
-
-function getCallback<TResult>(
-  config: QueryConfig<unknown, TResult>,
-  cb?: QueryCallback<TResult>
-) {
-  return config.callback ?? cb
-}
-
-async function withCallback<TResult>(
-  callback: QueryCallback<TResult> | undefined,
-  operation: () => Promise<TResult>
-): Promise<TResult | void> {
-  try {
-    const result = await operation()
-    if (callback) {
-      callback(null, result)
-      return
-    }
-    return result
-  } catch (err) {
-    if (callback) {
-      callback(err)
-      return
-    }
-    throw err
-  }
-}
+  QueryConfig,
+  QueryDocument,
+  QueryPayload,
+  QueryResult,
+} from './models/index.ts';
 
 /*
  * provides the following database utility functions:
  * find / findOne / create / findOneAndUpdate / findOneAndRemove
  */
-class Query<TSchema = unknown> {
-  private readonly model: Model<TSchema>
+class Query {
+  private readonly model: Model<object>;
 
-  constructor(model: Model<TSchema>) {
-    this.model = model
+  constructor(model: Model<object>) {
+    this.model = model;
   }
 
-  find(
-    config: FindConfig<TSchema>,
-    cb?: QueryCallback<Array<HydratedDocument<TSchema>>>
-  ): Promise<Array<HydratedDocument<TSchema>> | void> {
-    const callback = getCallback(config, cb)
-    return withCallback(callback, async () => {
-      return this.model.find(config.conditions, config.fields, config.options).exec()
-    })
+  private async run(
+    operation: () => Promise<QueryResult>,
+    callback?: QueryCallback,
+  ): Promise<QueryResult> {
+    try {
+      const result = await operation();
+      if (callback) {
+        callback(null, result);
+        return undefined;
+      }
+      return result;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unexpected query error');
+      if (callback) {
+        callback(error);
+        return undefined;
+      }
+      throw error;
+    }
   }
 
-  findOne(
-    config: FindOneConfig<TSchema>,
-    cb?: QueryCallback<HydratedDocument<TSchema> | null>
-  ): Promise<HydratedDocument<TSchema> | null | void> {
-    const callback = getCallback(config, cb)
-    return withCallback(callback, async () => {
-      return this.model.findOne(config.conditions, config.fields, config.options).exec()
-    })
+  find(config: QueryConfig, cb?: QueryCallback): Promise<QueryResult> {
+    const callback = config.callback ?? cb;
+    return this.run(async () => {
+      const records = await this.model
+        .find(config.conditions, config.fields, config.options)
+        .exec();
+      return records as Array<QueryDocument>;
+    }, callback);
   }
 
-  create(
-    config: CreateConfig<TSchema>,
-    data?: unknown,
-    cb?: QueryCallback<HydratedDocument<TSchema> | Array<HydratedDocument<TSchema>> | undefined>
-  ): Promise<HydratedDocument<TSchema> | Array<HydratedDocument<TSchema>> | undefined | void> {
-    const callback = config.callback ?? cb
-    const docData = config.data ?? data
+  findOne(config: QueryConfig, cb?: QueryCallback): Promise<QueryResult> {
+    const callback = config.callback ?? cb;
+    return this.run(async () => {
+      const record = await this.model
+        .findOne(config.conditions, config.fields, config.options)
+        .exec();
+      return record as QueryDocument | null;
+    }, callback);
+  }
+
+  create(config: QueryConfig, data?: QueryPayload, cb?: QueryCallback): Promise<QueryResult> {
+    const callback = config.callback ?? cb;
+    const docData = config.data ?? data;
+
     if (Array.isArray(docData) && docData.length === 0) {
       if (callback) {
-        callback(null, undefined)
-        return Promise.resolve()
+        callback(null, undefined);
       }
-      return Promise.resolve(undefined)
+      return Promise.resolve(undefined);
     }
 
-    return withCallback(callback, async () => {
-      const created = await this.model.create(
-        docData as any
-      )
-      return created as HydratedDocument<TSchema> | Array<HydratedDocument<TSchema>>
-    })
+    if (!docData) {
+      if (callback) {
+        callback(null, undefined);
+      }
+      return Promise.resolve(undefined);
+    }
+
+    return this.run(async () => {
+      if (Array.isArray(docData)) {
+        const createdMany = await this.model.create(docData);
+        return createdMany as Array<QueryDocument>;
+      }
+      const createdOne = await this.model.create(docData);
+      return createdOne as QueryDocument;
+    }, callback);
   }
 
   findOneAndUpdate(
-    config: QueryConfig<unknown, HydratedDocument<TSchema> | null>,
-    data?: unknown,
-    cb?: QueryCallback<HydratedDocument<TSchema> | null>
-  ): Promise<HydratedDocument<TSchema> | null | void> {
-    const callback = config.callback ?? cb
-    const docData = config.data ?? data
+    config: QueryConfig,
+    data?: QueryPayload,
+    cb?: QueryCallback,
+  ): Promise<QueryResult> {
+    const callback = config.callback ?? cb;
+    const docData = config.data ?? data;
 
-    return withCallback(callback, async () => {
-      const doc = await this.model.findOne(
-        config.conditions,
-        config.fields,
-        config.options
-      ).exec()
+    return this.run(async () => {
+      const doc = (await this.model
+        .findOne(config.conditions, config.fields, config.options)
+        .exec()) as QueryDocument | null;
       if (!doc) {
-        return null
+        return null;
       }
 
-      if (docData && typeof docData === 'object') {
-        Object.assign(doc, docData)
+      if (docData && !Array.isArray(docData)) {
+        Object.assign(doc, docData);
       }
 
-      await doc.save()
-      return doc
-    })
+      await doc.save();
+      return doc;
+    }, callback);
   }
 
-  findOneAndRemove(
-    config: QueryConfig<unknown, HydratedDocument<TSchema> | null>,
-    cb?: QueryCallback<HydratedDocument<TSchema> | null>
-  ): Promise<HydratedDocument<TSchema> | null | void> {
-    const callback = getCallback(config, cb)
-    return withCallback(callback, async () => {
-      const doc = await this.model.findOne(
-        config.conditions,
-        config.fields,
-        config.options
-      ).exec()
+  findOneAndRemove(config: QueryConfig, cb?: QueryCallback): Promise<QueryResult> {
+    const callback = config.callback ?? cb;
+    return this.run(async () => {
+      const doc = (await this.model
+        .findOne(config.conditions, config.fields, config.options)
+        .exec()) as QueryDocument | null;
       if (!doc) {
-        return null
+        return null;
       }
 
-      await doc.deleteOne()
-      return doc
-    })
+      await doc.deleteOne();
+      return doc;
+    }, callback);
   }
 }
 
-export default Query
+export default Query;
