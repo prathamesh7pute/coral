@@ -93,10 +93,14 @@ function getCreatedDocumentId(data: CoralResult): UpdateRefId {
   return data._id as UpdateRefId;
 }
 
+function toPublicError(fallbackMessage: string): { message: string } {
+  return { message: fallbackMessage };
+}
+
 function createCallback(req: Request, res: Response, updateRef?: UpdateRefConfig) {
   return async function callback(err: Error | null, data?: CoralResult) {
     if (err) {
-      res.status(400).json(err);
+      res.status(400).json(toPublicError('Request failed'));
       return;
     }
 
@@ -135,8 +139,8 @@ function createCallback(req: Request, res: Response, updateRef?: UpdateRefConfig
 
       await (doc as Document).save();
       res.json(data);
-    } catch (saveErr) {
-      res.status(400).json(saveErr);
+    } catch {
+      res.status(400).json(toPublicError('Reference update failed'));
     }
   };
 }
