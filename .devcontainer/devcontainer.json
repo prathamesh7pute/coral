@@ -1,0 +1,15 @@
+{
+  "name": "coral-dev",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.formatOnSave": true
+      },
+      "extensions": ["biomejs.biome", "vitest.explorer"]
+    }
+  },
+  "remoteUser": "node"
+}
