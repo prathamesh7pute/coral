@@ -1,17 +1,30 @@
-import type { Document } from 'mongoose'
+import type {
+  HydratedDocument,
+  QueryOptions as MongooseQueryOptions,
+  ProjectionType,
+  QueryFilter,
+  Types,
+} from 'mongoose';
 
-export type QueryFields = string | Record<string, unknown>
-export type QueryConditions = Record<string, unknown>
-export type QueryOptions = Record<string, unknown>
-
-export type QueryCallback<TResult> = (err: unknown, data?: TResult) => void
-
-export interface QueryConfig<TData = unknown, TResult = unknown> {
-  conditions?: QueryConditions
-  fields?: QueryFields
-  options?: QueryOptions
-  data?: TData
-  callback?: QueryCallback<TResult>
+export interface QueryRecord {
+  [key: string]: QueryValue | undefined;
 }
 
-export type QueryDocument = Document
+export type QueryScalar = boolean | Date | null | number | string | Types.ObjectId;
+export type QueryValue = QueryScalar | QueryRecord | Array<QueryScalar> | Array<QueryRecord>;
+
+export type QueryPayload = QueryRecord | Array<QueryRecord> | undefined;
+export type QueryDocument = HydratedDocument<QueryRecord>;
+export type QueryResult = QueryDocument | Array<QueryDocument> | null | undefined;
+export type QueryFields = ProjectionType<object> | string;
+export type QueryConditions = QueryFilter<object>;
+export type QueryOptions = MongooseQueryOptions<object>;
+export type QueryCallback = (err: Error | null, data?: QueryResult) => void;
+
+export interface QueryConfig {
+  conditions?: QueryConditions;
+  fields?: QueryFields;
+  options?: QueryOptions;
+  data?: QueryPayload;
+  callback?: QueryCallback;
+}

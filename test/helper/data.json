@@ -1,46 +1,65 @@
 {
-	"users": [{
-		"name": "abc",
-		"age": 10
-	}, {
-		"name": "def",
-		"age": 20
-	}, {
-		"name": "xyz",
-		"age": 30
-	}],
-	"articles": [{
-		"name": "article-one",
-		"title": "Article One",
-		"body": "Coral - Node JS framework to dynamically create REST application with express and mongoose Models",
-		"comments": [{
-			"name": "comment-one",
-			"body": "Article One First Comment",
-			"replies": [{
-				"name": "reply-one",
-				"body": "Article One First Comment First Reply"
-			}]
-		}, {
-			"name": "comment-two",
-			"body": "Article One Second Comment",
-			"replies": [{
-				"name": "reply-one",
-				"body": "Article One Second Comment First Reply"
-			}, {
-				"name": "reply-two",
-				"body": "Article One Second Comment Second Reply"
-			}]
-		}]
-	}, {
-		"name": "article-two",
-		"title": "Article Two",
-		"body": "Coral - Express middleware to simplify routing with mongooes",
-		"comments": [{
-			"body": "Article Two First Comment",
-			"replies": [{
-				"name": "reply-one",
-				"body": "Article Two First Comment First Reply"
-			}]
-		}]
-	}]
+  "users": [
+    {
+      "name": "abc",
+      "age": 10
+    },
+    {
+      "name": "def",
+      "age": 20
+    },
+    {
+      "name": "xyz",
+      "age": 30
+    }
+  ],
+  "articles": [
+    {
+      "name": "article-one",
+      "title": "Article One",
+      "body": "Coral - Node JS framework to dynamically create REST application with express and mongoose Models",
+      "comments": [
+        {
+          "name": "comment-one",
+          "body": "Article One First Comment",
+          "replies": [
+            {
+              "name": "reply-one",
+              "body": "Article One First Comment First Reply"
+            }
+          ]
+        },
+        {
+          "name": "comment-two",
+          "body": "Article One Second Comment",
+          "replies": [
+            {
+              "name": "reply-one",
+              "body": "Article One Second Comment First Reply"
+            },
+            {
+              "name": "reply-two",
+              "body": "Article One Second Comment Second Reply"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "article-two",
+      "title": "Article Two",
+      "body": "Coral - Express middleware to simplify routing with mongooes",
+      "comments": [
+        {
+          "body": "Article Two First Comment",
+          "replies": [
+            {
+              "name": "reply-one",
+              "body": "Article Two First Comment First Reply"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

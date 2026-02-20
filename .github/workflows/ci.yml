@@ -27,8 +27,8 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Check (Lint & Format)
+        run: npm run check:ci
 
       - name: Build
         run: npm run build

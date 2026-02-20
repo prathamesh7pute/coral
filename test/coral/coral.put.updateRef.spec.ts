@@ -1,178 +1,181 @@
 /**
  * Test dependencies.
  */
-import Coral from '../../src/coral.js'
-import Query from '../../src/query.js'
-import db from '../helper/db.js'
-import express from 'express'
-import request from 'supertest'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import type { Article, Location, User } from '../helper/models.js'
-import type { CoralConfig } from '../../src/models/coral.js'
-import type { Types } from 'mongoose'
-const app = express()
+
+import express from 'express';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import Coral from '../../src/coral';
+import type { CoralConfig } from '../../src/models/index.ts';
+import Query from '../../src/query';
+import db from '../helper/db';
+import {
+  getPopulatedStringField,
+  getQueryDocument,
+  getQueryValueArray,
+} from '../helper/queryAccessors';
+
+const app = express();
 
 describe('Coral put  updateRef tests', () => {
   // require to get req body parameters
-  app.use(express.json())
+  app.use(express.json());
 
   beforeEach(async () => {
-    await db.connect()
-    await db.initialise()
-  })
+    await db.connect();
+    await db.initialise();
+  });
 
   afterEach(async () => {
-    await db.disconnect()
-  })
+    await db.disconnect();
+  });
 
   describe('update Ref - must update record and should not push new article reference', () => {
-    let findOneUserId: Types.ObjectId
+    let findOneUserId: string;
 
     // use this to retrive the findOneUserId
     beforeEach(async () => {
-      const query = new Query<User>(db.getModel('User'))
+      const query = new Query(db.getModel('User'));
       // unique identifier to find data
       const config = {
         conditions: {
           name: 'abc',
-          age: 10
-        }
-      }
-      const record = await query.findOne(config)
-      if (!record) throw new Error('Expected user record')
-      expect(record.name).toBe('abc')
-      findOneUserId = record._id
-    })
+          age: 10,
+        },
+      };
+      const record = getQueryDocument(await query.findOne(config), 'Expected user record');
+      expect(record.name).toBe('abc');
+      findOneUserId = String(record._id);
+    });
 
     it('put - must create proper post route and updateReference ', async () => {
       // config to pass router find method
       const config: CoralConfig = {
         path: '/localhost/article',
-        model: db.getModel('Article') as unknown as import('mongoose').Model<unknown>,
+        model: db.getModel('Article'),
         methods: ['PUT'],
         idAttribute: 'name',
         updateRef: {
-          model: db.getModel('User') as unknown as import('mongoose').Model<unknown>,
+          model: db.getModel('User'),
           path: 'articles',
-          findOneId: findOneUserId
-        }
-      }
+          findOneId: findOneUserId,
+        },
+      };
       // data to be pass into post request
       const data = {
-        name: 'test article 1'
-      }
+        name: 'test article 1',
+      };
 
       // call router get with the config
-      app.use(Coral(config))
+      app.use(Coral(config));
 
       // invoke path with supertest
       const res = await request(app)
-        .put(config.path + '/article-two')
+        .put(`${config.path}/article-two`)
         .set('accept', 'application/json')
         .send(data)
-        .expect(200)
-      expect(res.body.name).toBe('test article 1')
-    })
+        .expect(200);
+      expect(res.body.name).toBe('test article 1');
+    });
 
     // verify that the article reference properly got inserted
     afterEach(async () => {
-      const query = new Query<User>(db.getModel('User'))
+      const query = new Query(db.getModel('User'));
       // unique identifier to find data
       const config = {
         conditions: {
-          _id: findOneUserId
+          _id: findOneUserId,
         },
         options: {
-          populate: 'articles'
-        }
-      }
+          populate: 'articles',
+        },
+      };
 
-      const record = await query.findOne(config)
-      if (!record) throw new Error('Expected user record')
-      expect(record.name).toBe('abc')
-      expect(record.articles).toHaveLength(1)
-      expect((record.articles[0] as unknown as Article).name).toBe('article-one')
-    })
-  })
+      const record = getQueryDocument(await query.findOne(config), 'Expected user record');
+      expect(record.name).toBe('abc');
+      expect(record.articles).toHaveLength(1);
+      const articles = getQueryValueArray(record.articles, 'Expected articles array');
+      const article = getPopulatedStringField(articles[0], 'name', 'article reference');
+      expect(article.name).toBe('article-one');
+    });
+  });
 
   describe('update Ref - must update record and should not update location reference', () => {
-    let findOneUserId: Types.ObjectId
+    let findOneUserId: string;
 
     // use this to retrive the findOneUserId
     beforeEach(async () => {
-      const query = new Query<User>(db.getModel('User'))
-      const locationQuery = new Query<Location>(db.getModel('Location'))
+      const query = new Query(db.getModel('User'));
+      const locationQuery = new Query(db.getModel('Location'));
       // unique identifier to find data
       const config = {
         conditions: {
           name: 'abc',
-          age: 10
-        }
-      }
-      const record = await query.findOne(config)
-      if (!record) throw new Error('Expected user record')
-      expect(record.name).toBe('abc')
-      findOneUserId = record._id
+          age: 10,
+        },
+      };
+      const record = getQueryDocument(await query.findOne(config), 'Expected user record');
+      expect(record.name).toBe('abc');
+      findOneUserId = String(record._id);
 
       // data to insert
       const data = {
-        streetOne: 'buckland'
-      }
+        streetOne: 'buckland',
+      };
       // invoke query create method
-      const createdLocation = await locationQuery.create({}, data)
+      const createdLocation = await locationQuery.create({}, data);
       if (!createdLocation || Array.isArray(createdLocation)) {
-        throw new Error('Expected one created location')
+        throw new Error('Expected one created location');
       }
-      expect(createdLocation.streetOne).toBe('buckland')
-    })
+      expect(createdLocation.streetOne).toBe('buckland');
+    });
 
     it('put - must create proper put route and and should not updateReference ', async () => {
       // config to pass router find method
       const config: CoralConfig = {
         path: '/localhost/location',
-        model: db.getModel('Location') as unknown as import('mongoose').Model<unknown>,
+        model: db.getModel('Location'),
         methods: ['PUT'],
         idAttribute: 'streetOne',
         updateRef: {
-          model: db.getModel('User') as unknown as import('mongoose').Model<unknown>,
+          model: db.getModel('User'),
           path: 'location',
-          findOneId: findOneUserId
-        }
-      }
+          findOneId: findOneUserId,
+        },
+      };
       // data to be pass into post request
       const data = {
-        streetOne: '345 Buckland Hills Dr'
-      }
+        streetOne: '345 Buckland Hills Dr',
+      };
 
       // call router get with the config
-      app.use(Coral(config))
+      app.use(Coral(config));
 
       // invoke path with supertest
       const res = await request(app)
-        .put(config.path + '/buckland')
+        .put(`${config.path}/buckland`)
         .set('accept', 'application/json')
         .send(data)
-        .expect(200)
-      expect(res.body.streetOne).toBe('345 Buckland Hills Dr')
-    })
+        .expect(200);
+      expect(res.body.streetOne).toBe('345 Buckland Hills Dr');
+    });
 
     // verify that the article reference properly got inserted
     afterEach(async () => {
-      const query = new Query<User>(db.getModel('User'))
+      const query = new Query(db.getModel('User'));
       // unique identifier to find data
       const config = {
         conditions: {
-          _id: findOneUserId
+          _id: findOneUserId,
         },
         options: {
-          populate: 'location'
-        }
-      }
+          populate: 'location',
+        },
+      };
 
-      const record = await query.findOne(config)
-      if (!record) throw new Error('Expected user record')
-      expect(record.name).toBe('abc')
-      expect(record.location).toBeFalsy()
-    })
-  })
-})
+      const record = getQueryDocument(await query.findOne(config), 'Expected user record');
+      expect(record.name).toBe('abc');
+      expect(record.location).toBeFalsy();
+    });
+  });
+});

@@ -1,74 +1,77 @@
 /**
  * Test dependencies.
  */
-import SubDocQuery from '../../src/subDocQuery.js'
-import db from '../helper/db.js'
-import { describe, it, beforeAll, beforeEach, afterAll, expect } from 'vitest'
-import type { Article } from '../helper/models.js'
+
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import SubDocQuery from '../../src/subDocQuery';
+import db from '../helper/db';
+import { getSubDocRecord } from '../helper/queryAccessors';
 
 describe('subDocQuery create tests', () => {
-  let subDocQuery: SubDocQuery<Article>
+  let subDocQuery: SubDocQuery;
 
   beforeAll(async () => {
-    await db.connect()
-    subDocQuery = new SubDocQuery(db.getModel('Article'))
-  })
+    await db.connect();
+    subDocQuery = new SubDocQuery(db.getModel('Article'));
+  });
 
   afterAll(async () => {
-    await db.disconnect()
-  })
+    await db.disconnect();
+  });
 
   beforeEach(async () => {
-    await db.initialise()
-  })
+    await db.initialise();
+  });
 
   it('create subDoc - must create record with data passed', async () => {
     const config = {
       conditions: {
-        name: 'article-one'
+        name: 'article-one',
       },
       subDoc: {
-        path: 'comments'
-      }
-    }
+        path: 'comments',
+      },
+    };
 
     const data = {
       name: 'comment-three',
       body: 'Article One Third Comment',
-      replies: [{
-        name: 'reply-one',
-        body: 'Article One Third Comment First Reply'
-      }]
-    }
+      replies: [
+        {
+          name: 'reply-one',
+          body: 'Article One Third Comment First Reply',
+        },
+      ],
+    };
 
-    const record = await subDocQuery.create(config, data) as Record<string, unknown>
-    expect(record.name).toBe('comment-three')
-    expect(record._id).toBeDefined()
-  })
+    const record = getSubDocRecord(await subDocQuery.create(config, data));
+    expect(record.name).toBe('comment-three');
+    expect(record._id).toBeDefined();
+  });
 
   it('create subDoc subDoc - must create record with data passed', async () => {
     const config = {
       conditions: {
-        name: 'article-one'
+        name: 'article-one',
       },
       subDoc: {
         path: 'comments',
         conditions: {
-          name: 'comment-two'
+          name: 'comment-two',
         },
         subDoc: {
-          path: 'replies'
-        }
-      }
-    }
+          path: 'replies',
+        },
+      },
+    };
 
     const data = {
       name: 'reply-three',
-      body: 'Article One Second Comment Third Reply'
-    }
+      body: 'Article One Second Comment Third Reply',
+    };
 
-    const record = await subDocQuery.create(config, data) as Record<string, unknown>
-    expect(record.name).toBe('reply-three')
-    expect(record._id).toBeDefined()
-  })
-})
+    const record = getSubDocRecord(await subDocQuery.create(config, data));
+    expect(record.name).toBe('reply-three');
+    expect(record._id).toBeDefined();
+  });
+});

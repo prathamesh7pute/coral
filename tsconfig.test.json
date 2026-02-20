@@ -1,21 +1,13 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "rootDir": ".",
-        "noEmit": true,
-        "allowJs": false,
-        "types": [
-            "node",
-            "vitest/globals"
-        ]
-    },
-    "include": [
-        "src/**/*.ts",
-        "test/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": ".",
+    "noEmit": true,
+    "allowJs": false,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }
