@@ -202,6 +202,19 @@ describe('createQueryConfig tests', () => {
     expect(queryConfig.fields).toBe('name profile.email');
   });
 
+  it('should keep default fields when select contains only unsafe tokens', () => {
+    const req = createRequest({
+      query: {
+        select: '+passwordHash,$where, ,+secret',
+      },
+    });
+    const res = createMockResponse();
+
+    const queryConfig = createQueryConfig(req, res, createBaseConfig({ fields: 'name age email' }));
+
+    expect(queryConfig.fields).toBe('name age email');
+  });
+
   it('should apply bodyFilter to array payloads', () => {
     const req = createRequest({
       body: [
@@ -235,6 +248,39 @@ describe('createQueryConfig tests', () => {
       {
         name: 'def',
         age: 20,
+      },
+    ]);
+  });
+
+  it('should skip undefined keys when applying bodyFilter to array payloads', () => {
+    const req = createRequest({
+      body: [
+        {
+          name: 'abc',
+          age: 10,
+        },
+        {
+          name: 'def',
+        },
+      ],
+    });
+    const res = createMockResponse();
+
+    const queryConfig = createQueryConfig(
+      req,
+      res,
+      createBaseConfig({
+        bodyFilter: ['name', 'age', 'role'],
+      }),
+    );
+
+    expect(queryConfig.data).toEqual([
+      {
+        name: 'abc',
+        age: 10,
+      },
+      {
+        name: 'def',
       },
     ]);
   });
