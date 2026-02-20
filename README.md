@@ -69,10 +69,16 @@ The `Coral` constructor takes a configuration object. Here are the available opt
 | `model` | `Model` | The Mongoose model to bind to. |
 | `methods` | `string[]` | Allowed HTTP methods. Default: `['GET', 'POST', 'PUT', 'DELETE']`. |
 | `middlewares` | `RequestHandler[]` | Custom Express middlewares to run before handlers. |
+| `conditions` | `QueryConditions` | Base Mongoose filter used for all operations. |
+| `options` | `QueryOptions` | Base Mongoose query options (sort, skip, limit, etc.). |
+| `fields` | `QueryFields` | Base field projection for query results. |
 | `perPage` | `number` | Default records per page for pagination. |
 | `idAttribute` | `string` | Custom field used for finding records by ID. Default: `_id`. |
+| `idParam` | `string` | URL param name used to read the route identifier (instead of `idAttribute`). |
+| `query` | `QueryDefaults` | Additional defaults merged with `conditions`, `options`, and `fields`. |
 | `subDoc` | `SubDocConfig` | Configuration for nested sub-documents. |
 | `updateRef` | `UpdateRefConfig`| Update a reference in a parent model on create. |
+| `bodyFilter` | `string[]` | Whitelist of request body keys to persist on create/update. |
 
 #### 1. Path & Model (`path`, `model`)
 Define the endpoint and the Mongoose model it interacts with.
@@ -144,7 +150,48 @@ Coral({
 // Generates: POST /posts/:postId/comments, DELETE /posts/:postId/comments/:commentId, etc.
 ```
 
-#### 7. Reference Updates (`updateRef`)
+#### 7. Custom Route Param Name (`idParam`)
+
+Bind route params to a lookup field without using the default `:idAttribute` param name:
+```javascript
+Coral({
+  path: '/profiles/:username',
+  model: Profile,
+  idAttribute: 'username',
+  idParam: 'username'
+});
+```
+
+#### 8. Query Defaults (`conditions`, `options`, `fields`, `query`)
+
+Set base query behavior and then layer overrides in `query`:
+```javascript
+Coral({
+  path: '/users',
+  model: User,
+  conditions: { active: true },
+  options: { sort: '-createdAt' },
+  fields: 'name email',
+  query: {
+    conditions: { role: { $in: ['admin', 'member'] } },
+    options: { limit: 20 },
+    fields: 'name email role'
+  }
+});
+```
+
+#### 9. Request Body Whitelisting (`bodyFilter`)
+
+Only allow selected fields from the request payload:
+```javascript
+Coral({
+  path: '/customers',
+  model: Customer,
+  bodyFilter: ['email', 'name']
+});
+```
+
+#### 10. Reference Updates (`updateRef`)
 Automatically push the ID of a newly created record into a parent model's array:
 ```javascript
 Coral({
@@ -167,7 +214,28 @@ Coral supports the following query parameters for all `GET` list requests:
 - `?limit=20` - Limit results.
 - `?skip=10` - Skip results.
 - `?page=2` - Pagination (multiplies by `perPage`).
-- `?sort=createdAt&order=desc` - Sorting (order can be `asc` or `desc`).
+- `?sort=createdAt&order=desc` - Sorting (order can be `asc`, `desc`, `1`, or `-1`).
+- `?select=name,email` - Field projection (translated to `'name email'`).
+
+---
+
+
+## Examples Directory
+
+A complete set of copy-paste examples is available in [`examples/`](examples/README.md).
+
+It includes:
+
+- Basic CRUD setup: [`examples/basic-crud.js`](examples/basic-crud.js)
+- Methods + middleware configuration: [`examples/methods-and-middlewares.js`](examples/methods-and-middlewares.js)
+- Custom `idAttribute` and `idParam`: [`examples/custom-id-attribute-and-param.js`](examples/custom-id-attribute-and-param.js)
+- Query defaults (`conditions`, `options`, `fields`, `query`): [`examples/query-defaults-and-overrides.js`](examples/query-defaults-and-overrides.js)
+- Pagination (`perPage`) and query overrides (`sort`, `order`, `select`): [`examples/pagination-and-limit-control.js`](examples/pagination-and-limit-control.js)
+- Request body filtering (`bodyFilter`): [`examples/body-filter.js`](examples/body-filter.js)
+- Reference updates on create (`updateRef`): [`examples/update-ref.js`](examples/update-ref.js)
+- Single-level and multi-level sub-document routing (`subDoc`): [`examples/subdoc-single-level.js`](examples/subdoc-single-level.js), [`examples/subdoc-multi-level.js`](examples/subdoc-multi-level.js)
+- TypeScript JWT auth middleware example (modern Bearer token flow): [`examples/auth-jwt-protected-routes.ts`](examples/auth-jwt-protected-routes.ts)
+- TypeScript AWS S3 presigned upload + media metadata example: [`examples/s3-presigned-upload.ts`](examples/s3-presigned-upload.ts)
 
 ---
 

@@ -2,7 +2,7 @@
  * Test dependencies.
  */
 
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Query from '../../src/query';
 import db from '../helper/db';
 import { getQueryDocument, getQueryDocuments, getRecordAtIndex } from '../helper/queryAccessors';
@@ -66,6 +66,16 @@ describe('query create tests', () => {
     // invoke query create method
     const records = await query.create({}, data);
     expect(records).toBeUndefined();
+  });
+
+  it('create - should invoke callback with undefined for empty array input', async () => {
+    const callback = vi.fn();
+    const data: Array<Record<string, never>> = [];
+
+    const records = await query.create({ callback }, data);
+
+    expect(records).toBeUndefined();
+    expect(callback).toHaveBeenCalledWith(null, undefined);
   });
 
   it('create - must create blank record if pass blank object', async () => {

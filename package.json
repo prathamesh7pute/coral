@@ -29,12 +29,13 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check .",
     "check:ci": "biome ci .",
     "prepare": "npm run build",
-    "test": "npm run build && vitest run",
+    "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
