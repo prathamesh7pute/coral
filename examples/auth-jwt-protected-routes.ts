@@ -27,7 +27,10 @@ app.use(express.json());
 
 await mongoose.connect(process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017/coral-examples');
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'change-me-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is required');
+}
 
 // User schema with hashed password storage only.
 const userSchema = new mongoose.Schema(
@@ -108,7 +111,9 @@ const requireBearerToken = (req: AuthenticatedRequest, res: Response, next: Next
 
   try {
     const token = authHeader.slice('Bearer '.length);
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, JWT_SECRET, {
+      algorithms: ['HS256'],
+    }) as JwtPayload;
     const userId = typeof payload.sub === 'string' ? payload.sub : undefined;
     if (!userId) {
       return res.status(401).json({ message: 'Token is missing subject' });
@@ -135,8 +140,30 @@ const requireRole = (role: UserRole) => {
 
 const attachOwnerOnCreate = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
   // Force ownership from JWT; clients cannot inject ownerId arbitrarily.
+  if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    req.body = {};
+  }
+
   if (req.method === 'POST' && req.auth?.userId) {
     req.body.ownerId = req.auth.userId;
+  }
+
+  next();
+};
+
+const blockOwnerReassignmentOnUpdate = (
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction,
+) => {
+  if (
+    req.method === 'PUT' &&
+    req.body &&
+    typeof req.body === 'object' &&
+    !Array.isArray(req.body)
+  ) {
+    // Keep owner immutable after create.
+    delete req.body.ownerId;
   }
 
   next();
@@ -170,22 +197,29 @@ app.post('/api/auth/signup', async (req: Request, res: Response) => {
     password?: string;
     displayName?: string;
   };
+  const normalizedEmail = email?.trim().toLowerCase();
 
-  if (!email || !password || !displayName || password.length < 8) {
+  if (!normalizedEmail || !password || !displayName || password.length < 8) {
     return res
       .status(400)
       .json({ message: 'email, displayName and password(>=8 chars) are required' });
   }
 
-  const existing = await AuthUser.findOne({ email }).lean();
+  const existing = await AuthUser.findOne({ email: normalizedEmail }).lean();
   if (existing) {
     return res.status(409).json({ message: 'Email already exists' });
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  const user = await AuthUser.create({ email, passwordHash, displayName, role: 'member' });
+  const user = await AuthUser.create({
+    email: normalizedEmail,
+    passwordHash,
+    displayName,
+    role: 'member',
+  });
 
   const token = jwt.sign({ role: user.role }, JWT_SECRET, {
+    algorithm: 'HS256',
     subject: String(user._id),
     expiresIn: '14d',
   });
@@ -195,11 +229,12 @@ app.post('/api/auth/signup', async (req: Request, res: Response) => {
 
 app.post('/api/auth/login', async (req: Request, res: Response) => {
   const { email, password } = req.body as { email?: string; password?: string };
-  if (!email || !password) {
+  const normalizedEmail = email?.trim().toLowerCase();
+  if (!normalizedEmail || !password) {
     return res.status(400).json({ message: 'email and password are required' });
   }
 
-  const user = await AuthUser.findOne({ email }).select('+passwordHash').exec();
+  const user = await AuthUser.findOne({ email: normalizedEmail }).select('+passwordHash').exec();
   if (!user) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
@@ -210,6 +245,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
   }
 
   const token = jwt.sign({ role: user.role }, JWT_SECRET, {
+    algorithm: 'HS256',
     subject: String(user._id),
     expiresIn: '14d',
   });
@@ -222,7 +258,12 @@ app.use(
     path: '/api/secure-notes',
     model: SecureNote,
     methods: ['POST', 'PUT', 'DELETE'],
-    middlewares: [requireBearerToken, attachOwnerOnCreate, ensureOwnerOnWrite],
+    middlewares: [
+      requireBearerToken,
+      attachOwnerOnCreate,
+      blockOwnerReassignmentOnUpdate,
+      ensureOwnerOnWrite,
+    ],
     bodyFilter: ['ownerId', 'title', 'content', 'visibility'],
     fields: 'ownerId title content visibility createdAt updatedAt',
   }),

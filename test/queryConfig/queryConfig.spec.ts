@@ -189,6 +189,56 @@ describe('createQueryConfig tests', () => {
     expect(queryConfig.subDoc?.conditions).toEqual({});
   });
 
+  it('should sanitize select query and drop unsafe +field tokens', () => {
+    const req = createRequest({
+      query: {
+        select: '+passwordHash,name,profile.email,$where',
+      },
+    });
+    const res = createMockResponse();
+
+    const queryConfig = createQueryConfig(req, res, createBaseConfig({ fields: 'name age email' }));
+
+    expect(queryConfig.fields).toBe('name profile.email');
+  });
+
+  it('should apply bodyFilter to array payloads', () => {
+    const req = createRequest({
+      body: [
+        {
+          name: 'abc',
+          age: 10,
+          email: 'should-be-filtered@example.com',
+        },
+        {
+          name: 'def',
+          age: 20,
+          email: 'should-be-filtered-too@example.com',
+        },
+      ],
+    });
+    const res = createMockResponse();
+
+    const queryConfig = createQueryConfig(
+      req,
+      res,
+      createBaseConfig({
+        bodyFilter: ['name', 'age'],
+      }),
+    );
+
+    expect(queryConfig.data).toEqual([
+      {
+        name: 'abc',
+        age: 10,
+      },
+      {
+        name: 'def',
+        age: 20,
+      },
+    ]);
+  });
+
   it('callback should return 400 when created document id is missing', async () => {
     const req = createRequest({ method: 'POST' });
     const res = createMockResponse();

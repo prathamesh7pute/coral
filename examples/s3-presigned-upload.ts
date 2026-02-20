@@ -7,6 +7,7 @@
  * - Protects asset CRUD with JWT middleware and owner authorization checks.
  */
 
+import { randomUUID } from 'node:crypto';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import Coral from 'coral';
@@ -25,7 +26,10 @@ app.use(express.json());
 
 await mongoose.connect(process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017/coral-examples');
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'change-me-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is required');
+}
 const AWS_REGION = process.env.AWS_REGION ?? 'us-east-1';
 const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET ?? '';
 
@@ -96,7 +100,9 @@ const requireBearerToken = (req: AuthenticatedRequest, res: Response, next: Next
 
   try {
     const token = authHeader.slice('Bearer '.length);
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, JWT_SECRET, {
+      algorithms: ['HS256'],
+    }) as JwtPayload;
     const userId = typeof payload.sub === 'string' ? payload.sub : undefined;
     if (!userId) {
       return res.status(401).json({ message: 'Token is missing subject' });
@@ -110,12 +116,38 @@ const requireBearerToken = (req: AuthenticatedRequest, res: Response, next: Next
 };
 
 const attachOwnerOnCreate = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+  if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    req.body = {};
+  }
+
   // Force owner linkage from JWT.
   if (req.method === 'POST' && req.auth?.userId) {
     req.body.ownerId = req.auth.userId;
   }
   if (req.method === 'POST' && !req.body.bucket) {
     req.body.bucket = AWS_S3_BUCKET;
+  }
+
+  next();
+};
+
+const blockImmutableFieldChangesOnUpdate = (
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction,
+) => {
+  if (
+    req.method === 'PUT' &&
+    req.body &&
+    typeof req.body === 'object' &&
+    !Array.isArray(req.body)
+  ) {
+    // Keep object identity and ownership immutable after create.
+    delete req.body.key;
+    delete req.body.bucket;
+    delete req.body.ownerId;
+    delete req.body.mimeType;
+    delete req.body.sizeBytes;
   }
 
   next();
@@ -157,7 +189,7 @@ app.post(
       sizeBytes?: number;
     };
 
-    if (!fileName || !mimeType || typeof sizeBytes !== 'number') {
+    if (!fileName || !mimeType || typeof sizeBytes !== 'number' || !Number.isFinite(sizeBytes)) {
       return res.status(400).json({ message: 'fileName, mimeType and sizeBytes are required' });
     }
 
@@ -171,12 +203,14 @@ app.post(
     }
 
     const safeFileName = fileName.replace(/[^A-Za-z0-9._-]/g, '-').slice(0, 80) || 'upload.bin';
-    const key = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}-${safeFileName}`;
+    const key = `${Date.now()}-${randomUUID()}-${safeFileName}`;
 
     const command = new PutObjectCommand({
       Bucket: AWS_S3_BUCKET,
       Key: key,
       ContentType: mimeType,
+      // Include expected object length in the signed request.
+      ContentLength: sizeBytes,
       Metadata: {
         uploadedBy: req.auth?.userId ?? 'unknown',
       },
@@ -200,7 +234,12 @@ app.use(
     model: MediaAsset,
     idAttribute: 'key',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    middlewares: [requireBearerToken, attachOwnerOnCreate, ensureOwnerOnWrite],
+    middlewares: [
+      requireBearerToken,
+      attachOwnerOnCreate,
+      blockImmutableFieldChangesOnUpdate,
+      ensureOwnerOnWrite,
+    ],
     bodyFilter: [
       'key',
       'bucket',
