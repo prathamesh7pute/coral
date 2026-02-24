@@ -37,6 +37,22 @@ function parseQueryNumber(value: QueryParamValue) {
   return Number.isNaN(parsed) ? undefined : parsed;
 }
 
+function sanitizeSelect(value: string): string | undefined {
+  const fields = value
+    .split(',')
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0)
+    // Block explicit inclusion syntax like +passwordHash and any invalid tokens.
+    .filter((token) => !token.startsWith('+'))
+    .filter((token) => /^-?[A-Za-z0-9_.]+$/.test(token));
+
+  if (fields.length === 0) {
+    return undefined;
+  }
+
+  return fields.join(' ');
+}
+
 function cloneSubDoc(subDoc?: SubDocConfig): SubDocConfig | undefined {
   if (!subDoc) return undefined;
 
@@ -214,20 +230,37 @@ export default function createQueryConfig(
   }
 
   if (select) {
-    fields = select.split(',').join(' ');
+    const sanitizedSelect = sanitizeSelect(select);
+    if (sanitizedSelect) {
+      fields = sanitizedSelect;
+    }
   }
 
   let data = req.body as QueryPayload;
-  if (config.bodyFilter && data && !Array.isArray(data)) {
-    const sourceData = data as QueryRecord;
-    const filteredData: QueryRecord = {};
-    for (const key of config.bodyFilter) {
-      const fieldValue = sourceData[key];
-      if (fieldValue !== undefined) {
-        filteredData[key] = fieldValue;
+  if (config.bodyFilter && data) {
+    if (Array.isArray(data)) {
+      data = data.map((entry) => {
+        const sourceData = entry as QueryRecord;
+        const filteredData: QueryRecord = {};
+        for (const key of config.bodyFilter as string[]) {
+          const fieldValue = sourceData[key];
+          if (fieldValue !== undefined) {
+            filteredData[key] = fieldValue;
+          }
+        }
+        return filteredData;
+      });
+    } else {
+      const sourceData = data as QueryRecord;
+      const filteredData: QueryRecord = {};
+      for (const key of config.bodyFilter) {
+        const fieldValue = sourceData[key];
+        if (fieldValue !== undefined) {
+          filteredData[key] = fieldValue;
+        }
       }
+      data = filteredData;
     }
-    data = filteredData;
   }
 
   return {

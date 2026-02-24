@@ -7,6 +7,8 @@ export default defineConfig({
     testTimeout: 15000,
     coverage: {
       provider: 'v8',
+      include: ['src/**/*.ts'],
+      exclude: ['src/index.ts', 'src/models/**/*.ts'],
       reporter: ['text', 'html', 'json-summary', 'json'],
     },
   },
