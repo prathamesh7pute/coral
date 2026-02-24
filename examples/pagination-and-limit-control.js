@@ -5,6 +5,7 @@
  * - Builds an AuditLog model for time-ordered read-heavy APIs.
  * - Configures perPage to control page size for ?page-based pagination.
  * - Highlights Coral's safety cap for oversized ?limit requests.
+ * - Run: node examples/pagination-and-limit-control.js
  */
 
 import Coral from 'coral';
@@ -64,9 +65,24 @@ app.use(
   }),
 );
 
-// Query examples:
-// GET /api/audit-logs?page=2   -> skip 100, limit 50
-// GET /api/audit-logs?limit=800 -> capped to 500
 app.listen(3004, () => {
   console.log('pagination-and-limit-control running on http://localhost:3004');
 });
+
+/*
+Sample requests (Node.js fetch):
+
+await fetch('http://localhost:3004/api/audit-logs', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    actorId: 'usr_alpha001',
+    action: 'created task',
+    resourceType: 'task',
+    metadata: { taskId: 'tsk_001' },
+  }),
+});
+
+await fetch('http://localhost:3004/api/audit-logs?page=2');
+await fetch('http://localhost:3004/api/audit-logs?limit=800');
+*/

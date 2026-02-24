@@ -224,7 +224,7 @@ Coral supports the following query parameters for all `GET` list requests:
 
 A complete set of copy-paste examples is available in [`examples/`](examples/README.md).
 
-It includes:
+It includes focused core-framework scenarios:
 
 - Basic CRUD setup: [`examples/basic-crud.js`](examples/basic-crud.js)
 - Methods + middleware configuration: [`examples/methods-and-middlewares.js`](examples/methods-and-middlewares.js)
@@ -234,8 +234,6 @@ It includes:
 - Request body filtering (`bodyFilter`): [`examples/body-filter.js`](examples/body-filter.js)
 - Reference updates on create (`updateRef`): [`examples/update-ref.js`](examples/update-ref.js)
 - Single-level and multi-level sub-document routing (`subDoc`): [`examples/subdoc-single-level.js`](examples/subdoc-single-level.js), [`examples/subdoc-multi-level.js`](examples/subdoc-multi-level.js)
-- TypeScript JWT auth middleware example (modern Bearer token flow): [`examples/auth-jwt-protected-routes.ts`](examples/auth-jwt-protected-routes.ts)
-- TypeScript AWS S3 presigned upload + media metadata example: [`examples/s3-presigned-upload.ts`](examples/s3-presigned-upload.ts)
 
 ---
 

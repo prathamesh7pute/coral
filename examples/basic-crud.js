@@ -5,6 +5,7 @@
  * - Creates a production-style Product schema with validations, indexes, and timestamps.
  * - Mounts Coral on /api/products to auto-generate CRUD routes.
  * - Uses bodyFilter and perPage to demonstrate safe write controls and pagination defaults.
+ * - Run: node examples/basic-crud.js
  */
 
 import Coral from 'coral';
@@ -74,9 +75,34 @@ app.use(
   }),
 );
 
-// Generated routes:
-// GET/POST /api/products
-// GET/PUT/DELETE /api/products/:idAttribute
 app.listen(3000, () => {
   console.log('basic-crud running on http://localhost:3000');
 });
+
+/*
+Sample requests (Node.js fetch):
+- default methods generate GET/POST on /api/products and GET/PUT/DELETE on /api/products/:idAttribute.
+- replace <productId> with an actual document id.
+
+await fetch('http://localhost:3000/api/products', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    sku: 'PRD-1001',
+    name: 'Noise Cancelling Headphones',
+    description: 'Over-ear ANC headphones',
+    price: { amount: 199, currency: 'USD' },
+    inventory: { inStock: 40, reorderLevel: 8 },
+    tags: ['audio', 'premium'],
+    status: 'active',
+  }),
+});
+
+await fetch('http://localhost:3000/api/products?limit=10&sort=createdAt&order=desc');
+
+await fetch('http://localhost:3000/api/products/<productId>', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'Noise Cancelling Headphones v2', status: 'active' }),
+});
+*/

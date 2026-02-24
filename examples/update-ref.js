@@ -5,6 +5,7 @@
  * - Creates Team and Project models with relational references.
  * - On POST /api/projects, Coral persists the project and updates Team.projects.
  * - Shows practical one-to-many linkage without custom controller boilerplate.
+ * - Run: node examples/update-ref.js
  */
 
 import Coral from 'coral';
@@ -94,3 +95,24 @@ app.use(
 app.listen(3006, () => {
   console.log('update-ref running on http://localhost:3006');
 });
+
+/*
+Sample requests (Node.js fetch):
+- methods: ['GET', 'POST'] generates only GET and POST routes.
+- create a Team first, then replace <teamId>.
+
+await fetch('http://localhost:3006/api/projects', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    teamId: '<teamId>',
+    name: 'Payments Revamp',
+    status: 'active',
+    budgetUsd: 250000,
+  }),
+});
+
+await fetch('http://localhost:3006/api/projects?sort=createdAt&order=desc');
+
+// After POST, the created project _id is pushed into Team.projects via updateRef.
+*/

@@ -5,6 +5,7 @@
  * - Defines an Invoice model with practical field constraints.
  * - Applies request logging and API-key authentication middleware before Coral handlers.
  * - Restricts generated routes to GET, POST, and PUT using methods.
+ * - Run: node examples/methods-and-middlewares.js
  */
 
 import Coral from 'coral';
@@ -84,3 +85,37 @@ app.use(
 app.listen(3001, () => {
   console.log('methods-and-middlewares running on http://localhost:3001');
 });
+
+/*
+Sample requests (Node.js fetch):
+- methods: ['GET', 'POST', 'PUT'] generates only these three routes.
+- set INTERNAL_API_KEY and replace <invoiceId>.
+
+await fetch('http://localhost:3001/api/invoices', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': process.env.INTERNAL_API_KEY,
+  },
+  body: JSON.stringify({
+    invoiceNumber: 'INV-100001',
+    customerEmail: 'billing@acme.com',
+    totalAmount: 499.99,
+    currency: 'USD',
+    status: 'issued',
+  }),
+});
+
+await fetch('http://localhost:3001/api/invoices?sort=createdAt&order=desc', {
+  headers: { 'x-api-key': process.env.INTERNAL_API_KEY },
+});
+
+await fetch('http://localhost:3001/api/invoices/<invoiceId>', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': process.env.INTERNAL_API_KEY,
+  },
+  body: JSON.stringify({ status: 'paid' }),
+});
+*/

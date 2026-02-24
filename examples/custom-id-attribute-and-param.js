@@ -5,6 +5,7 @@
  * - Uses tenantSlug as the business identifier instead of Mongo _id.
  * - Reads tenantSlug from the route (/api/tenants/:tenantSlug/settings).
  * - Shows tenant-safe writes by attaching tenantSlug from path in middleware.
+ * - Run: node examples/custom-id-attribute-and-param.js
  */
 
 import Coral from 'coral';
@@ -76,3 +77,22 @@ app.use(
 app.listen(3002, () => {
   console.log('custom-id-attribute-and-param running on http://localhost:3002');
 });
+
+/*
+Sample requests (Node.js fetch):
+- methods: ['GET', 'POST'] generates only GET and POST routes.
+- idAttribute + idParam use tenantSlug from the URL.
+
+await fetch('http://localhost:3002/api/tenants/acme/settings', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    supportEmail: 'support@acme.com',
+    timezone: 'UTC',
+    brandingColor: '#1d4ed8',
+  }),
+});
+
+await fetch('http://localhost:3002/api/tenants/acme/settings');
+await fetch('http://localhost:3002/api/tenants/zenlabs/settings');
+*/

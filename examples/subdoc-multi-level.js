@@ -5,6 +5,7 @@
  * - Models Discussion -> comments[] -> replies[] hierarchy.
  * - Locates parent discussion and target comment using idParam/idAttribute mapping.
  * - Uses recursive subDoc.subDoc config to operate on nested replies.
+ * - Run: node examples/subdoc-multi-level.js
  */
 
 import Coral from 'coral';
@@ -113,9 +114,32 @@ app.use(
   }),
 );
 
-// Examples:
-// GET /api/discussions/api-design/comments/c_alpha001/replies
-// PUT /api/discussions/api-design/comments/c_alpha001/replies/r_beta001
 app.listen(3008, () => {
   console.log('subdoc-multi-level running on http://localhost:3008');
 });
+
+/*
+Sample requests (Node.js fetch):
+- seed a Discussion with slug "api-design" and commentKey "c_alpha001" before these calls.
+
+await fetch('http://localhost:3008/api/discussions/api-design/comments/c_alpha001/replies');
+
+await fetch('http://localhost:3008/api/discussions/api-design/comments/c_alpha001/replies', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    replyKey: 'r_beta001',
+    authorName: 'Alex',
+    body: 'We should benchmark this approach',
+  }),
+});
+
+await fetch(
+  'http://localhost:3008/api/discussions/api-design/comments/c_alpha001/replies/r_beta001',
+  {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body: 'We should benchmark this approach before rollout' }),
+  },
+);
+*/

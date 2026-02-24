@@ -5,6 +5,7 @@
  * - Sets default conditions/options/fields for Incident listing APIs.
  * - Adds query defaults via query config merged with top-level defaults.
  * - Demonstrates how request params (sort/order/select/page) override defaults at runtime.
+ * - Run: node examples/query-defaults-and-overrides.js
  */
 
 import Coral from 'coral';
@@ -51,6 +52,20 @@ incidentSchema.index({ tenantId: 1, status: 1, severity: -1, createdAt: -1 });
 
 const Incident = mongoose.model('Incident', incidentSchema);
 
+// Why this config exists:
+// - Multi-tenant APIs usually need fixed base filters to avoid accidental cross-tenant data access.
+// - List endpoints often need predictable default sorting and projection for dashboard performance.
+// - Some defaults should still be overridable by query params for flexible reporting screens.
+//
+// How Coral merges this:
+// - top-level conditions/options/fields are the base.
+// - query.conditions/query.options/query.fields are merged on top.
+// - runtime query params like ?sort, ?order, ?select, ?page, ?limit can override final query behavior.
+//
+// Practical use cases:
+// - Incident response dashboards that should show only active incidents by default.
+// - Customer-facing monitoring APIs where payload size and sort order need controlled defaults.
+// - Backoffice tools that occasionally override projection/sort from URL params.
 app.use(
   Coral({
     path: '/api/incidents',
@@ -78,10 +93,30 @@ app.use(
   }),
 );
 
-// Runtime override examples:
-// GET /api/incidents?sort=severity&order=desc
-// GET /api/incidents?select=title,status,severity
-// GET /api/incidents?page=1
 app.listen(3003, () => {
   console.log('query-defaults-and-overrides running on http://localhost:3003');
 });
+
+/*
+Sample requests (Node.js fetch):
+- 1) Create a record that matches base + query defaults.
+- 2) Use runtime sort override for severity-prioritized views.
+- 3) Use select/page override to return compact paginated payload.
+- Expected default read behavior (without query params):
+  tenantId='t_acme001', archived=false, status in ['open','investigating'], sort by -createdAt.
+
+await fetch('http://localhost:3003/api/incidents', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    tenantId: 't_acme001',
+    title: 'API error spikes in EU region',
+    severity: 'high',
+    status: 'open',
+    archived: false,
+  }),
+});
+
+await fetch('http://localhost:3003/api/incidents?sort=severity&order=desc');
+await fetch('http://localhost:3003/api/incidents?select=title,status,severity&page=1');
+*/

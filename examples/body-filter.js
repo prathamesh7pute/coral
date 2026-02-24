@@ -5,6 +5,7 @@
  * - Defines a Customer schema with internal/server-managed fields.
  * - Allows clients to write only selected fields (email, fullName, phone).
  * - Prevents mass-assignment of privileged fields like role or internal notes.
+ * - Run: node examples/body-filter.js
  */
 
 import Coral from 'coral';
@@ -78,3 +79,29 @@ app.use(
 app.listen(3005, () => {
   console.log('body-filter running on http://localhost:3005');
 });
+
+/*
+Sample requests (Node.js fetch):
+- methods: ['GET', 'POST', 'PUT'] generates only these three routes.
+- replace <customerId> with an actual document id.
+
+await fetch('http://localhost:3005/api/customers', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: 'jane@example.com',
+    fullName: 'Jane Doe',
+    phone: '+1-415-555-1001',
+    role: 'admin',
+    internalNotes: 'should-be-ignored',
+  }),
+});
+
+await fetch('http://localhost:3005/api/customers?select=email,fullName,role');
+
+await fetch('http://localhost:3005/api/customers/<customerId>', {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ fullName: 'Jane A. Doe', creditScore: 900 }),
+});
+*/
