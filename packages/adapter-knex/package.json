@@ -1,0 +1,19 @@
+{
+  "name": "@coral/adapter-knex",
+  "version": "0.0.0-v2-dev",
+  "private": true,
+  "type": "module",
+  "description": "Coral v2 adapter for Knex",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "knex": "^3.0.0"
+  },
+  "dependencies": {
+    "@coral/core": "0.0.0-v2-dev"
+  }
+}

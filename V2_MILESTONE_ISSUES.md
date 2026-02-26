@@ -1,0 +1,73 @@
+# Coral v2 Milestone Issue List
+
+Last updated: 2026-02-26
+
+Use this file as a ready-to-create issue backlog. Each item is intentionally small and maps to one or two roadmap phases.
+
+## Alpha milestone (core extraction + mongoose parity)
+
+- [ ] V2-001: Write v2 charter and KPI document.
+- [ ] V2-002: Add v1 golden behavior tests for CRUD and query paths.
+- [ ] V2-003: Add monorepo package skeleton and contributor notes.
+- [ ] V2-004: Publish semver + deprecation policy for v2 packages.
+- [ ] V2-005: Define canonical Coral query DSL spec.
+- [ ] V2-006: Define adapter capability model and fallback rules.
+- [ ] V2-007: Implement `CoralAdapter` interface in `@coral/core`.
+- [ ] V2-008: Build reusable adapter compliance test harness.
+- [ ] V2-009: Extract Mongoose runtime into `@coral/adapter-mongoose`.
+- [ ] V2-010: Add parity test suite to ensure v1 behavior is unchanged.
+
+Exit criteria:
+- Mongoose adapter passes contract suite.
+- Existing consumers can run without breaking API changes.
+
+## Beta milestone (multi-DB + OpenAPI + MCP)
+
+- [ ] V2-011: Implement Prisma adapter MVP (SQLite + Postgres).
+- [ ] V2-012: Add Prisma advanced features (relations, nested writes, tx).
+- [ ] V2-013: Publish Prisma compatibility policy (including Mongo caveats).
+- [ ] V2-014: Implement Knex adapter MVP (Postgres).
+- [ ] V2-015: Add Knex dialect support (MySQL, SQLite, MariaDB).
+- [ ] V2-016: Add validation layer (JSON Schema or Zod) for requests.
+- [ ] V2-017: Generate OpenAPI 3.1 with stable operation IDs.
+- [ ] V2-018: Implement `@coral/mcp-server` with stdio + HTTP transports.
+
+Exit criteria:
+- Prisma and Knex adapters pass contract tests for supported DBs.
+- OpenAPI and MCP integration tests are green.
+
+## RC milestone (AI and production hardening)
+
+- [ ] V2-019: Add `AGENTS.md`, `.codex/skills`, and `llms.txt`.
+- [ ] V2-020: Add multi-agent templates (planner/executor/reviewer patterns).
+- [ ] V2-021: Add tracing, request correlation IDs, and audit events.
+- [ ] V2-022: Add security and supply-chain gates (audit, CodeQL, provenance).
+
+Exit criteria:
+- AI/agent docs and templates are usable end-to-end.
+- Security gates are mandatory in CI for release branches.
+
+## GA milestone (publish + migration)
+
+- [ ] V2-023: Implement release automation and package smoke tests.
+- [ ] V2-024: Publish migration guide, cookbook, and launch checklist.
+
+Exit criteria:
+- Tag-to-publish flow is reproducible.
+- Migration from v1 to v2 is documented and validated.
+
+## Suggested labels
+
+- `v2`
+- `milestone:alpha` / `milestone:beta` / `milestone:rc` / `milestone:ga`
+- `area:core` / `area:adapter` / `area:mcp` / `area:docs` / `area:security`
+- `type:feature` / `type:tech-debt` / `type:docs`
+
+## Suggested issue template fields
+
+- Problem statement
+- Scope
+- Out of scope
+- Acceptance criteria
+- Test plan
+- Rollback plan
