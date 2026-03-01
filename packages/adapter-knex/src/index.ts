@@ -4,7 +4,7 @@ import type {
   CoralCapability,
   CoralListQuery,
   CoralMutationPayload,
-} from '@coral/core';
+} from '@coral-kit/core';
 
 export interface KnexAdapterOptions {
   tableName: string;
@@ -16,7 +16,7 @@ function notImplemented<T>(): Promise<T> {
 
 export function createKnexAdapter(_options: KnexAdapterOptions): CoralAdapter {
   return {
-    name: '@coral/adapter-knex',
+    name: '@coral-kit/adapter-knex',
     version: '0.0.0-v2-dev',
     capabilities: new Set<CoralCapability>([
       'bulkWrite',

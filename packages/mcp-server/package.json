@@ -1,5 +1,5 @@
 {
-  "name": "@coral/mcp-server",
+  "name": "@coral-kit/mcp-server",
   "version": "0.0.0-v2-dev",
   "private": true,
   "type": "module",
@@ -11,6 +11,6 @@
     }
   },
   "dependencies": {
-    "@coral/core": "0.0.0-v2-dev"
+    "@coral-kit/core": "0.0.0-v2-dev"
   }
 }

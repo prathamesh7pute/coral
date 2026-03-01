@@ -12,9 +12,9 @@ Use this file as a ready-to-create issue backlog. Each item is intentionally sma
 - [ ] V2-004: Publish semver + deprecation policy for v2 packages.
 - [ ] V2-005: Define canonical Coral query DSL spec.
 - [ ] V2-006: Define adapter capability model and fallback rules.
-- [ ] V2-007: Implement `CoralAdapter` interface in `@coral/core`.
+- [ ] V2-007: Implement `CoralAdapter` interface in `@coral-kit/core`.
 - [ ] V2-008: Build reusable adapter compliance test harness.
-- [ ] V2-009: Extract Mongoose runtime into `@coral/adapter-mongoose`.
+- [ ] V2-009: Extract Mongoose runtime into `@coral-kit/adapter-mongoose`.
 - [ ] V2-010: Add parity test suite to ensure v1 behavior is unchanged.
 
 Exit criteria:
@@ -30,7 +30,7 @@ Exit criteria:
 - [ ] V2-015: Add Knex dialect support (MySQL, SQLite, MariaDB).
 - [ ] V2-016: Add validation layer (JSON Schema or Zod) for requests.
 - [ ] V2-017: Generate OpenAPI 3.1 with stable operation IDs.
-- [ ] V2-018: Implement `@coral/mcp-server` with stdio + HTTP transports.
+- [ ] V2-018: Implement `@coral-kit/mcp-server` with stdio + HTTP transports.
 
 Exit criteria:
 - Prisma and Knex adapters pass contract tests for supported DBs.

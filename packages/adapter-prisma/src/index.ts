@@ -4,7 +4,7 @@ import type {
   CoralCapability,
   CoralListQuery,
   CoralMutationPayload,
-} from '@coral/core';
+} from '@coral-kit/core';
 
 export interface PrismaAdapterOptions {
   modelName: string;
@@ -16,7 +16,7 @@ function notImplemented<T>(): Promise<T> {
 
 export function createPrismaAdapter(_options: PrismaAdapterOptions): CoralAdapter {
   return {
-    name: '@coral/adapter-prisma',
+    name: '@coral-kit/adapter-prisma',
     version: '0.0.0-v2-dev',
     capabilities: new Set<CoralCapability>([
       'filtering',

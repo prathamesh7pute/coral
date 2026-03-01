@@ -1,4 +1,4 @@
-# @coral/adapter-prisma
+# @coral-kit/adapter-prisma
 
 Scaffold package for Coral v2 Prisma adapter.
 

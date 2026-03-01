@@ -4,7 +4,7 @@ import type {
   CoralCapability,
   CoralListQuery,
   CoralMutationPayload,
-} from '@coral/core';
+} from '@coral-kit/core';
 
 export interface MongooseAdapterOptions {
   modelName: string;
@@ -16,7 +16,7 @@ function notImplemented<T>(): Promise<T> {
 
 export function createMongooseAdapter(_options: MongooseAdapterOptions): CoralAdapter {
   return {
-    name: '@coral/adapter-mongoose',
+    name: '@coral-kit/adapter-mongoose',
     version: '0.0.0-v2-dev',
     capabilities: new Set<CoralCapability>([
       'filtering',

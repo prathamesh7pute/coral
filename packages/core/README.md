@@ -1,4 +1,4 @@
-# @coral/core
+# @coral-kit/core
 
 Scaffold package for Coral v2 core abstractions.
 

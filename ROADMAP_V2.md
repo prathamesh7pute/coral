@@ -53,7 +53,7 @@ Last updated: 2026-02-26
 ### Phase 06 - Capability model
 - Define adapter capability flags (`transactions`, `relations`, `subDoc`, `bulkWrite`, etc.).
 - Define fallback behavior when capability is absent.
-- Exit criteria: capability contract in `@coral/core`.
+- Exit criteria: capability contract in `@coral-kit/core`.
 
 ### Phase 07 - Adapter interface v1
 - Implement `CoralAdapter` contract and shared error shape.
@@ -66,7 +66,7 @@ Last updated: 2026-02-26
 - Exit criteria: adapter test harness reusable by all adapters.
 
 ### Phase 09 - Mongoose adapter extraction
-- Move current Mongoose-specific logic to `@coral/adapter-mongoose`.
+- Move current Mongoose-specific logic to `@coral-kit/adapter-mongoose`.
 - Preserve existing behavior for current users.
 - Exit criteria: v1 behavior parity passes.
 
@@ -76,7 +76,7 @@ Last updated: 2026-02-26
 - Exit criteria: zero parity regressions.
 
 ### Phase 11 - Prisma adapter MVP
-- Build `@coral/adapter-prisma` for SQL-first target (SQLite/Postgres first).
+- Build `@coral-kit/adapter-prisma` for SQL-first target (SQLite/Postgres first).
 - Implement CRUD + filtering + pagination + sorting.
 - Exit criteria: contract tests green for supported providers.
 
@@ -91,7 +91,7 @@ Last updated: 2026-02-26
 - Exit criteria: compatibility matrix merged into docs.
 
 ### Phase 14 - Knex adapter MVP
-- Build `@coral/adapter-knex` for SQL teams needing query-builder control.
+- Build `@coral-kit/adapter-knex` for SQL teams needing query-builder control.
 - Provide schema mapping strategy and safe defaults.
 - Exit criteria: Postgres MVP passes adapter contract tests.
 
@@ -111,7 +111,7 @@ Last updated: 2026-02-26
 - Exit criteria: generated spec validates in CI.
 
 ### Phase 18 - MCP server package
-- Build `@coral/mcp-server` with stdio and streamable HTTP transports.
+- Build `@coral-kit/mcp-server` with stdio and streamable HTTP transports.
 - Expose route tools with strict input/output schema.
 - Exit criteria: integration tests for both transports pass.
 

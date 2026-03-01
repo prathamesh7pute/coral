@@ -1,4 +1,4 @@
-# @coral/mcp-server
+# @coral-kit/mcp-server
 
 Scaffold package for Coral v2 MCP server.
 

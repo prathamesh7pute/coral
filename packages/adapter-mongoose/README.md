@@ -1,4 +1,4 @@
-# @coral/adapter-mongoose
+# @coral-kit/adapter-mongoose
 
 Scaffold package for Coral v2 Mongoose adapter.
 

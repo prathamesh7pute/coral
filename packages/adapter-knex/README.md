@@ -1,4 +1,4 @@
-# @coral/adapter-knex
+# @coral-kit/adapter-knex
 
 Scaffold package for Coral v2 Knex adapter.
 
