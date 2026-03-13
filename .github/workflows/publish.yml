@@ -1,4 +1,4 @@
-name: Publish Package
+name: Publish Root Package
 
 on:
   push:
@@ -20,6 +20,7 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
+      # Root-package-only publish flow until scoped workspace releases are added in Phase 23.
       - run: npm ci
       - run: npm run check:ci
       - run: npm run build

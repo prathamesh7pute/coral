@@ -1,6 +1,6 @@
 # Coral v2 Milestone Issue List
 
-Last updated: 2026-02-26
+Last updated: 2026-03-12
 
 Use this file as a ready-to-create issue backlog. Each item is intentionally small and maps to one or two roadmap phases.
 
@@ -8,8 +8,8 @@ Use this file as a ready-to-create issue backlog. Each item is intentionally sma
 
 - [ ] V2-001: Write v2 charter and KPI document.
 - [ ] V2-002: Add v1 golden behavior tests for CRUD and query paths.
-- [ ] V2-003: Add monorepo package skeleton and contributor notes.
-- [ ] V2-004: Publish semver + deprecation policy for v2 packages.
+- [ ] V2-003: Add npm workspaces, monorepo package skeleton, and contributor notes while keeping root `coral` publishable.
+- [ ] V2-004: Publish product-line, semver, and deprecation policy for `coral` and `@coral-kit/*`.
 - [ ] V2-005: Define canonical Coral query DSL spec.
 - [ ] V2-006: Define adapter capability model and fallback rules.
 - [ ] V2-007: Implement `CoralAdapter` interface in `@coral-kit/core`.
@@ -49,12 +49,17 @@ Exit criteria:
 
 ## GA milestone (publish + migration)
 
-- [ ] V2-023: Implement release automation and package smoke tests.
+- [ ] V2-023: Implement workspace release automation, scoped publish flow from the current repo, and package smoke tests.
 - [ ] V2-024: Publish migration guide, cookbook, and launch checklist.
 
 Exit criteria:
 - Tag-to-publish flow is reproducible.
 - Migration from v1 to v2 is documented and validated.
+
+## Post-v2 operational backlog
+
+- [ ] OPS-001: Transfer the repository to the `coral-kit` GitHub org after v2 GA.
+- [ ] OPS-002: Update package metadata, trusted publisher settings, and release automation after the repo transfer.
 
 ## Suggested labels
 

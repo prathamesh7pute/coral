@@ -31,6 +31,13 @@ npm run check
 npm test
 ```
 
+## Repository Structure
+
+- The root package remains the publishable `coral` package during v2 development.
+- New v2 packages live under `packages/` and use the `@coral-kit/*` namespace.
+- This repository stays in its current GitHub location until v2 is complete; repo transfer to the `coral-kit` org is a post-v2 operational step.
+- Before the first public v2 beta, the publishable `coral` package is expected to move into `packages/coral` so every publishable package lives under `packages/`.
+
 ### 5. Submit a Pull Request
 - Provide a clear description of the problem and your solution.
 - Link to any related issues.
@@ -39,6 +46,7 @@ npm test
 ## Development Standards
 - **Commit Messages**: Use clear, imperative summaries. A `.gitmessage` template is provided for convenience.
 - **Code Style**: We use Biome for linting and formatting. Run `npm run check` before committing.
+- **Workspaces**: Use `npm install` at the repo root. Workspace-level checks are available via `npm run check:packages`, `npm run build:packages`, `npm run typecheck:packages`, and `npm run test:packages` as v2 packages become runnable.
 - **Documentation**: If you're adding a feature, please update the `README.md`.
 
 ## Code of Conduct
