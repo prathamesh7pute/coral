@@ -4,14 +4,24 @@
   "private": true,
   "type": "module",
   "description": "Coral v2 adapter for Prisma",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prathamesh7pute/coral.git",
+    "directory": "packages/adapter-prisma"
+  },
+  "bugs": {
+    "url": "https://github.com/prathamesh7pute/coral/issues"
+  },
+  "homepage": "https://github.com/prathamesh7pute/coral#readme",
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     }
-  },
-  "peerDependencies": {
-    "@prisma/client": "^6.19.0"
   },
   "dependencies": {
     "@coral-kit/core": "0.0.0-v2-dev"

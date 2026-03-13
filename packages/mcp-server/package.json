@@ -4,6 +4,19 @@
   "private": true,
   "type": "module",
   "description": "Coral v2 MCP server",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prathamesh7pute/coral.git",
+    "directory": "packages/mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/prathamesh7pute/coral/issues"
+  },
+  "homepage": "https://github.com/prathamesh7pute/coral#readme",
   "exports": {
     ".": {
       "types": "./src/index.ts",

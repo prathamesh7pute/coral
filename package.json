@@ -29,16 +29,23 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "build:packages": "npm run build --workspaces --if-present",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "typecheck:packages": "npm run typecheck --workspaces --if-present",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check .",
     "check:ci": "biome ci .",
+    "check:packages": "npm run check:ci --workspaces --if-present",
     "prepare": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:packages": "npm run test --workspaces --if-present"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "engines": {
     "node": ">=20"
   },

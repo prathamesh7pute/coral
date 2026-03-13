@@ -1,6 +1,6 @@
 # Coral v2 Roadmap
 
-Last updated: 2026-02-26
+Last updated: 2026-03-12
 
 ## Goals
 
@@ -36,12 +36,15 @@ Last updated: 2026-02-26
 - Exit criteria: parity suite can detect v2 drift.
 
 ### Phase 03 - Monorepo layout bootstrap
-- Introduce package folders: `core`, adapters, `mcp-server`.
-- Keep v1 runtime untouched while scaffolding v2.
-- Exit criteria: folders and package metadata committed.
+- Introduce npm workspaces and standardize v2 packages under `packages/*`.
+- Keep the root `coral` package publishable and unchanged for existing users.
+- Standardize shared package metadata around the current repository path and keep `@coral-kit/*` packages private until release-ready.
+- Exit criteria: workspace install succeeds, root package continuity is preserved, and v2 packages share repo conventions.
 
 ### Phase 04 - Public API compatibility policy
-- Define semantic versioning rules per package.
+- Define `coral` as the stable default install path and `@coral-kit/*` as the v2 platform surface.
+- Define semantic versioning rules for the root package and grouped scoped packages.
+- Define when `coral` moves into `packages/coral` before the first public v2 beta.
 - Define deprecation windows and removal policy.
 - Exit criteria: policy doc referenced by CONTRIBUTING and releases.
 
@@ -137,8 +140,9 @@ Last updated: 2026-02-26
 
 ### Phase 23 - Release engineering and packaging
 - Add Changesets (or equivalent), release notes automation, multi-package publish flow.
-- Add package smoke tests (`npm pack` + install verification).
-- Exit criteria: reproducible release pipeline from tag to publish.
+- Configure scoped package publishing from the current repository path with OIDC/trusted publisher.
+- Add package smoke tests (`npm pack` + install verification) for both `coral` and `@coral-kit/*`.
+- Exit criteria: reproducible release pipeline from tag to publish without requiring a GitHub org transfer.
 
 ### Phase 24 - Migration and GA launch
 - Publish v1 -> v2 migration guide and adapter cookbook.
@@ -151,3 +155,11 @@ Last updated: 2026-02-26
 - Beta: Phases 11-18 complete (prisma/knex/openapi/mcp).
 - RC: Phases 19-22 complete (agent readiness + security + observability).
 - GA: Phases 23-24 complete (release + migration + launch).
+
+## Post-v2 Operations
+
+### Ops 01 - Repository transfer to `coral-kit`
+- Transfer the repository to the `coral-kit` GitHub org only after v2 is stable.
+- Update repository metadata, homepage links, and issue URLs after the transfer.
+- Rebind trusted publisher/OIDC settings if the repository path changes.
+- Verify GitHub redirects, npm provenance, and release automation after the move.
