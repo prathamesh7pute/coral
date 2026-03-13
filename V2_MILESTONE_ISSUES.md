@@ -1,15 +1,15 @@
 # Coral v2 Milestone Issue List
 
-Last updated: 2026-03-12
+Last updated: 2026-03-13
 
 Use this file as a ready-to-create issue backlog. Each item is intentionally small and maps to one or two roadmap phases.
 
 ## Alpha milestone (core extraction + mongoose parity)
 
-- [ ] V2-001: Write v2 charter and KPI document.
+- [x] V2-001: Write v2 charter and KPI document.
 - [ ] V2-002: Add v1 golden behavior tests for CRUD and query paths.
-- [ ] V2-003: Add npm workspaces, monorepo package skeleton, and contributor notes while keeping root `coral` publishable.
-- [ ] V2-004: Publish product-line, semver, and deprecation policy for `coral` and `@coral-kit/*`.
+- [x] V2-003: Add npm workspaces, monorepo package skeleton, and contributor notes while keeping root `coral` publishable.
+- [x] V2-004: Publish product-line, semver, and deprecation policy for `coral` and `@coral-kit/*`.
 - [ ] V2-005: Define canonical Coral query DSL spec.
 - [ ] V2-006: Define adapter capability model and fallback rules.
 - [ ] V2-007: Implement `CoralAdapter` interface in `@coral-kit/core`.
@@ -20,6 +20,11 @@ Use this file as a ready-to-create issue backlog. Each item is intentionally sma
 Exit criteria:
 - Mongoose adapter passes contract suite.
 - Existing consumers can run without breaking API changes.
+
+Completed references:
+- V2-001: [`roadmap/v2/CHARTER_AND_KPIS.md`](roadmap/v2/CHARTER_AND_KPIS.md)
+- V2-003: workspace and package scaffold in `packages/*`, root workspaces config, and updated contributor guidance.
+- V2-004: [`roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md`](roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md)
 
 ## Beta milestone (multi-DB + OpenAPI + MCP)
 
