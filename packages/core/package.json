@@ -1,0 +1,13 @@
+{
+  "name": "@coral-kit/core",
+  "version": "0.0.0-v2-dev",
+  "private": true,
+  "type": "module",
+  "description": "Coral v2 core contracts and orchestration",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  }
+}

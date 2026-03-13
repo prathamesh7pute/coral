@@ -1,0 +1,19 @@
+{
+  "name": "@coral-kit/adapter-mongoose",
+  "version": "0.0.0-v2-dev",
+  "private": true,
+  "type": "module",
+  "description": "Coral v2 adapter for Mongoose",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "mongoose": "^8.0.0 || ^9.0.0"
+  },
+  "dependencies": {
+    "@coral-kit/core": "0.0.0-v2-dev"
+  }
+}
