@@ -7,7 +7,7 @@ Use this file as a ready-to-create issue backlog. Each item is intentionally sma
 ## Alpha milestone (core extraction + mongoose parity)
 
 - [x] V2-001: Write v2 charter and KPI document.
-- [ ] V2-002: Add v1 golden behavior tests for CRUD and query paths.
+- [x] V2-002: Add v1 golden behavior tests for CRUD and query paths.
 - [x] V2-003: Add npm workspaces, monorepo package skeleton, and contributor notes while keeping root `coral` publishable.
 - [x] V2-004: Publish product-line, semver, and deprecation policy for `coral` and `@coral-kit/*`.
 - [ ] V2-005: Define canonical Coral query DSL spec.
@@ -23,6 +23,7 @@ Exit criteria:
 
 Completed references:
 - V2-001: [`roadmap/v2/CHARTER_AND_KPIS.md`](roadmap/v2/CHARTER_AND_KPIS.md)
+- V2-002: [`test/golden/coral.v1.golden.spec.ts`](test/golden/coral.v1.golden.spec.ts)
 - V2-003: workspace and package scaffold in `packages/*`, root workspaces config, and updated contributor guidance.
 - V2-004: [`roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md`](roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md)
 
