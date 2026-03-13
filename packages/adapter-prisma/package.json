@@ -23,9 +23,6 @@
       "default": "./src/index.ts"
     }
   },
-  "peerDependencies": {
-    "@prisma/client": "^6.19.0"
-  },
   "dependencies": {
     "@coral-kit/core": "0.0.0-v2-dev"
   }
