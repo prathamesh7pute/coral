@@ -37,6 +37,8 @@ npm test
 - New v2 packages live under `packages/` and use the `@coral-kit/*` namespace.
 - This repository stays in its current GitHub location until v2 is complete; repo transfer to the `coral-kit` org is a post-v2 operational step.
 - Before the first public v2 beta, the publishable `coral` package is expected to move into `packages/coral` so every publishable package lives under `packages/`.
+- v2 scope and success criteria are documented in [`roadmap/v2/CHARTER_AND_KPIS.md`](roadmap/v2/CHARTER_AND_KPIS.md).
+- Product-line, semver, and deprecation policy are documented in [`roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md`](roadmap/v2/PRODUCT_LINE_AND_VERSIONING_POLICY.md).
 
 ### 5. Submit a Pull Request
 - Provide a clear description of the problem and your solution.
